@@ -6,7 +6,7 @@ Source: ITD's accepted core commit `485c6ad8b74ef46d9dc56b3e8bfeac8ed116adb2`. T
 
 ## 2. Final repository structure
 
-Repository root is plugin source (`itd-cookies.php`, admin/includes/public/assets/languages). Tests, scripts and CI are development-only. Production ZIP adds exactly one `itd-cookies/` wrapper. No runtime vendor dependencies.
+Repository root is plugin source (`itd-cookies.php`, admin/includes/public/assets/languages). Tests, scripts and CI are development-only. Production ZIP adds exactly one `itd-cookies/` wrapper. Built `dist/itd-cookies-0.1.0-dev.1.zip`: SHA-256 `2a23f54d5ed713b7fb50db88624d8976bd2bc0893c780922179c963906631183`. Two builds, including Pacific/Auckland timezone, yielded identical hashes. No runtime vendor dependencies.
 
 ## 3. Updater architecture
 
@@ -34,7 +34,7 @@ Built asset `itd-cookies-X.Y.Z.zip`; explicit allowlist, fixed timestamp, sorted
 
 Standalone CI: PHP 7.4/8.5, PHPUnit, PHPCS, PHPStan level 5, PHPCompatibilityWP, Composer audit, Node 22/ESLint/JS tests/npm audit, WordPress 5.2/5.2.24/latest with PHP 7.4 and latest with PHP 8.5. Disposable WordPress tests migration/translation/shortcode/consent/native upgrade and failure preservation. Build waits for every gate.
 
-Stable-tag workflow validates version and main ancestry, invokes the entire CI, then attaches the checked ZIP and SHA-256 once. Existing release causes refusal. No release workflow has been triggered in this stage.
+Stable-tag workflow validates version and main ancestry, invokes the entire CI, then attaches the checked ZIP and SHA-256 once. Existing release causes refusal. No release workflow has been triggered in this stage. Because the repository was empty, GitHub automatically made the first pushed feature branch its default. A reviewed main branch must be established before stable tagging; no main merge/default-setting mutation was performed.
 
 ## 9. Removed ModuBricks infrastructure
 
@@ -42,17 +42,17 @@ Excluded old updater, manifest transport, signing keys/tooling, hosting credenti
 
 ## 10. Security
 
-Trust boundary: controlled GitHub account/release permissions, HTTPS with WordPress certificate validation and native upgrader. This does not protect against account compromise; enable account 2FA, branch protections and restricted release rights. Custom signatures would not solve compromised signing credentials and are not introduced without an independent trust requirement. SHA-256 is integrity/audit evidence, not an independent signature. Cache failure handling prevents repeated anonymous-rate-limit calls. No production secrets/tokens/cookies/HAR files are shipped.
+Trust boundary: controlled GitHub account/release permissions, HTTPS with WordPress certificate validation and native upgrader. This does not protect against account compromise; enable account 2FA, branch protections and restricted release rights. Custom signatures would not solve compromised signing credentials and are not introduced without an independent trust requirement. SHA-256 is integrity/audit evidence, not an independent signature. Cache failure handling prevents repeated anonymous-rate-limit calls. Gitleaks 8.30.1 redacted Git history scan: 6 commits, no leaks (exit 0). Scanner archive checked against the official SHA-256 list. Additional forbidden-infrastructure and sensitive-file/pattern scans: no matches. Test IDs and disposable CI database credentials are explicit synthetic fixtures. No production secrets/tokens/captured cookies/HAR files are shipped.
 
 Core copyright/attribution retained under GPL-2.0-or-later; GNU GPL v2 license included. No third-party runtime libraries are bundled. Dev dependencies have their own package licenses.
 
 ## 11. Automated tests
 
-Initial local results: PHP 7.4 and 8.1 PHPUnit 12 tests/167 assertions PASS; JS 16 tests PASS; PHPCS PASS; PHPStan PASS; PHPCompatibilityWP 7.4+ PASS. npm audit found two vulnerable transitive development packages, fixed within supported ranges; repeat audit zero vulnerabilities. Composer install/audit clean. Package build/inspection PASS (11 entries). Final reruns and remote CI pending.
+Initial local results: PHP 7.4 and 8.1 PHPUnit 12 tests/167 assertions PASS; JS 16 tests PASS; PHPCS PASS; PHPStan PASS; PHPCompatibilityWP 7.4+ PASS. npm audit found two vulnerable transitive development packages, fixed within supported ranges; repeat audit zero vulnerabilities. Composer install/audit clean. Package build/inspection PASS (12 entries). Remote CI [run #5](https://github.com/itdream24/itd-cookies/actions/runs/37321841651) on `22a778884d9809e2a3b6ef38aab71cc0d8078a5c`: all 9 jobs PASS (PHP 7.4/8.5, quality, JS, 4 WordPress matrices, build). Earlier red runs exposed a test assertion/skin selection error: early download/unpack failures can leave the upgrader result null, and errors are recorded by the native AJAX skin. The corrected test asserts native skin errors and preserves plugin files/options/activity; production updater required no change.
 
 ## 12. End-to-end updater test
 
-Pending testwp browser acceptance. Controlled synthetic stable metadata can exercise native installation without changing the source development version or publishing a release. Any simulated metadata version must be explicitly distinguished from the installed development header; this is an installation-path test, not proof of a published stable release.
+Pending testwp browser acceptance: permission requested immediately before installing the locally built standalone ZIP and isolated helper. The site was read only: ModuBricks 1.1.1 active, ITD Cookies 0.1.0-dev.1 inactive; no settings changed. Controlled synthetic stable metadata can exercise native installation without changing the source development version or publishing a release. Any simulated metadata version must be explicitly distinguished from the installed development header; this is an installation-path test, not proof of a published stable release.
 
 ## 13. Known limitations
 
@@ -64,4 +64,4 @@ After acceptance and owner authorization: align header/constant/package.json/loc
 
 ## 15. Verdict
 
-NOT_READY_FOR_FIRST_ITD_COOKIES_RELEASE — remote CI and real testwp update/settings/failure acceptance are pending. Stable release is not published.
+NOT_READY_FOR_FIRST_ITD_COOKIES_RELEASE — real testwp browser update/settings/failure acceptance is pending approval. Standalone CI is green. Stable release is not published.
