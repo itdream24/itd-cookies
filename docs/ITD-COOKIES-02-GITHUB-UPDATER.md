@@ -48,11 +48,61 @@ Core copyright/attribution retained under GPL-2.0-or-later; GNU GPL v2 license i
 
 ## 11. Automated tests
 
-Initial local results: PHP 7.4 and 8.1 PHPUnit 12 tests/167 assertions PASS; JS 16 tests PASS; PHPCS PASS; PHPStan PASS; PHPCompatibilityWP 7.4+ PASS. npm audit found two vulnerable transitive development packages, fixed within supported ranges; repeat audit zero vulnerabilities. Composer install/audit clean. Package build/inspection PASS (12 entries). Remote CI [run #5](https://github.com/itdream24/itd-cookies/actions/runs/37321841651) on `22a778884d9809e2a3b6ef38aab71cc0d8078a5c`: all 9 jobs PASS (PHP 7.4/8.5, quality, JS, 4 WordPress matrices, build). Earlier red runs exposed a test assertion/skin selection error: early download/unpack failures can leave the upgrader result null, and errors are recorded by the native AJAX skin. The corrected test asserts native skin errors and preserves plugin files/options/activity; production updater required no change.
+Initial local results: PHP 7.4 and 8.1 PHPUnit 12 tests/167 assertions PASS; JS 16 tests PASS; PHPCS PASS; PHPStan PASS; PHPCompatibilityWP 7.4+ PASS. npm audit found two vulnerable transitive development packages, fixed within supported ranges; repeat audit zero vulnerabilities. Composer install/audit clean. Package build/inspection PASS (12 entries). Remote CI [run #6](https://github.com/itdream24/itd-cookies/actions/runs/37322478058) on `22510abd11461fb51b51f23a33ad2ace686e3adf`: all 9 jobs PASS. Prior code CI [run #5](https://github.com/itdream24/itd-cookies/actions/runs/37321841651) on `22a778884d9809e2a3b6ef38aab71cc0d8078a5c`: all 9 jobs PASS (PHP 7.4/8.5, quality, JS, 4 WordPress matrices, build). Earlier red runs exposed a test assertion/skin selection error: early download/unpack failures can leave the upgrader result null, and errors are recorded by the native AJAX skin. The corrected test asserts native skin errors and preserves plugin files/options/activity; production updater required no change.
 
 ## 12. End-to-end updater test
 
-Pending testwp browser acceptance: permission requested immediately before installing the locally built standalone ZIP and isolated helper. The site was read only: ModuBricks 1.1.1 active, ITD Cookies 0.1.0-dev.1 inactive; no settings changed. Controlled synthetic stable metadata can exercise native installation without changing the source development version or publishing a release. Any simulated metadata version must be explicitly distinguished from the installed development header; this is an installation-path test, not proof of a published stable release.
+Browser acceptance completed on 2026-10-05 on testwp, WordPress 7.1.2, through the native WordPress admin UI. Owner authorized the isolated synthetic fixture and separately confirmed permanent cleanup. No GitHub Release/tag was created. No product code changed during this closure.
+
+### Scenario and version evidence
+
+Before installing the standalone baseline, the testwp-only helper captured original plugin settings, migration marker, plugin activity and SHA-256 fingerprints of both plugin directories. Original installation: ITD Cookies `0.1.0-dev.1` inactive (accepted stage 01C files); ModuBricks `1.1.1` active; Akismet and Hello Dolly inactive. Original ITD Cookies settings were also recorded from its settings form before test seeding. Its settings SHA-256 was `e2f17cbbe92ffa0c813d0550c609786abf21a90d5ba345303db6938c62875b08`; migration marker was `copied-v1`.
+
+Baseline installed using WordPress Upload Plugin/Replace; ModuBricks temporarily inactive, ITD Cookies active. Fixture seeded a long Russian description, three legal links, `very-large` text size, Metrika `12345678`, GA4 `G-TEST12345`, retaining policy version `1.1.0-rc.1`, consent lifetime and migration marker. Seeded settings SHA-256: `257ed037ca766e865b2be55b217e347a6092f076031bb8bced3607056567135f`.
+
+Fixture returned synthetic stable `v0.1.0` metadata at the exact production API/asset URLs via WordPress `pre_http_request`, without exposing a public test endpoint. WordPress Dashboard Updates → Check again offered `0.1.0` over `0.1.0-dev.1`. Plugins → Update ITD Cookies now used the native AJAX upgrader to download/extract/install the controlled package. The helper did not install files itself.
+
+**Version distinction:** metadata advertised `0.1.0`; both packaged header and runtime constant intentionally remained `0.1.0-dev.1`, following the requirement not to bump source version solely for updater tests. File replacement was proved independently by an inert fixture comment and updater SHA-256 changing from `8642dc56bfeee4923d1b73d024c9ff7a2ca5f4e4dee64edab350c3de5df6b7b8` to `72b481047a9bf6ab8d1f74b08635af9f16a043a3880e4c972cf0044eca8800a5`. Test payload ZIP SHA-256: `3e528799e16cbd8ddcfee2fb76bb9308232e7fcd8be36f858ff66a4259d0259e`. This proves the native installation path with synthetic metadata, not installation of an actual published 0.1.0 stable binary. While the fixture remains enabled, unchanged dev headers can cause the synthetic offer to recur; fixture/cache were removed after testing.
+
+### Acceptance results
+
+| Browser check | Actual result |
+| --- | --- |
+| Native manual check/discovery | PASS: WordPress offered synthetic 0.1.0 |
+| Native update/file replacement | PASS: marker present, updater/file-tree hashes changed |
+| Directory/basename | PASS: `itd-cookies/itd-cookies.php` retained |
+| Activity after update | PASS: ITD Cookies remained active |
+| Consent/legal links/text size/analytics settings | PASS: full settings SHA-256 unchanged; Russian form showed all three links, very-large, both test IDs and toggles |
+| Migration marker | PASS: `copied-v1` unchanged |
+| Existing consent | PASS: analytics-only choice survived update/reload, functional/marketing remained false, no banner re-prompt |
+| Shortcode | PASS: rendered settings button opened dialog with saved analytics checkbox |
+| Providers before consent | PASS: zero provider scripts/init calls after clearing synthetic choice |
+| Providers after consent/repeated save/reload | PASS: one script and one init/config call per provider per document; repeated save did not add another |
+| Desktop 1280×900 | PASS: long description/three links/buttons visible; no horizontal overflow |
+| Mobile 390×844 | PASS: document scroll/client width 375 (scrollbar excluded), dialog 351 wide, inner scroll/client width 349; accept button available at y=665..709 |
+| Theme font | PASS: dialog/button retained Manrope from the active Twenty Twenty-Five theme |
+| ModuBricks | PASS: entire directory SHA-256 and stored settings matched initial snapshot throughout and after reactivation |
+| Reload after update/failures | PASS: shortcode page rendered, saved consent remained effective, providers initialized once |
+
+Counters are controlled preview instrumentation: they count actual runtime calls to provider entry points and tagged script insertion. They do not claim receipt of analytics events by vendor services; synthetic IDs are not real tracking credentials.
+
+### Native failure scenarios
+
+Separate update attempts used WordPress's own updater button:
+
+- Invalid ZIP: native error `PCLZIP_ERR_BAD_FORMAT (-10)` / archive could not be installed.
+- Unavailable ZIP: native download error from a synthetic HTTP network failure.
+- GitHub metadata timeout: native Check again displayed no ITD Cookies update.
+
+After each failure, ITD Cookies remained active; complete installed tree SHA-256 stayed `9118325d234dee0d90cc68a7f8e980283c6a949a15e44940f743575a2493e9f6`; updater hash, settings hash and migration marker were unchanged. The shortcode page still worked on reload and preserved consent. No custom installer/recovery mechanism was used.
+
+### Restoration and cleanup
+
+Original settings/marker restored; entire original stage 01C plugin restored through WordPress Upload Plugin/Replace. Its complete directory fingerprint returned to `382758cc1b4c067fa0f291ed5fc445963cfbb4d4afc24d936f4d83839ed141dd`, identical to the initial snapshot. Original settings form matched field-for-field. ITD Cookies inactive, ModuBricks 1.1.1 active; other plugins unchanged.
+
+Synthetic consent was cleared; fixture mode disabled. Temporary helper then deactivated and deleted through WordPress. Its uninstall removed all four test options and own release cache; admin options UI confirmed no remaining fixture/cache keys. Newly created test page ID 21 permanently deleted after owner confirmation; pre-existing stage 01C page ID 14 remained in Trash. Plugin list returned to the original four plugins, with no helper. Homepage reloaded normally with the original ModuBricks banner and no ITD Cookies scripts/test instrumentation/provider SDKs.
+
+Local browser evidence (screenshots, status/form comparisons) is retained outside Git in the task's artifact directory: `02-browser-evidence.json`, `02-update-offered.jpg`, `02-update-success.jpg`, `02-desktop.jpg`, `02-mobile.jpg`, `02-invalid-zip.jpg`, `02-network-failure.jpg`, `02-restored-status.jpg`, `02-final-plugins.jpg`. No browser cookies, nonces, auth headers, helper or synthetic payload are committed/published. Production, old main, plugin product code, public tags/releases and repository visibility were not changed.
 
 ## 13. Known limitations
 
@@ -64,4 +114,4 @@ After acceptance and owner authorization: align header/constant/package.json/loc
 
 ## 15. Verdict
 
-NOT_READY_FOR_FIRST_ITD_COOKIES_RELEASE — real testwp browser update/settings/failure acceptance is pending approval. Standalone CI is green. Stable release is not published.
+READY_FOR_FIRST_ITD_COOKIES_RELEASE — standalone package/updater, stable filtering, API failure handling, native browser update and failure preservation, settings/consent/runtime acceptance, full testwp restoration and fixture cleanup PASS. Standalone CI is green; the report-only closure commit also runs CI before final handoff. No stable release/tag is published. Readiness authorizes no publication: first release still requires the separately reviewed version/main/tag procedure in section 14.
