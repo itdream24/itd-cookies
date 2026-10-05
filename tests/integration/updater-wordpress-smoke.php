@@ -79,7 +79,7 @@ foreach ( array( 'invalid', 'network', 'valid' ) as $itd_cookies_mode ) {
 		WP_CLI::error( 'Synthetic stable metadata did not reach native update record.' );
 	}
 	set_site_transient( 'update_plugins', $itd_cookies_updates );
-	$itd_cookies_skin   = new Automatic_Upgrader_Skin();
+	$itd_cookies_skin   = new WP_Ajax_Upgrader_Skin();
 	$itd_cookies_result = ( new Plugin_Upgrader( $itd_cookies_skin ) )->upgrade( $itd_cookies_basename );
 	// Early download/unpack errors can leave Plugin_Upgrader::result null; the skin records them.
 	$itd_cookies_errors = $itd_cookies_skin->get_errors();
@@ -93,6 +93,9 @@ foreach ( array( 'invalid', 'network', 'valid' ) as $itd_cookies_mode ) {
 		get_option( 'itd_cookies_migration_version' ) !== $itd_cookies_marker
 	) {
 		WP_CLI::error( 'Installation or settings were damaged: ' . $itd_cookies_mode );
+	}
+	if ( 'valid' !== $itd_cookies_mode && ! is_plugin_active( $itd_cookies_basename ) ) {
+		WP_CLI::error( 'Failed update deactivated the working plugin.' );
 	}
 	// WP-CLI has no subsequent browser request for reactivation; ensure activation.
 	activate_plugin( $itd_cookies_basename );
