@@ -26,20 +26,20 @@ $itd_cookies_sha      = hash_file( 'sha256', ITD_COOKIES_FILE );
 add_filter(
 	'pre_http_request',
 	static function ( $result, $args, $url ) use ( &$itd_cookies_mode, $itd_cookies_package ) {
-		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v0.1.1/itd-cookies-0.1.1.zip';
+		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v0.3.0/itd-cookies-0.3.0.zip';
 		if ( ITD_Cookies_Updater::API_URL === $url ) {
 			if ( 'timeout' === $itd_cookies_mode ) {
 				return new WP_Error( 'http_request_failed', 'Synthetic GitHub timeout.' );
 			}
 			$body = wp_json_encode(
 				array(
-					'tag_name'   => 'v0.1.1',
+					'tag_name'   => 'v0.3.0',
 					'draft'      => false,
 					'prerelease' => false,
 					'body'       => 'Disposable CI fixture, no public release.',
 					'assets'     => array(
 						array(
-							'name'                 => 'itd-cookies-0.1.1.zip',
+							'name'                 => 'itd-cookies-0.3.0.zip',
 							'browser_download_url' => $package_url,
 							'state'                => 'uploaded',
 							'size'                 => filesize( $itd_cookies_package ),

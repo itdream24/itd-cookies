@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ITD Cookies
  * Description: Cookie choices and consent-aware Yandex Metrika and Google Analytics.
- * Version: 0.1.0
+ * Version: 0.2.0-dev.1
  * Requires at least: 5.2
  * Requires PHP: 7.4
  * Plugin URI: https://github.com/itdream24/itd-cookies
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITD_COOKIES_VERSION', '0.1.0' );
+define( 'ITD_COOKIES_VERSION', '0.2.0-dev.1' );
 define( 'ITD_COOKIES_FILE', __FILE__ );
 define( 'ITD_COOKIES_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ITD_COOKIES_URL', plugin_dir_url( __FILE__ ) );
@@ -51,6 +51,8 @@ if ( version_compare( (string) $wp_version, '5.2', '<' ) ) {
 
 require_once ITD_COOKIES_DIR . 'admin/class-itd-cookies-settings.php';
 require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-consent.php';
+require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-services.php';
+require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-legal.php';
 require_once ITD_COOKIES_DIR . 'public/class-itd-cookies-plugin.php';
 require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-updater.php';
 ( new ITD_Cookies_Updater( ITD_COOKIES_FILE, ITD_COOKIES_VERSION ) )->register();

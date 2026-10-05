@@ -36,6 +36,9 @@ final class ITD_Cookies_Settings {
 			'link_2_url'                    => '',
 			'link_3_label'                  => __( 'Cookie policy', 'itd-cookies' ),
 			'link_3_url'                    => '',
+			'link_4_label'                  => __( 'User agreement', 'itd-cookies' ),
+			'link_4_url'                    => '',
+			'auto_footer'                   => 0,
 			'metrika_enabled'               => 0,
 			'metrika_id'                    => '',
 			'metrika_webvisor'              => 0,
@@ -85,6 +88,7 @@ final class ITD_Cookies_Settings {
 		$defaults = self::defaults();
 		$output   = array(
 			'enabled'                       => self::flag( $input, 'enabled' ),
+			'auto_footer'                   => self::flag( $input, 'auto_footer' ),
 			'banner_title'                  => '' !== $title ? $title : $defaults['banner_title'],
 			'banner_text'                   => '' !== $text ? $text : $defaults['banner_text'],
 			'banner_text_size'              => $size,
@@ -102,9 +106,12 @@ final class ITD_Cookies_Settings {
 			'consent_version'               => '' !== trim( $ver ) ? substr( $ver, 0, 100 ) : '1',
 		);
 
-		for ( $index = 1; $index <= 3; $index++ ) {
+		for ( $index = 1; $index <= 4; $index++ ) {
 			$output[ 'link_' . $index . '_label' ] = sanitize_text_field( self::scalar( $input, 'link_' . $index . '_label' ) );
-			$output[ 'link_' . $index . '_url' ]   = self::sanitize_url( self::scalar( $input, 'link_' . $index . '_url' ) );
+			if ( '' === $output[ 'link_' . $index . '_label' ] ) {
+				$output[ 'link_' . $index . '_label' ] = $defaults[ 'link_' . $index . '_label' ];
+			}
+			$output[ 'link_' . $index . '_url' ] = self::sanitize_url( self::scalar( $input, 'link_' . $index . '_url' ) );
 		}
 
 		return $output;
@@ -227,13 +234,18 @@ final class ITD_Cookies_Settings {
 				</table>
 				<h2><?php echo esc_html__( 'Legal links', 'itd-cookies' ); ?></h2>
 				<table class="form-table" role="presentation">
-					<?php for ( $index = 1; $index <= 3; $index++ ) : ?>
-						<?php // translators: %d is the legal link number (1, 2, or 3). ?>
+					<?php for ( $index = 1; $index <= 4; $index++ ) : ?>
+						<?php // translators: %d is the legal link number (1 to 4). ?>
 						<?php self::text_row( sprintf( __( 'Link %d label', 'itd-cookies' ), $index ), 'link_' . $index . '_label', $settings ); ?>
-						<?php // translators: %d is the legal link number (1, 2, or 3). ?>
+						<?php // translators: %d is the legal link number (1 to 4). ?>
 						<?php self::text_row( sprintf( __( 'Link %d URL', 'itd-cookies' ), $index ), 'link_' . $index . '_url', $settings ); ?>
 					<?php endfor; ?>
 				</table>
+				<h2><?php echo esc_html__( 'Footer integration', 'itd-cookies' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<?php self::checkbox_row( __( 'Automatically display legal links at the bottom of the site', 'itd-cookies' ), 'auto_footer', $settings ); ?>
+				</table>
+				<p><?php echo esc_html__( 'Use [itd_cookies_legal_links] to place the links yourself. Automatic output is disabled by default.', 'itd-cookies' ); ?></p>
 				<h2><?php echo esc_html__( 'Yandex Metrika', 'itd-cookies' ); ?></h2>
 				<p><?php echo esc_html__( 'Enter the numeric counter ID. Executable snippets are not stored.', 'itd-cookies' ); ?></p>
 				<table class="form-table" role="presentation">
@@ -254,6 +266,18 @@ final class ITD_Cookies_Settings {
 				<p><?php echo esc_html__( 'Place [itd_cookies_settings] in a page or footer to let visitors change their choice.', 'itd-cookies' ); ?></p>
 				<?php submit_button( __( 'Save settings', 'itd-cookies' ) ); ?>
 			</form>
+			<h2><?php echo esc_html__( 'Cookie policy', 'itd-cookies' ); ?></h2>
+			<p><?php echo esc_html__( 'The page uses [itd_cookies_policy] and follows your current configuration. An explicit Cookie Policy URL takes priority. Existing page content is never overwritten.', 'itd-cookies' ); ?></p>
+			<?php $policy_id = ITD_Cookies_Legal::page_id(); ?>
+			<?php if ( $policy_id ) : ?>
+				<p><a class="button" href="<?php echo esc_url( get_edit_post_link( $policy_id ) ); ?>"><?php echo esc_html__( 'Open page', 'itd-cookies' ); ?></a></p>
+			<?php else : ?>
+				<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+					<input type="hidden" name="action" value="itd_cookies_create_policy">
+					<?php wp_nonce_field( 'itd_cookies_create_policy' ); ?>
+					<?php submit_button( __( 'Create Cookie Policy page', 'itd-cookies' ), 'secondary' ); ?>
+				</form>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

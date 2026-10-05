@@ -106,4 +106,60 @@ if ( 'Принять все' !== __( 'Accept all', 'itd-cookies' ) ) {
 	);
 }
 
+// Product 0.2.0 checks run on real disposable WordPress 5.2 and latest.
+$legal  = new ITD_Cookies_Legal();
+$before = get_option( 'itd_cookies_settings' );
+if ( 0 !== ITD_Cookies_Settings::get()['auto_footer'] || '' !== ITD_Cookies_Settings::get()['link_4_url'] ) {
+	$fail( 'New product defaults changed existing installations.' );
+}
+$services = ITD_Cookies_Services::get( ITD_Cookies_Settings::get() );
+if ( 2 !== count( ITD_Cookies_Services::in_category( $services, 'analytics' ) ) || ITD_Cookies_Services::in_category( $services, 'marketing' ) ) {
+	$fail( 'Actual services do not match configured categories.' );
+}
+if ( false === strpos( do_shortcode( '[itd_cookies_policy]' ), esc_html( __( 'Yandex Metrika', 'itd-cookies' ) ) ) || false === strpos( do_shortcode( '[itd_cookies_legal_links]' ), 'data-itd-cookies-open' ) ) {
+	$fail( 'Product shortcodes were not registered.' );
+}
+$policy_page_id = ITD_Cookies_Legal::ensure_page();
+if ( is_wp_error( $policy_page_id ) || ITD_Cookies_Legal::ensure_page() !== $policy_page_id || '[itd_cookies_policy]' !== get_post( $policy_page_id )->post_content ) {
+	$fail( 'Managed policy creation is not idempotent.' );
+}
+wp_update_post(
+	array(
+		'ID'           => $policy_page_id,
+		'post_content' => 'Owner edited content',
+	)
+);
+ITD_Cookies_Legal::ensure_page();
+if ( 'Owner edited content' !== get_post( $policy_page_id )->post_content || get_option( 'itd_cookies_settings' ) !== $before ) {
+	$fail( 'Policy action overwrote content or existing options.' );
+}
+$links = ITD_Cookies_Legal::links( ITD_Cookies_Settings::get() );
+if ( ! hash_equals( (string) get_permalink( $policy_page_id ), (string) $links[0]['url'] ) ) {
+	$fail( 'Managed policy fallback is missing.' );
+}
+wp_trash_post( $policy_page_id );
+$replacement = ITD_Cookies_Legal::ensure_page();
+if ( is_wp_error( $replacement ) || in_array( $replacement, array( $policy_page_id ), true ) ) {
+	$fail( 'A deleted managed page could not be replaced.' );
+}
+wp_delete_post( $policy_page_id, true );
+wp_delete_post( $replacement, true );
+delete_option( ITD_Cookies_Legal::PAGE_OPTION );
+ob_start();
+$legal->render_footer();
+if ( '' !== ob_get_clean() ) {
+	$fail( 'Auto footer was unexpectedly enabled.' );
+}
+$footer_settings                = ITD_Cookies_Settings::get();
+$footer_settings['auto_footer'] = 1;
+$footer_settings['link_4_url']  = '/agreement/';
+update_option( ITD_Cookies_Settings::OPTION_NAME, $footer_settings );
+ob_start();
+$legal->render_footer();
+$footer = ob_get_clean();
+if ( false === strpos( $footer, '/agreement/' ) || false === strpos( $footer, 'itd-cookies-footer' ) ) {
+	$fail( 'Optional footer or fourth link did not render.' );
+}
+update_option( ITD_Cookies_Settings::OPTION_NAME, $before );
+
 WP_CLI::success( $persisted ? 'ITD Cookies reactivation preserved migrated settings.' : 'ITD Cookies activation, migration, consent defaults, UI, and Russian translation passed.' );

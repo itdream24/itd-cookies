@@ -46,3 +46,11 @@ Align plugin header/constant, package.json/lock, readme, catalog metadata and ch
 ## Attribution
 
 Core code extracted from ITD's GPL-compatible ModuBricks project, accepted commit `485c6ad8b74ef46d9dc56b3e8bfeac8ed116adb2`. Copyright ITD contributors. Migration compatibility is retained; unrelated modules and deployment infrastructure are excluded. No third-party runtime libraries are bundled. Composer/npm libraries are development tools, with their licenses recorded in lock files and installed packages. The WordPress APIs and externally loaded provider scripts remain their respective authors' work.
+
+## 0.2.0 development
+
+Development version: 0.2.0-dev.1. Adds service descriptions, Cookie Policy, four legal links and an optional isolated footer. See docs/ITD-COOKIES-0.2.0.md for the acceptance gate. Stable v0.1.0 remains unchanged.
+
+Shortcodes: [itd_cookies_settings], [itd_cookies_policy], [itd_cookies_legal_links]. Automatic footer output is off by default. Cookie Policy page creation is an explicit admin action and never overwrites existing page content.
+
+Registry filter: itd_cookies_services receives an array of id, name, category, enabled and description entries plus sanitized settings. Extensions must implement their own consent-aware loading through the existing APIs; registry entries only describe services.

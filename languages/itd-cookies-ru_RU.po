@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.1.0\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.2.0-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -162,3 +162,66 @@ msgstr "Юридическая информация"
 
 msgid "Cookie choices and consent-aware Yandex Metrika and Google Analytics."
 msgstr "Настройки cookies и загрузка Яндекс Метрики и Google Analytics с учётом согласия."
+
+msgid "User agreement"
+msgstr "Пользовательское соглашение"
+
+msgid "Footer integration"
+msgstr "Интеграция с footer"
+
+msgid "Automatically display legal links at the bottom of the site"
+msgstr "Автоматически выводить юридические ссылки внизу сайта"
+
+msgid "Use [itd_cookies_legal_links] to place the links yourself. Automatic output is disabled by default."
+msgstr "Используйте [itd_cookies_legal_links] для вывода ссылок вручную. Автоматический вывод по умолчанию выключен."
+
+msgid "The page uses [itd_cookies_policy] and follows your current configuration. An explicit Cookie Policy URL takes priority. Existing page content is never overwritten."
+msgstr "Страница использует [itd_cookies_policy] и текущую конфигурацию. Указанный вручную URL политики Cookie имеет приоритет. Содержимое существующей страницы не перезаписывается."
+
+msgid "Open page"
+msgstr "Открыть страницу"
+
+msgid "Create Cookie Policy page"
+msgstr "Создать страницу политики Cookie"
+
+msgid "Needed for site operation and saving your privacy choices."
+msgstr "Необходимы для работы сайта и сохранения настроек конфиденциальности."
+
+msgid "Support additional site features."
+msgstr "Улучшают дополнительные функции сайта."
+
+msgid "Help understand how the site is used."
+msgstr "Помогают понять, как используется сайт."
+
+msgid "Used by advertising and marketing services."
+msgstr "Используются рекламными и маркетинговыми сервисами."
+
+msgid "Site usage statistics provided by Yandex."
+msgstr "Статистика использования сайта от Яндекса."
+
+msgid "Site usage statistics provided by Google."
+msgstr "Статистика использования сайта от Google."
+
+msgid "Not currently used"
+msgstr "Сейчас не используется"
+
+msgid "About cookies"
+msgstr "Что такое файлы cookie"
+
+msgid "Cookies are small pieces of information stored in your browser. This plugin stores your privacy choice."
+msgstr "Cookie — небольшие фрагменты информации, сохраняемые в браузере. Этот плагин сохраняет ваш выбор настроек конфиденциальности."
+
+msgid "When consent is enabled, this plugin loads analytics services only after you allow the Analytics category. Revoking that choice saves your decision and reloads the page without those providers."
+msgstr "При включённом согласии этот плагин загружает сервисы аналитики только после разрешения аналитической категории. При отзыве разрешения выбор сохраняется, а страница перезагружается без этих сервисов."
+
+msgid "Consent collection and analytics loading by this plugin are currently disabled."
+msgstr "Сбор согласия и загрузка аналитики этим плагином сейчас выключены."
+
+msgid "Your consent choice is stored for %d days, unless you change it, clear browser cookies or the site changes its consent version."
+msgstr "Ваш выбор сохраняется на %d дней, если вы не измените его, не очистите cookie браузера или сайт не изменит версию согласия."
+
+msgid "You can change your choice using Cookie settings."
+msgstr "Вы можете изменить выбор через «Настройки Cookie»."
+
+msgid "The Cookie Policy page could not be created."
+msgstr "Не удалось создать страницу политики Cookie."

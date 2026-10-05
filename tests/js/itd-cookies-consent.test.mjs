@@ -9,7 +9,8 @@ const source = fs.readFileSync(
 );
 const html = `
 	<button data-itd-cookies-open>Open settings</button>
-	<section data-itd-cookies-banner hidden aria-hidden="true" aria-labelledby="itd-cookies-title">
+	<div data-itd-cookies-backdrop hidden></div>
+	<section class="itd-cookies" data-itd-cookies-banner hidden aria-hidden="true" aria-labelledby="itd-cookies-title">
 		<div data-itd-cookies-summary>
 			<h2 id="itd-cookies-title">Cookies</h2>
 			<button data-itd-cookies-accept>Accept all</button>
@@ -22,6 +23,7 @@ const html = `
 			<input type="checkbox" data-itd-cookies-category="analytics">
 			<input type="checkbox" data-itd-cookies-category="marketing">
 			<button data-itd-cookies-save>Save</button>
+			<button data-itd-cookies-accept>Accept all in panel</button>
 			<button data-itd-cookies-cancel>Back</button>
 		</div>
 	</section>
@@ -320,4 +322,52 @@ test("saving analytics consent twice does not append duplicate loaders", (t) => 
 	click(dom.window, "[data-itd-cookies-save]");
 	assert.equal(scripts(dom.window).length, 2);
 	assert.deepEqual(initializationCounts(dom.window), { yandex: 1, ga4: 1 });
+});
+
+test('modal Escape and focus return preserve a v0.1.0 decision', (t) => {
+	const dom = createPage(); t.after(() => dom.window.close());
+	const {window} = dom;
+	click(window, '[data-itd-cookies-reject]');
+	const original = choice(window);
+	const opener = window.document.querySelector('[data-itd-cookies-open]');
+	opener.focus(); opener.click();
+	const banner = window.document.querySelector('[data-itd-cookies-banner]');
+	assert.equal(banner.getAttribute('aria-modal'), 'true');
+	assert.equal(window.document.activeElement.id, 'itd-cookies-settings-title');
+	window.document.querySelector('[data-itd-cookies-category="analytics"]').checked = true;
+	window.document.dispatchEvent(new window.KeyboardEvent('keydown', {key:'Escape',bubbles:true}));
+	assert.equal(banner.hidden, true);
+	assert.equal(window.document.activeElement, opener);
+	assert.deepEqual(choice(window), original);
+	assert.equal(scripts(window).length, 0);
+});
+
+test('initial Escape returns to summary without granting consent', (t) => {
+	const dom = createPage(); t.after(() => dom.window.close());
+	const {window} = dom;
+	click(window, '[data-itd-cookies-customize]');
+	window.document.dispatchEvent(new window.KeyboardEvent('keydown', {key:'Escape',bubbles:true}));
+	assert.equal(window.document.querySelector('[data-itd-cookies-summary]').hidden, false);
+	assert.equal(window.document.querySelector('[data-itd-cookies-panel]').hidden, true);
+	assertFailClosed(window);
+	assert.equal(window.document.cookie.includes('itd_cookies_consent='), false);
+});
+
+test('panel Accept all and keyboard wrap work, disabled categories preserve existing consent', (t) => {
+	const dom = createPage(); t.after(() => dom.window.close());
+	const {window} = dom;
+	click(window, '[data-itd-cookies-customize]');
+	const cancel = window.document.querySelector('[data-itd-cookies-cancel]');
+	cancel.focus();
+	window.document.dispatchEvent(new window.KeyboardEvent('keydown', {key:'Tab',bubbles:true,cancelable:true}));
+	assert.equal(window.document.activeElement, window.document.querySelector('[data-itd-cookies-category="functional"]'));
+	window.document.dispatchEvent(new window.KeyboardEvent('keydown', {key:'Tab',shiftKey:true,bubbles:true,cancelable:true}));
+	assert.equal(window.document.activeElement, cancel);
+	window.document.querySelector('[data-itd-cookies-panel] [data-itd-cookies-accept]').click();
+	assert.equal(choice(window).categories.analytics, true);
+	click(window, '[data-itd-cookies-open]');
+	window.document.querySelector('[data-itd-cookies-category="functional"]').disabled = true;
+	click(window, '[data-itd-cookies-save]');
+	assert.equal(choice(window).categories.functional, true);
+	assert.deepEqual(initializationCounts(window), {yandex:1,ga4:1});
 });

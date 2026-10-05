@@ -9,7 +9,7 @@
 	inset-block-end: max(12px, env(safe-area-inset-bottom));
 	inset-inline-end: max(12px, env(safe-area-inset-right));
 	box-sizing: border-box;
-	width: min(460px, calc(100vw - 24px));
+	width: min(460px, calc(100% - 24px));
 	max-height: calc(100vh - 24px);
 	max-height: calc(100dvh - 24px);
 	overflow-y: auto;
@@ -105,33 +105,6 @@
 	color: var(--itd-cookies-accent);
 }
 
-.itd-cookies__choice {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	min-height: 48px;
-	padding: 10px 0;
-	border-bottom: 1px solid var(--itd-cookies-border);
-	font-size: calc(.9375rem * var(--itd-cookies-scale));
-	line-height: 1.4;
-}
-
-.itd-cookies__choice > span {
-	overflow-wrap: anywhere;
-}
-
-.itd-cookies__choice small {
-	display: block;
-	color: var(--itd-cookies-muted);
-}
-
-.itd-cookies__choice input {
-	width: 20px;
-	height: 20px;
-	accent-color: var(--itd-cookies-accent);
-}
-
 .itd-cookies :focus-visible,
 .itd-cookies-open:focus-visible {
 	outline: 3px solid #7aabff;
@@ -177,4 +150,147 @@
 	.itd-cookies {
 		display: none !important;
 	}
+}
+
+.itd-cookies {
+	--itd-cookies-radius: 18px;
+	--itd-cookies-bg: #fff;
+	width: min(520px, calc(100% - 24px));
+	border-radius: var(--itd-cookies-radius);
+	background: var(--itd-cookies-bg);
+}
+
+.itd-cookies-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 999998;
+	background: rgba(23, 32, 51, .42);
+}
+
+.itd-cookies-backdrop[hidden] { display: none; }
+
+.itd-cookies--settings {
+	inset: 50% auto auto 50%;
+	transform: translate(-50%, -50%);
+	width: min(720px, calc(100% - 24px));
+}
+
+.itd-cookies__choices {
+	display: grid;
+	gap: 12px;
+}
+
+.itd-cookies__category {
+	border: 1px solid var(--itd-cookies-border);
+	border-radius: 12px;
+	padding: 16px;
+	min-width: 0;
+}
+
+.itd-cookies__category-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.itd-cookies__category-name {
+	font-size: calc(1rem * var(--itd-cookies-scale));
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+.itd-cookies__category-description,
+.itd-cookies__services {
+	color: var(--itd-cookies-muted);
+	font-size: calc(.9375rem * var(--itd-cookies-scale));
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+	margin: 8px 0 0;
+}
+
+.itd-cookies__status { display: block; font-weight: 600; }
+.itd-cookies__services { padding-inline-start: 20px; }
+.itd-cookies__services li + li { margin-block-start: 8px; }
+.itd-cookies__services span { display: block; }
+
+.itd-cookies__toggle {
+	appearance: none;
+	flex: 0 0 48px;
+	width: 48px;
+	height: 28px;
+	margin: 8px 0;
+	border: 2px solid #68758a;
+	border-radius: 99px;
+	background: #68758a;
+	position: relative;
+	cursor: pointer;
+}
+
+.itd-cookies__toggle::before {
+	content: "";
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #fff;
+}
+
+.itd-cookies__toggle:checked { background: var(--itd-cookies-accent); border-color: var(--itd-cookies-accent); }
+.itd-cookies__toggle:checked::before { left: 22px; }
+.itd-cookies__toggle:disabled { cursor: default; opacity: .65; }
+
+.itd-cookies-open {
+	appearance: none;
+	border: 0;
+	border-radius: 0;
+	padding: 8px 0;
+	margin: 0;
+	background: transparent;
+	color: inherit;
+	text-decoration: underline;
+	font: inherit;
+	line-height: inherit;
+	text-align: start;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
+.itd-cookies-footer {
+	padding: 20px;
+	font-family: inherit;
+	color: inherit;
+}
+
+.itd-cookies-legal {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 20px;
+	font-family: inherit;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.itd-cookies-legal__link {
+	color: inherit;
+	font: inherit;
+	padding-block: 8px;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+}
+
+.itd-cookies-legal :focus-visible { outline: 3px solid #0b57d0; outline-offset: 3px; }
+.itd-cookies-policy { font-family: inherit; max-width: 100%; overflow-wrap: anywhere; }
+
+@media (max-width: 600px) {
+	.itd-cookies--settings { inset: 50% auto auto 50%; width: calc(100% - 24px); }
+	.itd-cookies__category { padding: 12px; }
+}
+
+@media (forced-colors: active) {
+	.itd-cookies__toggle { appearance: auto; }
+	.itd-cookies__toggle::before { display: none; }
 }

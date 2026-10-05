@@ -6,6 +6,7 @@
 	var summary = banner ? banner.querySelector('[data-itd-cookies-summary]') : null;
 	var panel = banner ? banner.querySelector('[data-itd-cookies-panel]') : null;
 	var previousFocus = null;
+	var backdrop = document.querySelector('[data-itd-cookies-backdrop]');
 	var state = null;
 	var loaded = {};
 	var categories = ['functional', 'analytics', 'marketing'];
@@ -169,6 +170,10 @@
 		banner.hidden = false;
 		banner.setAttribute('aria-hidden', 'false');
 		banner.setAttribute('aria-labelledby', 'itd-cookies-title');
+		banner.setAttribute('aria-describedby', 'itd-cookies-description');
+		banner.setAttribute('aria-modal', 'false');
+		banner.classList.remove('itd-cookies--settings');
+		if (backdrop) { backdrop.hidden = true; }
 		summary.hidden = false;
 		if (panel) {
 			panel.hidden = true;
@@ -182,6 +187,7 @@
 		}
 		banner.hidden = true;
 		banner.setAttribute('aria-hidden', 'true');
+		if (backdrop) { backdrop.hidden = true; }
 		if (previousFocus && document.contains(previousFocus)) {
 			focusElement(previousFocus);
 		}
@@ -198,6 +204,11 @@
 		banner.hidden = false;
 		banner.setAttribute('aria-hidden', 'false');
 		banner.setAttribute('aria-labelledby', 'itd-cookies-settings-title');
+		banner.setAttribute('aria-describedby', 'itd-cookies-settings-description');
+		banner.setAttribute('aria-modal', 'true');
+		banner.classList.add('itd-cookies--settings');
+		banner.scrollTop = 0;
+		if (backdrop) { backdrop.hidden = false; }
 		summary.hidden = true;
 		panel.hidden = false;
 		for (i = 0; i < categories.length; i += 1) {
@@ -325,10 +336,10 @@
 	}
 
 	function button(selector, callback) {
-		var element = banner ? banner.querySelector(selector) : null;
-		if (element) {
+		var elements = banner ? banner.querySelectorAll(selector) : [];
+		Array.prototype.forEach.call(elements, function (element) {
 			element.addEventListener('click', callback);
-		}
+		});
 	}
 
 	button('[data-itd-cookies-accept]', function () {
@@ -351,6 +362,25 @@
 			hideBanner();
 		} else {
 			showBanner();
+		}
+	});
+
+	// A reopened panel can close without saving. An initial choice stays pending.
+	document.addEventListener('keydown', function (event) {
+		if (!banner || banner.hidden || !panel || panel.hidden) { return; }
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			if (state) { hideBanner(); } else { showBanner(); }
+			return;
+		}
+		if (event.key !== 'Tab') { return; }
+		var controls = panel.querySelectorAll('button:not(:disabled), input:not(:disabled), a[href]');
+		var first = controls[0];
+		var last = controls[controls.length - 1];
+		if (event.shiftKey && (document.activeElement === first || document.activeElement === panel.querySelector('#itd-cookies-settings-title'))) {
+			event.preventDefault(); focusElement(last);
+		} else if (!event.shiftKey && document.activeElement === last) {
+			event.preventDefault(); focusElement(first);
 		}
 	});
 
