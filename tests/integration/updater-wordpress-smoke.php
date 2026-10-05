@@ -79,9 +79,10 @@ foreach ( array( 'invalid', 'network', 'valid' ) as $itd_cookies_mode ) {
 		WP_CLI::error( 'Synthetic stable metadata did not reach native update record.' );
 	}
 	set_site_transient( 'update_plugins', $itd_cookies_updates );
-	$itd_cookies_result = ( new Plugin_Upgrader( new Automatic_Upgrader_Skin() ) )->upgrade( $itd_cookies_basename );
+	$itd_cookies_skin   = new Automatic_Upgrader_Skin();
+	$itd_cookies_result = ( new Plugin_Upgrader( $itd_cookies_skin ) )->upgrade( $itd_cookies_basename );
 	if ( 'valid' === $itd_cookies_mode ? true !== $itd_cookies_result : ! is_wp_error( $itd_cookies_result ) ) {
-		WP_CLI::error( 'Unexpected native upgrade result: ' . $itd_cookies_mode );
+		WP_CLI::error( 'Unexpected native upgrade result: ' . $itd_cookies_mode . ': ' . var_export( $itd_cookies_result, true ) . '; skin=' . wp_json_encode( $itd_cookies_skin->get_errors() ) );
 	}
 	if (
 		! is_file( ITD_COOKIES_FILE ) ||
