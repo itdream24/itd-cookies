@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Current development version: **0.1.0-dev.1**. No stable release has been published. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.1.0**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
@@ -37,11 +37,11 @@ npm run inspect
 
 The deterministic ZIP uses an explicit runtime allowlist, fixed timestamps and one `itd-cookies/` root. Its inspector checks paths, main/header/constant versions and PHP syntax. Set `PHP_BINARY` to the PHP executable if it is not on PATH. Dev dependencies never ship.
 
-## Versions and future releases
+## Versions and releases
 
-Keep `0.1.0-dev.1` during updater acceptance. Continue `0.1.0-beta.1` → `0.1.0-rc.1` → **0.1.0** for the first stable: the consent API is young and does not yet warrant a long-term 1.0 compatibility promise. All stable tags must be `vX.Y.Z`; prereleases never reach ordinary users.
+The first stable version is **0.1.0**: the consent API is young and does not yet warrant a long-term 1.0 compatibility promise. Stable tags must be strict `vX.Y.Z`; prereleases never reach ordinary users.
 
-After acceptance and owner approval, update the plugin header/constant, package.json/lock, readme and changelog together; merge the reviewed branch into main; then create a new stable tag. `release.yml` validates ancestry/version, runs all CI gates, builds and inspects the ZIP, then publishes once with a SHA-256 file. Existing releases/tags are never overwritten. See `docs/ITD-COOKIES-02-GITHUB-UPDATER.md` for acceptance evidence and limitations.
+Align plugin header/constant, package.json/lock, readme, catalog metadata and changelog for every release. Run full CI on main before tagging. `release.yml` validates tag/version and main ancestry, reruns all CI gates, builds and inspects the ZIP, then publishes once with a SHA-256 file. Existing releases/tags are never overwritten. See `docs/ITD-COOKIES-02-GITHUB-UPDATER.md` for updater acceptance evidence.
 
 ## Attribution
 

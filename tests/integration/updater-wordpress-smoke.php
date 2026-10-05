@@ -2,8 +2,8 @@
 /**
  * Native upgrader integration on disposable CI WordPress only.
  *
- * Metadata is synthetic; the development package/version is not changed.
- * Run: PACKAGE_PATH=/absolute/package.zip wp eval-file this-file.php.
+ * Metadata is synthetic; the package/version is not changed.
+ * Run: PACKAGE_PATH=fixture.zip wp eval-file this-file.php.
  *
  * @package ITD_Cookies
  */
@@ -26,20 +26,20 @@ $itd_cookies_sha      = hash_file( 'sha256', ITD_COOKIES_FILE );
 add_filter(
 	'pre_http_request',
 	static function ( $result, $args, $url ) use ( &$itd_cookies_mode, $itd_cookies_package ) {
-		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v0.1.0/itd-cookies-0.1.0.zip';
+		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v0.1.1/itd-cookies-0.1.1.zip';
 		if ( ITD_Cookies_Updater::API_URL === $url ) {
 			if ( 'timeout' === $itd_cookies_mode ) {
 				return new WP_Error( 'http_request_failed', 'Synthetic GitHub timeout.' );
 			}
 			$body = wp_json_encode(
 				array(
-					'tag_name'   => 'v0.1.0',
+					'tag_name'   => 'v0.1.1',
 					'draft'      => false,
 					'prerelease' => false,
 					'body'       => 'Disposable CI fixture, no public release.',
 					'assets'     => array(
 						array(
-							'name'                 => 'itd-cookies-0.1.0.zip',
+							'name'                 => 'itd-cookies-0.1.1.zip',
 							'browser_download_url' => $package_url,
 							'state'                => 'uploaded',
 							'size'                 => filesize( $itd_cookies_package ),
@@ -108,4 +108,4 @@ delete_transient( ITD_Cookies_Updater::CACHE_KEY );
 if ( null !== ( new ITD_Cookies_Updater( ITD_COOKIES_FILE, ITD_COOKIES_VERSION ) )->release() ) {
 	WP_CLI::error( 'GitHub timeout did not fail safely.' );
 }
-WP_CLI::success( 'Native upgrade, invalid ZIP, network failure, timeout and settings preservation passed; dev version unchanged.' );
+WP_CLI::success( 'Native upgrade, invalid ZIP, network failure, timeout and settings preservation passed; installed package version unchanged.' );

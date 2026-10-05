@@ -8,10 +8,14 @@ import { spawnSync } from "node:child_process";
 export function validateVersion(root, tag) {
 	const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8")).version;
 	const main = fs.readFileSync(path.join(root, "itd-cookies.php"), "utf8");
+	const lock = JSON.parse(fs.readFileSync(path.join(root, "package-lock.json"), "utf8"));
+	const readme = fs.readFileSync(path.join(root, "readme.txt"), "utf8");
 	if (!/^\d+\.\d+\.\d+(?:-(?:dev|beta|rc)\.\d+)?$/.test(version) ||
+		lock.version !== version || lock.packages?.[""].version !== version ||
+		!readme.includes(`Stable tag: ${version}\n`) ||
 		!main.includes(` * Version: ${version}\n`) ||
 		!main.includes(`define( 'ITD_COOKIES_VERSION', '${version}' );`)) {
-		throw new Error("Plugin header, constant and package version must agree");
+		throw new Error("Plugin header, constant, package, lock and readme version must agree");
 	}
 	if (tag && (!/^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(tag) || tag !== `v${version}`)) {
 		throw new Error("Stable tag must equal the source version");
@@ -53,6 +57,9 @@ export function inspectPackage(file, version, php = process.env.PHP_BINARY || "p
 	const main = entries.get("itd-cookies/itd-cookies.php")?.toString("utf8");
 	if (!main?.includes(` * Version: ${version}\n`) || !main.includes(`define( 'ITD_COOKIES_VERSION', '${version}' );`)) {
 		throw new Error("ZIP main file version mismatch");
+	}
+	if (!entries.get("itd-cookies/readme.txt")?.toString("utf8").includes(`Stable tag: ${version}\n`)) {
+		throw new Error("ZIP readme version mismatch");
 	}
 	for (const required of ["LICENSE", "readme.txt", "includes/class-itd-cookies-updater.php", "languages/itd-cookies-ru_RU.mo"]) {
 		if (!entries.has(`itd-cookies/${required}`)) throw new Error(`Missing ${required}`);
