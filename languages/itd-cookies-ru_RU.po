@@ -1,0 +1,161 @@
+msgid ""
+msgstr "Project-Id-Version: ITD Cookies 0.1.0-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+
+msgid "ITD Cookies requires PHP 7.4 or newer."
+msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
+
+msgid "ITD Cookies requires WordPress 5.2 or newer."
+msgstr "Для ITD Cookies требуется WordPress 5.2 или новее."
+
+msgid "Privacy settings"
+msgstr "Настройки конфиденциальности"
+
+msgid "Choose which cookies this site may use. You can change your choice later."
+msgstr "Выберите, какие файлы cookie может использовать сайт. Вы сможете изменить выбор позже."
+
+msgid "Privacy policy"
+msgstr "Политика конфиденциальности"
+
+msgid "Personal data processing policy"
+msgstr "Политика обработки персональных данных"
+
+msgid "Cookie policy"
+msgstr "Политика использования cookie"
+
+msgid "ITD Cookies"
+msgstr "ITD Cookies"
+
+msgid "You are not allowed to manage these settings."
+msgstr "У вас нет прав для изменения этих настроек."
+
+msgid "Consent banner"
+msgstr "Окно согласия"
+
+msgid "Enable consent banner"
+msgstr "Включить окно согласия"
+
+msgid "Title"
+msgstr "Заголовок"
+
+msgid "Description"
+msgstr "Описание"
+
+msgid "Consent banner text size"
+msgstr "Размер текста окна согласия"
+
+msgid "Very small"
+msgstr "Очень маленький"
+
+msgid "Small"
+msgstr "Маленький"
+
+msgid "Standard"
+msgstr "Стандартный"
+
+msgid "Large"
+msgstr "Большой"
+
+msgid "Very large"
+msgstr "Очень большой"
+
+msgid "Consent lifetime (days)"
+msgstr "Срок действия выбора (дни)"
+
+msgid "Consent version"
+msgstr "Версия согласия"
+
+msgid "Legal links"
+msgstr "Ссылки на документы"
+
+msgid "Link %d label"
+msgstr "Название ссылки %d"
+
+msgid "Link %d URL"
+msgstr "URL ссылки %d"
+
+msgid "Yandex Metrika"
+msgstr "Яндекс.Метрика"
+
+msgid "Enter the numeric counter ID. Executable snippets are not stored."
+msgstr "Укажите числовой ID счётчика. Исполняемый код не сохраняется."
+
+msgid "Enable Yandex Metrika"
+msgstr "Включить Яндекс.Метрику"
+
+msgid "Counter ID"
+msgstr "ID счётчика"
+
+msgid "Webvisor"
+msgstr "Вебвизор"
+
+msgid "Click map"
+msgstr "Карта кликов"
+
+msgid "Outbound link tracking"
+msgstr "Отслеживание внешних ссылок"
+
+msgid "Accurate bounce tracking"
+msgstr "Точный показатель отказов"
+
+msgid "Ecommerce"
+msgstr "Электронная коммерция"
+
+msgid "Ecommerce data layer"
+msgstr "Слой данных электронной коммерции"
+
+msgid "Google Analytics 4"
+msgstr "Google Analytics 4"
+
+msgid "Enable Google Analytics 4"
+msgstr "Включить Google Analytics 4"
+
+msgid "Measurement ID"
+msgstr "Идентификатор потока"
+
+msgid "Place [itd_cookies_settings] in a page or footer to let visitors change their choice."
+msgstr "Разместите [itd_cookies_settings] на странице или в подвале, чтобы посетители могли изменить свой выбор."
+
+msgid "Save settings"
+msgstr "Сохранить настройки"
+
+msgid "Enabled"
+msgstr "Включено"
+
+msgid "Cookie settings"
+msgstr "Настройки cookie"
+
+msgid "Accept all"
+msgstr "Принять все"
+
+msgid "Reject optional"
+msgstr "Отклонить"
+
+msgid "Customize"
+msgstr "Настроить"
+
+msgid "Choose the optional categories you allow."
+msgstr "Выберите дополнительные категории, которые вы разрешаете."
+
+msgid "Necessary"
+msgstr "Необходимые"
+
+msgid "Always active"
+msgstr "Всегда активны"
+
+msgid "Functional"
+msgstr "Функциональные"
+
+msgid "Analytics"
+msgstr "Аналитические"
+
+msgid "Marketing"
+msgstr "Маркетинговые"
+
+msgid "Save choice"
+msgstr "Сохранить выбор"
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Legal information"
+msgstr "Юридическая информация"
