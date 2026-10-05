@@ -1,0 +1,156 @@
+name: CI
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer test
+      - run: composer compat
+        if: matrix.php == '7.4'
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: composer audit --locked
+      - run: composer phpcs
+      - run: composer phpstan
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci
+      - run: npm audit
+      - run: npm run lint:js
+      - run: npm run build:i18n
+      - run: git diff --exit-code -- languages
+      - run: npm run test:js
+  wordpress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wordpress: '5.2'
+            php: '7.4'
+          - wordpress: '5.2.24'
+            php: '7.4'
+          - wordpress: latest
+            php: '7.4'
+          - wordpress: latest
+            php: '8.5'
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_DATABASE: wordpress
+          MARIADB_ROOT_PASSWORD: wordpress
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, mysqli
+          coverage: none
+          tools: wp-cli
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci && npm run build:i18n && npm run build
+      - name: Disposable WordPress activation and migration smoke
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          wp_path="$RUNNER_TEMP/wordpress"
+          wp core download --path="$wp_path" --version='${{ matrix.wordpress }}'
+          wp config create --path="$wp_path" --dbname=wordpress --dbuser=root --dbpass=wordpress --dbhost=127.0.0.1:3306 --skip-check
+          wp config set WP_DEBUG true --raw --path="$wp_path"
+          wp config set WP_DEBUG_LOG true --raw --path="$wp_path"
+          wp config set WP_DEBUG_DISPLAY false --raw --path="$wp_path"
+          wp core install --path="$wp_path" --url=http://wordpress.test --title='ITD Cookies compatibility' --admin_user=admin --admin_password=disposable-ci-only --admin_email=compatibility@example.test --skip-email
+          install -d "$wp_path/wp-content/languages"
+          cp languages/itd-cookies-ru_RU.mo "$wp_path/wp-content/languages/ru_RU.mo"
+          wp option update WPLANG ru_RU --path="$wp_path"
+          wp option update itd_modubricks_settings '{"enabled":1,"banner_title":"Legacy consent title","banner_text":"Legacy description","banner_text_size":"standard","metrika_enabled":1,"metrika_id":"12345678","ga4_enabled":1,"ga4_measurement_id":"G-TEST12345","consent_version":"legacy-policy-1"}' --format=json --path="$wp_path"
+          version="$(node -p 'JSON.parse(require("fs").readFileSync("package.json")).version')"
+          wp plugin install "$GITHUB_WORKSPACE/dist/itd-cookies-$version.zip" --activate --path="$wp_path"
+          wp eval-file "$GITHUB_WORKSPACE/tests/integration/itd-cookies-wordpress-smoke.php" --path="$wp_path"
+          wp plugin deactivate itd-cookies --path="$wp_path"
+          wp plugin activate itd-cookies --path="$wp_path"
+          CHECK_PERSISTED=1 wp eval-file "$GITHUB_WORKSPACE/tests/integration/itd-cookies-wordpress-smoke.php" --path="$wp_path"
+          PACKAGE_PATH="$GITHUB_WORKSPACE/dist/itd-cookies-$version.zip" wp eval-file "$GITHUB_WORKSPACE/tests/integration/updater-wordpress-smoke.php" --path="$wp_path"
+          if [[ -f "$wp_path/wp-content/debug.log" ]] && grep -Ei 'itd-cookies.*(fatal|warning|deprecated)|(fatal|warning|deprecated).*itd-cookies' "$wp_path/wp-content/debug.log"; then exit 1; fi
+  build:
+    needs: [php, quality, node, wordpress]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+      - run: npm ci
+      - run: npm run build
+        env:
+          RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          TZ: UTC
+      - run: npm run inspect
+      - uses: actions/upload-artifact@v7
+        with:
+          name: itd-cookies-package
+          path: dist/itd-cookies-*.zip
+          if-no-files-found: error
+          retention-days: 14

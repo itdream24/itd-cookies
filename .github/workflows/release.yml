@@ -1,0 +1,52 @@
+name: Stable GitHub Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require stable tag on the default branch
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node --input-type=module -e 'import {validateVersion} from "./scripts/inspect-package.mjs"; validateVersion(process.cwd(),process.env.RELEASE_TAG)'
+          git merge-base --is-ancestor HEAD origin/main
+  checks:
+    needs: validate
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: itd-cookies-package
+          path: release
+      - name: Create release once with the validated asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo 'Release already exists; never overwrite or retry publication.' >&2
+            exit 1
+          fi
+          zip="release/itd-cookies-${RELEASE_TAG#v}.zip"
+          test -f "$zip"
+          sha256sum "$zip" > "$zip.sha256"
+          gh release create "$RELEASE_TAG" "$zip" "$zip.sha256" --verify-tag --title "ITD Cookies ${RELEASE_TAG#v}" --generate-notes --latest

@@ -1,0 +1,21 @@
+{
+  "name": "itd-cookies",
+  "version": "0.1.0-dev.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:js": "node --test tests/js/*.test.mjs",
+    "lint:js": "eslint assets/js scripts tests/js",
+    "build": "node scripts/build.mjs",
+    "inspect": "node scripts/inspect-package.mjs",
+    "build:i18n": "node scripts/compile-translations.mjs",
+    "check": "npm run lint:js && npm run test:js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "archiver": "^8.0.0",
+    "eslint": "^10.8.0",
+    "globals": "^17.8.0",
+    "jsdom": "^30.0.1"
+  }
+}

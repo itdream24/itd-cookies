@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<ruleset name="ITD Cookies">
+  <description>WordPress standards and PHP 7.4 compatibility.</description>
+  <file>itd-cookies.php</file>
+  <file>uninstall.php</file>
+  <file>admin</file>
+  <file>includes</file>
+  <file>public</file>
+  <file>tests/php</file>
+  <file>tests/integration</file>
+  <arg name="basepath" value="."/>
+  <arg value="sp"/>
+  <rule ref="WordPress"/>
+  <rule ref="WordPress.Files.FileName">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.WP.AlternativeFunctions">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+    <exclude-pattern>tests/*</exclude-pattern>
+  </rule>
+  <rule ref="WordPress.Security.ValidatedSanitizedInput"><exclude-pattern>tests/*</exclude-pattern></rule>
+  <rule ref="WordPress.NamingConventions.PrefixAllGlobals"><exclude-pattern>tests/*</exclude-pattern></rule>
+  <config name="minimum_supported_wp_version" value="5.2"/>
+  <config name="text_domain" value="itd-cookies"/>
+  <config name="prefixes" value="itd_cookies,ITD_COOKIES"/>
+</ruleset>

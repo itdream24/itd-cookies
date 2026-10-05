@@ -5,6 +5,8 @@
  * Version: 0.1.0-dev.1
  * Requires at least: 5.2
  * Requires PHP: 7.4
+ * Plugin URI: https://github.com/itdream24/itd-cookies
+ * Update URI: https://github.com/itdream24/itd-cookies
  * Author: ITD
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +52,8 @@ if ( version_compare( (string) $wp_version, '5.2', '<' ) ) {
 require_once ITD_COOKIES_DIR . 'admin/class-itd-cookies-settings.php';
 require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-consent.php';
 require_once ITD_COOKIES_DIR . 'public/class-itd-cookies-plugin.php';
+require_once ITD_COOKIES_DIR . 'includes/class-itd-cookies-updater.php';
+( new ITD_Cookies_Updater( ITD_COOKIES_FILE, ITD_COOKIES_VERSION ) )->register();
 
 register_activation_hook( ITD_COOKIES_FILE, array( 'ITD_Cookies_Settings', 'migrate_legacy' ) );
 

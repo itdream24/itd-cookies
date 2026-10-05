@@ -26,6 +26,7 @@ const phpFiles = [
 	"itd-cookies.php",
 	"admin/class-itd-cookies-settings.php",
 	"public/class-itd-cookies-plugin.php",
+    "includes/class-itd-cookies-updater.php",
 ];
 for (const file of phpFiles) {
 	const code = fs.readFileSync(path.join(root, file), "utf8");

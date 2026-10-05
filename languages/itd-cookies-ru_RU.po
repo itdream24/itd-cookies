@@ -159,3 +159,6 @@ msgstr "Назад"
 
 msgid "Legal information"
 msgstr "Юридическая информация"
+
+msgid "Cookie choices and consent-aware Yandex Metrika and Google Analytics."
+msgstr "Настройки cookies и загрузка Яндекс Метрики и Google Analytics с учётом согласия."
