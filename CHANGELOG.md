@@ -1,13 +1,13 @@
 # Changelog
 
-## 0.2.0-dev.1 — Unreleased
+## 0.2.0 — 2026-10-05
 
-- Consent category cards with descriptions, configured services and accessible toggles.
-- Descriptive service registry filter for integrations; empty categories are visibly unused.
-- Dynamic Cookie Policy shortcode and explicit managed-page creation.
-- Optional fourth legal link, legal-links shortcode and opt-in automatic footer.
-- Reopen link styling, modal focus handling and responsive layout.
-- Existing consent schema, settings, migration marker, providers and GitHub updater retained.
+- New consent banner and category-card settings panel with descriptions and accessible toggles.
+- Descriptive service registry filter; configured Yandex Metrika and GA4 shown in Analytics, empty categories marked unused.
+- Dynamic `[itd_cookies_policy]` shortcode and explicit managed Cookie Policy page creation with permalink fallback.
+- `[itd_cookies_legal_links]` shortcode, optional fourth legal link and automatic footer output OFF by default.
+- Footer-friendly settings action, keyboard navigation, Escape and focus return, responsive layout.
+- Existing 0.1.0 settings, consent schema/decisions, migration marker, provider gating and GitHub updater retained.
 
 ## 0.1.0 — 2026-10-05
 

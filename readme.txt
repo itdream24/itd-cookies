@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.0-dev.1
+Stable tag: 0.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Cookie choices with consent-aware Yandex Metrika and Google Analytics.
 
 == Description ==
 
-Necessary, functional, analytics and marketing preferences. Analytics providers load only after analytics consent. Visitors can reopen settings using [itd_cookies_settings]. Five text sizes retain the theme font. Includes Russian translation.
+Necessary, functional, analytics and marketing preferences. Analytics providers load only after analytics consent. Visitors can reopen settings using [itd_cookies_settings]. Five text sizes retain the theme font. Includes Russian translation. Category cards describe configured services. [itd_cookies_policy] provides configuration-based Cookie Policy information; [itd_cookies_legal_links] outputs configured document links and the settings action. Cookie Policy page creation is explicit. The optional automatic footer is off by default. This plugin does not scan every cookie on a site.
 
 Distributed through GitHub Releases, not the WordPress.org directory. Automatic updates accept stable releases only. Update checks contact api.github.com from admin/cron, with cached results. Packages download from GitHub over HTTPS through the native WordPress upgrader. No GitHub token is required.
 
@@ -31,6 +31,14 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.2.0 =
+* New consent UI with category cards, descriptions, configured services and accessible toggles.
+* Extensible descriptive service registry showing enabled Yandex Metrika and GA4 in Analytics.
+* Dynamic [itd_cookies_policy] and managed Cookie Policy page with permalink fallback.
+* [itd_cookies_legal_links], fourth optional legal link and opt-in automatic footer.
+* Keyboard navigation, Escape/focus handling and responsive layout.
+* Existing 0.1.0 settings, consent and migration marker preserved.
 
 = 0.1.0 =
 * Cookie consent banner with accept all, reject and custom preferences.

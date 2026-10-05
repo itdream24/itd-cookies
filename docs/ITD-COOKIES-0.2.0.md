@@ -104,3 +104,13 @@ Policy describes plugin configuration rather than all cookies on a site. Registr
 ## Verdict
 
 READY_FOR_ITD_COOKIES_0_2_0_RELEASE — implementation, full CI, pre-release native updater E2E, UI/responsive/consent/legal acceptance and cleanup PASS. Stable release gate and real stable-to-stable verification are still required.
+
+## Stable release gate — preparation
+
+Accepted implementation main bf1eaf38d946265fdf70a3ec8684088a1d6300a5; release/itd-cookies-0.2.0 created from freshly fetched origin/main with a clean tree. Stable source version 0.2.0 synchronized in plugin header/constant, package/lock root metadata, readme, Russian PO/MO and PHPStan fixture. Changelog documents actual 0.2.0 changes. No consent schema or runtime function change.
+
+Source audit found the pre-existing yocto-queue lock entry had erroneously received the plugin dev version while its resolved tarball/integrity still pinned 0.1.0. Corrected only that dependency version to the actual installed/pinned 0.1.0; no dependency or runtime package change. Package/release scripts already enforce strict stable tag/version agreement and main ancestry; unchanged.
+
+Updater SHA-256 unchanged from accepted implementation. No temporary browser helper/observer, credentials, cookie/HAR captures, synthetic HTTP metadata or old deployment/update-host configuration in runtime/package. Automated disposable WordPress updater metadata mocks remain development tests and are excluded from ZIP; localhost-only disposable CI credentials are not test-site credentials.
+
+Composer audit PASS (no advisories), npm audit PASS (0 vulnerabilities), diff whitespace check PASS. Production ZIP itd-cookies-0.2.0.zip: 14 allowlisted entries, single itd-cookies root, main/updater/license/readme/Russian PO+MO present, dev/tests/docs/reports excluded. Inspector and PHP 7.4 syntax PASS. Two builds under UTC and Pacific/Auckland matched SHA-256 d4a4251031e1905a7fd15412e8c8c7e3e96eafebc3f59c46037b16f72f6d78e9 (36324 bytes). Tag/publication requires full release-branch CI then a separate full main CI. Real stable-to-stable browser update and cleanup are pending until publication.

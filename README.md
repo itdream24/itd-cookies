@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Stable version: **0.1.0**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.2.0**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
@@ -47,9 +47,9 @@ Align plugin header/constant, package.json/lock, readme, catalog metadata and ch
 
 Core code extracted from ITD's GPL-compatible ModuBricks project, accepted commit `485c6ad8b74ef46d9dc56b3e8bfeac8ed116adb2`. Copyright ITD contributors. Migration compatibility is retained; unrelated modules and deployment infrastructure are excluded. No third-party runtime libraries are bundled. Composer/npm libraries are development tools, with their licenses recorded in lock files and installed packages. The WordPress APIs and externally loaded provider scripts remain their respective authors' work.
 
-## 0.2.0 development
+## 0.2.0
 
-Development version: 0.2.0-dev.1. Adds service descriptions, Cookie Policy, four legal links and an optional isolated footer. See docs/ITD-COOKIES-0.2.0.md for the acceptance gate. Stable v0.1.0 remains unchanged.
+Version: 0.2.0. Adds service descriptions, Cookie Policy, four legal links and an optional isolated footer. See docs/ITD-COOKIES-0.2.0.md for the acceptance gate. Stable v0.1.0 remains unchanged.
 
 Shortcodes: [itd_cookies_settings], [itd_cookies_policy], [itd_cookies_legal_links]. Automatic footer output is off by default. Cookie Policy page creation is an explicit admin action and never overwrites existing page content.
 
