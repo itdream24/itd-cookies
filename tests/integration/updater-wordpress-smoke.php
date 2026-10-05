@@ -84,7 +84,7 @@ foreach ( array( 'invalid', 'network', 'valid' ) as $itd_cookies_mode ) {
 	// Early download/unpack errors can leave Plugin_Upgrader::result null; the skin records them.
 	$itd_cookies_errors = $itd_cookies_skin->get_errors();
 	if ( 'valid' === $itd_cookies_mode ? true !== $itd_cookies_result : ( true === $itd_cookies_result || empty( $itd_cookies_errors->errors ) ) ) {
-		WP_CLI::error( 'Unexpected native upgrade result: ' . $itd_cookies_mode . ': ' . var_export( $itd_cookies_result, true ) . '; skin=' . wp_json_encode( $itd_cookies_skin->get_errors() ) );
+		WP_CLI::error( 'Unexpected native upgrade result: ' . $itd_cookies_mode . ': ' . wp_json_encode( $itd_cookies_result ) . '; skin=' . wp_json_encode( $itd_cookies_skin->get_errors() ) );
 	}
 	if (
 		! is_file( ITD_COOKIES_FILE ) ||
