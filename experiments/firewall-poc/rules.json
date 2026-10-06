@@ -1,0 +1,9 @@
+[
+  {"host":"mc.yandex.ru","path":"/metrika/","category":"analytics","provider":"yandex"},
+  {"host":"www.googletagmanager.com","path":"/gtag/js","category":"analytics","provider":"ga4"},
+  {"host":"www.google-analytics.com","path":"/analytics.js","category":"analytics","provider":"ga4"},
+  {"host":"www.googletagmanager.com","path":"/gtm.js","category":"analytics","provider":"gtm"},
+  {"host":"www.clarity.ms","path":"/tag/","category":"analytics","provider":"clarity"},
+  {"host":"clarity.ms","path":"/tag/","category":"analytics","provider":"clarity"},
+  {"host":"connect.facebook.net","path":"/en_US/fbevents.js","category":"marketing","provider":"meta"}
+]
