@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0-dev.1
+Stable tag: 0.3.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Necessary, functional, analytics and marketing preferences. Analytics providers 
 
 Distributed through GitHub Releases, not the WordPress.org directory. Automatic updates accept stable releases only. Update checks contact api.github.com from admin/cron, with cached results. Packages download from GitHub over HTTPS through the native WordPress upgrader. No GitHub token is required.
 
-When enabled and consented to, Yandex Metrika loads mc.yandex.ru and Google Analytics loads www.googletagmanager.com. Configure provider IDs in Settings > ITD Cookies. No providers load before analytics consent. Configure legal documents according to your site.
+When enabled, Yandex Metrika (mc.yandex.ru), GA4 and Google Tag Manager (www.googletagmanager.com), and Microsoft Clarity (www.clarity.ms) load after Analytics consent. Meta Pixel (connect.facebook.net) loads after Marketing consent. Configure provider IDs in Settings > ITD Cookies and legal documents according to your site. New GTM/Clarity/Meta integrations are off by default. VK Ads is not supported.
 
 == Installation ==
 
@@ -32,8 +32,13 @@ No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
 
-= 0.3.0-dev.1 =
-* Development: GTM and Clarity after Analytics consent, Meta Pixel after Marketing consent; unified provider loader and safe OFF defaults. VK Ads deferred.
+= 0.3.0 =
+* Analytics: existing Yandex Metrika/GA4 retained; added Google Tag Manager and Microsoft Clarity after Analytics consent.
+* Marketing: Meta Pixel after Marketing consent.
+* Unified provider loader/service registry, script/init deduplication, strict provider-ID validation and dynamic Cookie Policy integration.
+* Existing 0.2.0 settings and consent preserved; schema 1; new integrations OFF by default.
+* Revoked categories reload without their providers; Clarity consentv2 follows the selected categories.
+* GTM can run analytics/marketing tags; ITD Cookies gates its container without automatically classifying individual tags. VK Ads is not supported.
 
 = 0.2.0 =
 * New consent UI with category cards, descriptions, configured services and accessible toggles.

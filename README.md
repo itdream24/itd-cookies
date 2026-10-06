@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Stable version: **0.2.0**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.3.0**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
@@ -59,9 +59,9 @@ Shortcodes: [itd_cookies_settings], [itd_cookies_policy], [itd_cookies_legal_lin
 
 Registry filter: itd_cookies_services receives an array of id, name, category, enabled and description entries plus sanitized settings. Extensions must implement their own consent-aware loading through the existing APIs; registry entries only describe services.
 
-## 0.3.0 development
+## 0.3.0
 
-Candidate: **0.3.0-dev.1**; published stable stays **0.2.0**. See [acceptance report](docs/ITD-COOKIES-0.3.0.md).
+Release version: **0.3.0**; previous stable v0.2.0 remains immutable. See [acceptance report](docs/ITD-COOKIES-0.3.0.md).
 
 Native Analytics integrations: Yandex Metrika, GA4, Google Tag Manager and Microsoft Clarity. Native Marketing: Meta Pixel. New integrations are off by default, including on legacy import. VK Ads is deferred until its official installation method can be verified.
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ITD Cookies
  * Description: Cookie choices and consent-aware Yandex Metrika and Google Analytics.
- * Version: 0.3.0-dev.1
+ * Version: 0.3.0
  * Requires at least: 5.2
  * Requires PHP: 7.4
  * Plugin URI: https://github.com/itdream24/itd-cookies
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITD_COOKIES_VERSION', '0.3.0-dev.1' );
+define( 'ITD_COOKIES_VERSION', '0.3.0' );
 define( 'ITD_COOKIES_FILE', __FILE__ );
 define( 'ITD_COOKIES_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ITD_COOKIES_URL', plugin_dir_url( __FILE__ ) );

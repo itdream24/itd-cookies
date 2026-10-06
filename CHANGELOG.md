@@ -1,11 +1,15 @@
 # Changelog
 
-## 0.3.0-dev.1 (unreleased)
-- Unified consent-gated native provider loader: GTM/Clarity (analytics), Meta Pixel (marketing).
-- Registry provider types, grouped admin settings, strict ID validation and dynamic policy service descriptions.
-- New integrations default OFF; schema 1 and existing 0.2.0 options/consent retained.
-- Clarity consentv2 follows Analytics/Marketing choices; revoked categories reload without their providers.
-- VK Ads deferred pending verified official installation. No external script firewall or automatic Google Consent Mode.
+## 0.3.0 — 2026-10-06
+
+- Analytics integrations: existing Yandex Metrika/GA4 retained; added Google Tag Manager and Microsoft Clarity.
+- Marketing integration: Meta Pixel after Marketing consent, with one PageView per document.
+- Unified provider loader and descriptive service registry; each built-in SDK/init attempted at most once per document.
+- Strict provider-ID validation, grouped admin settings and dynamic Cookie Policy service descriptions.
+- New GTM/Clarity/Meta integrations default OFF; existing 0.2.0 settings/consent preserved, schema remains 1.
+- Clarity consentv2 follows Analytics/Marketing choices; revoking a category saves consent and reloads without its providers.
+- GTM can run its own analytics/marketing tags. ITD Cookies gates the container, without automatically classifying each tag inside it; Google Consent Mode is not configured automatically.
+- VK Ads is not supported pending verified official installation instructions. No universal external-script firewall.
 
 ## 0.2.0 — 2026-10-05
 
