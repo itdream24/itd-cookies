@@ -50,13 +50,46 @@ Updater SHA-256 remains 8642dc56bfeee4923d1b73d024c9ff7a2ca5f4e4dee64edab350c3de
 
 ## Automated tests
 
-Local results are recorded after the final run. Coverage includes enabled/disabled/invalid IDs, category matrix, old consent compatibility, registry/policy used-state, legacy defaults, deduplication and reload after revocation. Disposable WordPress smoke additionally checks registry/runtime configuration, local script dependency, policy content and raw settings/marker/page preservation.
+Local checks (2026-10-06): PHPUnit on PHP 7.4 PASS (21 tests, 340 assertions); JS PASS (31 tests); ESLint PASS; PHPCS PASS; PHPCompatibilityWP for PHP 7.4+ PASS; PHPStan level 5 PASS; Composer audit PASS (no advisories); npm audit PASS (0 vulnerabilities); Russian MO compilation PASS (93 messages); git diff --check PASS; Gitleaks PASS (one feature commit scanned, no leaks). JS reload tests reconstruct the next document with its cookie jar; jsdom emits its expected unsupported navigation notices. PHP tools use a writable local temporary directory; initial local temp-permission failures were resolved without changing project configuration. Coverage includes enabled/disabled/invalid IDs, category matrix, old consent compatibility, registry/policy used-state, legacy defaults, deduplication and reload after revocation. Disposable WordPress smoke additionally checks registry/runtime configuration, local script dependency, policy content and raw settings/marker/page preservation.
 
-Full existing CI (nine jobs: two PHP, quality, node, four WordPress matrix, build) pending.
+Implementation commit: da71f8387adb3d858a026f21145a23855da02a13. [Full existing CI run 37426737141](https://github.com/itdream24/itd-cookies/actions/runs/37426737141) PASS, all nine jobs: PHP 7.4, PHP 8.5, quality, node, WordPress 5.2/PHP 7.4, WordPress 5.2.24/PHP 7.4, latest/PHP 7.4, latest/PHP 8.5, build. No cancelled/skipped job. Production-format dev ZIP inspector PASS: 15 runtime entries, single itd-cookies/ root, version 0.3.0-dev.1, updater/PO/MO included, dev files excluded, all packaged PHP syntax valid on 7.4. Asset name: itd-cookies-0.3.0-dev.1.zip. SHA-256: 66e110a5c3d1da388e735643a4c98fbe2eb600f011827eafc53f55dfac6cb4c9. This ZIP is a test candidate; no stable release is published.
 
 ## Browser tests
 
-Pending candidate installation and acceptance on testwp with a recoverable snapshot. Required scenarios: 0.2.0 upgrade, fresh/reject, analytics only, marketing only, accept all, repeated settings/save/accept, custom→all, revoke/reload; bootstrap network/script and initialization counts; desktop 1440 and mobile 390. Temporary settings/files/activity/pages/helper must be restored/removed.
+Owner confirmed a recoverable snapshot and the candidate/observer installation immediately before E2E (2026-10-06). Test scope is testwp only. The observer is outside Git/ZIP, restricted to this host and an admin preview; it counts application calls and Performance Resource Timing SDK entries. It does not replace HTTP metadata or SDK responses. Clarity's bootstrap count is its SDK script append; API consentv2 signals are counted separately. This does not claim backend delivery with test IDs.
+
+### Upgrade preservation — PASS
+
+Installed the immutable official 0.2.0 ZIP (SHA-256 d4a4251031e1905a7fd15412e8c8c7e3e96eafebc3f59c46037b16f72f6d78e9), then uploaded/replaced it with the dev candidate through the native WordPress upgrader. No synthetic release metadata and no public 0.3.0 release. WordPress reported successful update. Folder/basename itd-cookies/itd-cookies.php retained, plugin active, header/runtime 0.3.0-dev.1.
+
+Seeded long description, very-large size, four legal links, 365 days, existing policy version, Metrika/GA4 IDs, auto_footer=1 and managed policy page ID 43. Raw settings SHA-256 before/after: fb01189b1dc9f6b2b790b4b54ca165454ad0a1834601f4a1db28a3e1beb24740. Existing analytics-only consent SHA-256 before/after: 200d254d19c60a801bf5658baccd68cefec90a21bf33f181cc06355f97d3b174. Migration marker copied-v1 and schema 1 preserved. New flags 0 and IDs empty without rewriting the old option. Existing Yandex/GA4 each bootstrap once after reload; new integrations absent until enabled. Installed candidate tree SHA-256: 3b31bcebc0c1ac2a9408eea7b824d36b447fa9e302433e5023b2ac3567fa43c9. Updater hash unchanged. ModuBricks files/settings were unchanged at this gate.
+
+The ordinary Russian Settings API form saved GTM, Clarity and Meta IDs/flags successfully. It displays grouped sections, GTM limitations and VK deferred status. Four links, reopen/legal/policy shortcodes and optional footer continued rendering. Dynamic policy listed enabled GTM/Clarity and omitted Meta when disabled. Marketing becomes used/enabled with Meta and unused/disabled without it; Functional remains unused.
+
+### Consent/runtime matrix — PASS for built-in bootstrap
+
+The following scenarios were exercised on desktop 1440 and mobile 390:
+
+| Choice | Yandex / GA4 / GTM / Clarity | Meta | SDK requests before disallowed consent |
+| --- | --- | --- | --- |
+| Fresh / Reject and reload | 0 each | 0 | 0 |
+| Analytics only | 1 each | 0 | Meta 0 |
+| Marketing only | 0 each | 1 | Analytics 0 |
+| Accept all | 1 each | 1 | only after grant |
+| Revoke Analytics and reload | 0 each | 1 if Marketing retained | Analytics 0 |
+| Revoke Marketing and reload | 1 each if Analytics retained | 0 | Meta 0 |
+
+Repeated reopen/save, repeated Accept all, custom Analytics→all and custom Marketing→all kept script/init counts at one per provider per document; Meta PageView one. Existing stored consent and subsequent reload also bootstrapped once. Completed SDK resource entries were one per allowed integration, zero for disallowed categories. Fake GTM-TEST123 returned the expected 404; successful tag execution/vendor collection with genuine IDs is not claimed. Clarity consentv2 ad storage changed denied→granted when Marketing was granted without another bootstrap.
+
+### Responsive UI — PASS
+
+Long description, four legal links and very-large text checked at 1440×900 and 390×844. Document scroll widths 1425 and 375 respectively, within viewport. Desktop dialog scroll/client width 703/703; mobile 334/334. No horizontal overflow. Mobile panel Save was reached by keyboard/internal scroll and successfully used (button rect x31/y664.84, 298×44). Banner/panel screenshots were inspected. Computed font Manrope, sans-serif matches the theme. Viewport override reset.
+
+### Restoration/cleanup — PENDING; connection failure
+
+During final policy verification/re-enabling Meta, the admin form request and a fresh observer-page navigation timed out. Browser displayed ERR_CONNECTION_TIMED_OUT for testwp; its data: error page then prevented browser control. Preview tab was closed, evidence saved, owner asked to open the observer page again. No cause is attributed to plugin code without evidence. The owner independently confirmed testwp is still unavailable. No restoration/cleanup PASS is claimed.
+
+Last confirmed site state: ITD Cookies candidate and temporary itd-cookies-030-provider-observer active; ModuBricks temporarily inactive; test settings present. Meta was disabled and a subsequent re-enable save has unknown outcome. Owned pages: managed policy 43 and draft acceptance 44; old page 14 is untouched. Baseline to restore: ITD Cookies 0.1.0-dev.1 inactive, tree SHA-256 382758cc1b4c067fa0f291ed5fc445963cfbb4d4afc24d936f4d83839ed141dd; settings SHA-256 e2f17cbbe92ffa0c813d0550c609786abf21a90d5ba345303db6938c62875b08; marker copied-v1; no managed page option or three consent cookies; ModuBricks 1.1.1 active. Snapshot and restore controls remain in the observer's private test option. Restore original ZIP first, then raw options/activity/cookies; remove only owned pages/helper and its five options after restoration verification.
 
 ## Known limitations
 
@@ -68,4 +101,13 @@ Keep registry descriptions separate from executable adapters. A potential 0.4.x 
 
 ## Verdict
 
-NOT_READY_FOR_ITD_COOKIES_0_3_0_RELEASE — implementation underway; full CI and browser acceptance/cleanup must complete before READY.
+NOT_READY_FOR_ITD_COOKIES_0_3_0_RELEASE — implementation, local checks, nine-job CI and executed browser runtime/UI checks PASS; final policy verification and testwp restoration/cleanup are blocked by the connection timeout. Do not create a stable tag/release.
+
+### Resume after testwp becomes available
+
+1. Open Tools > ITD Cookies provider acceptance; verify current settings/plugin state and preserve the observer snapshot.
+2. Finish the enabled-service dynamic policy check if needed, then clear the three test consent cookies using the preview control (their baseline presence was all false).
+3. Deactivate ITD Cookies; restore the original 01C dev ZIP through WordPress upload/replace. The original ZIP is retained locally outside Git.
+4. Use Restore settings and trash test page in the observer. Compare original settings/file hashes, migration marker, managed-page option, ModuBricks hashes/settings and cookie absence. Restore plugin activity to ModuBricks active, ITD Cookies inactive; Akismet/Hello Dolly stay inactive.
+5. Permanently remove only temporary pages 43/44 and the observer with its five test options after action-time cleanup confirmation; leave page 14 untouched. Verify original four-plugin list, options/caches, homepage reload and no temporary assets.
+6. Update this report only after verified cleanup; run final CI for the documentation closure commit and then consider READY. No stable tag/release is authorized in this stage.

@@ -14,7 +14,7 @@ Settings → ITD Cookies provides legal links, provider IDs, consent duration/po
 
 The updater anonymously queries `https://api.github.com/repos/itdream24/itd-cookies/releases/latest` only on WordPress update checks/details requests in admin, cron or WP-CLI. Valid results cache for 6 hours; failures for 15 minutes. Native Dashboard → Updates → Check again clears the cache. Only strict stable `vX.Y.Z` tags and the matching built asset are accepted. The native WordPress upgrader downloads and installs over HTTPS. No token, custom installer, channel selector or custom signature service.
 
-Optional providers load only after analytics consent: Yandex `mc.yandex.ru`, Google `www.googletagmanager.com`. Revoke consent to stop future loading and reload the page. This is not a legal compliance guarantee.
+Built-in providers load only after their category is allowed: Analytics gates Yandex `mc.yandex.ru`, Google GA4/GTM `www.googletagmanager.com` and Clarity `www.clarity.ms`; Marketing gates Meta `connect.facebook.net`. Revoke consent to stop future loading and reload the page. This is not a legal compliance guarantee.
 
 ## Development
 
