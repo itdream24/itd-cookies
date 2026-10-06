@@ -6,73 +6,155 @@ Branch: feature/itd-cookies-0.3.0. Baseline origin/main: 2705b9f51e71e9ab1db778f
 
 The owner's LOCAL-FIRST QA POLICY applies permanently from this stage
 (2026-10-06). See [project rules](../AGENTS.md) and [setup/reset procedure](LOCAL-QA.md).
-The previous remote test is historical evidence only; it does not count as
-the local acceptance required now. No return to remote QA is automatic.
+Previous remote tests are historical evidence only and do not substitute for
+the completed local acceptance below. Remote QA is never resumed automatically.
 
-- OpenServer document root: `C:\openserver\domains\itd-cookies.local`.
-- URL: `http://itd-cookies.local`; domain/hosts registration is present.
-- Folder was empty before setup. The Git checkout stays separate from runtime.
-- Running OpenServer PHP: 8.1.5; MariaDB: 10.6 (127.0.0.1:3306).
-- Official WordPress 7.1.2 en_US ZIP downloaded and extracted into this folder;
-  core checksums PASS. The ru_RU core download was unavailable via WP-CLI;
-  the native installer successfully downloaded/selects Russian translations.
-- WP-CLI 2.12.0 downloaded from the official builds repository and matched its
-  published SHA-512. The Windows WP-CLI extraction produced no installed files;
-  native ZIP extraction was used and verified instead. No failed step is a PASS.
-- Local browser: Russian setup-config page loads. Database-backed installation
-  is **not complete**. Theme/plugin activation has not started.
-- Dedicated intended database: `itd_cookies_local`. OpenServer root with no
-  password returned Access denied. Neither OpenServer/phpMyAdmin configuration
-  nor client defaults provide saved administrator credentials, and local
-  phpMyAdmin shows its login form. A private SQL bootstrap was prepared outside
-  web-root/Git: it creates only this database and a dedicated localhost user
-  with privileges on this database. The owner was asked to authenticate/import
-  it locally. This import has not been confirmed; no other database was read
-  or used, and no existing account/password was modified.
-- Baseline: **not yet captured**, because installation/database setup is pending.
-  No destructive test is allowed before a recoverable baseline exists.
-- Prepared untracked local tools in the private `030-local-qa` artifact folder:
-  `configure-local.php` validates dedicated localhost DB, writes wp-config and
-  removes private temporary credential inputs outside web-root; `qa-state.php` exports non-secret
-  state; `baseline.ps1 -Mode Capture|Restore|Inspect` exports/imports the
-  dedicated DB, saves wp-content and hashes, checks exact absolute paths and
-  verifies restored options/theme/plugins/files. These procedures are prepared,
-  not yet executed or claimed as verified baseline/reset.
-- No local observer/helper has been installed. No candidate runtime copy has
-  been deployed yet. Final local state: official core files and language files,
-  waiting for wp-config/database/installation.
+### Installed reference environment and baseline
 
-### Local acceptance execution status
+- OpenServer document root: C:\openserver\domains\itd-cookies.local.
+- URL: http://itd-cookies.local; domain/hosts registration verified after the
+  owner's normal OpenServer restart. The folder was initially empty.
+- WordPress 7.1.2, PHP 8.1.5, MariaDB 10.6 at 127.0.0.1:3306, ru_RU,
+  Twenty Twenty-Five 1.5. No global OpenServer configuration was changed.
+- Dedicated DB itd_cookies_local and localhost user itd_cookies_qa: grants
+  verified only for this DB. The owner supplied the working local admin login
+  after the initial blank-password attempt failed. Existing accounts/passwords
+  and unrelated databases were not changed or used. Runtime DB credentials
+  are only in wp-config.php; temporary setup credentials/SQL were deleted.
+  QA admin credentials remain private outside web-root/Git.
+- Official WordPress en_US ZIP SHA-256:
+  8fc96c59a78b7219e4a130222b7fadb51b03e503e8b0123beaa7e28961c21ce2.
+  Core checksum verification PASS. ru_RU core download was unavailable via
+  WP-CLI; native installation language selection downloaded Russian files.
+  Initial Windows WP-CLI extraction produced no files; guarded ZIP extraction
+  followed by checksum verification completed installation.
+- Official WP-CLI 2.12.0 matched its published SHA-512. Windows DB import/export
+  uses forward-slash SQL paths and process-local MariaDB/Git tool paths.
+- Official immutable v0.2.0 installed/activated with native wp plugin install.
+  Only ITD Cookies 0.2.0 is installed/active in the baseline. Providers OFF,
+  standard text, default RU consent settings, empty legal URLs, footer OFF,
+  marker fresh-v1; managed policy option and legacy ModuBricks option absent.
+- Baseline is outside web-root/Git in the private task artifacts:
+  030-local-qa/baseline (DB SQL, state.json, wp-content, SHA-256 manifest).
+  SQL: 147664 bytes, 12 tables; SHA-256
+  30e83507104013fc3b82cb90673d9c4356c059478e2c11c030e562b4e8b49d5e.
+  Manifest: 491 files. Capture and repeated Restore executed, with source dump
+  and snapshot hashes validated before restoring the exact local target.
+- Private baseline.ps1 -Mode Restore imports only this configured DB, restores
+  wp-content, and compares every file hash plus WordPress/PHP/locale/theme,
+  plugins/activity/settings/marker/page option. Initial Windows SQL-path failure
+  was corrected in this private script; successful retries are the reset evidence.
+  Never recapture over the immutable baseline.
 
-| Check | Actual result in this local-only stage |
+### Executed local acceptance
+
+| Check | Actual result |
 | --- | --- |
-| Official core download/checksums | PASS |
-| WP-CLI checksum and version | PASS |
-| Local domain/installer, Russian language | PASS |
-| Database setup and WordPress installation | BLOCKED: dedicated DB access missing |
-| Baseline DB dump/settings/theme/plugins/wp-content hashes | NOT RUN |
-| Direct development install smoke | NOT RUN |
-| Native v0.2.0 ZIP -> 0.3.0-dev.1 upgrade preservation | NOT RUN |
-| Consent/category/dedup/revoke/reload browser matrix | NOT RUN |
-| Actual SDK requests before/after consent | NOT RUN |
-| Dynamic policy/legal links/footer/shortcodes | NOT RUN |
-| Desktop 1440x900 / mobile 390x844 | NOT RUN |
-| Invalid ZIP / broken package URL / mocked GitHub timeout | NOT RUN |
-| Malformed IDs/settings/consent in local WordPress | NOT RUN |
-| Real anonymous GitHub updater check on local WordPress | NOT RUN |
-| Local baseline restore and cleanup | NOT RUN |
+| Core/WP-CLI integrity, isolated DB and ru_RU setup | PASS |
+| Baseline capture and verified reset | PASS: DB, 491 file hashes, settings/theme/plugins |
+| Direct development deployment | PASS: separate runtime copy, candidate activation/registry smoke; reset afterward |
+| Native official v0.2.0 ZIP -> candidate | PASS: wp plugin install --force, native Plugin_Upgrader |
+| Consent/category/reopen/dedup/revoke/reload | PASS: 26 recorded desktop/mobile scenarios |
+| SDK script/init/actual request inspection | PASS: blocked category 0, allowed SDK <=1/document |
+| RU Settings API, policy, links, footer and shortcodes | PASS |
+| Desktop 1440x900 / mobile 390x844 | PASS: no horizontal overflow, Save accessible |
+| Invalid ZIP / mocked download failure / actual broken GitHub asset URL | PASS: native upgrader rejects safely |
+| Mocked GitHub API timeout | PASS: no update offered, installed data/files intact |
+| Invalid IDs / malformed stored settings / malformed consent | PASS: fail closed; originals restored |
+| Actual local ModuBricks 1.1.1 migration | PASS: allowlist, new providers OFF/empty, one-time marker |
+| Real anonymous GitHub updater | PASS: published v0.2.0 found; official 0.1.0 -> 0.2.0 native update |
+| Final baseline restoration, helper/options/pages/cache cleanup, homepage reload | PASS |
 
-Remote-access criterion for **this stage**: remote QA requests initiated to
-testwp.itdream.su = **0**; SSH/FTP operations against Timeweb = **0**; production
-mutations = **0**. Existing remote pages/plugins were not inspected or changed.
-The earlier remote restoration remains unverified; no fresh remote status or
-cleanup claim is made. A separate explicitly authorized task is required for it.
+Native candidate upgrade retained itd-cookies/itd-cookies.php and active state,
+header/runtime 0.3.0-dev.1. Seeded long description, very-large text, four local
+legal links, 365 days, unchanged policy version, Metrika/GA4, footer ON and managed
+policy page 5 survived exactly. Raw settings SHA-256 before/after:
+dc7403f4edd0b0483fc5b1a94371699a4a6e35cfbeae1cc6654e4b0e8e3cb2a9.
+Consent hash unchanged; schema 1 and existing analytics-only consent accepted
+without another prompt. Marker fresh-v1 and updater file hash unchanged.
+New provider defaults were OFF with empty IDs before any settings save.
 
-Before local acceptance, finish the dedicated DB/install, choose ru_RU and
-Twenty Twenty-Five, minimize default plugins, capture and verify baseline.
-Then execute every NOT RUN row above, restore the baseline (or explicitly
-document a useful accepted candidate state), verify no local helper remains
-and run CI on the documentation closure commit. Do not create a stable tag.
+The ordinary Russian Settings API form enabled GTM-TEST123, Clarity test12345
+and synthetic Meta ID 123456789012345. It displays Analytics/Marketing grouping,
+GTM warning and VK deferred status. Dynamic policy included all enabled native
+services; disabling Meta removed it and disabled unused Marketing, then
+re-enabling restored it. Four legal links/footer and policy/reopen shortcodes
+rendered. Invalid GTM-invalid / INVALID-ID / 0 became empty through the ordinary
+form; no new provider SDK/init followed. Corrupted stored option returns safe
+defaults and no providers; malformed consent showed the banner and all SDKs 0.
+
+Fresh and Reject/reload: all five SDK/script/init/request counts 0.
+Analytics only: Yandex/GA4/GTM/Clarity one each, Meta 0. Marketing only: Meta
+one (PageView one), Analytics 0. Accept all: all five one. Repeated Save,
+Accept all, settings reopen, Analytics->all and Marketing->all kept each
+script/init <=1/document. Revocation saved the new consent and reloaded without
+the denied category; explicit further reload and stored-consent reload passed.
+Clarity consentv2 ad storage changed denied->granted without another bootstrap.
+Completed Performance Resource Timing entries were one for each allowed SDK
+and zero for blocked categories. Immediate captures can precede request completion.
+Fake GTM returned the expected 404; genuine vendor collection is not claimed.
+The browser matrix did not mock SDK responses or GitHub HTTP.
+
+Responsive checks used long text/four links/110% text: document widths 1425/1440
+and 375/390; desktop panel scroll/client width 703/703, mobile 334/334.
+Mobile Save reached through keyboard/internal scroll, rect x31/y664.84,
+298x44, then actually used. Screenshots inspected. Computed Manrope, sans-serif
+matches the theme. Viewport override reset; layout code was not changed.
+
+Failure tests compared the full plugin file tree, raw settings, marker, policy
+option and active state. Invalid archive returned incompatible_archive;
+mocked network error and actual nonexistent GitHub ZIP returned download_failed.
+All preserved the installed working candidate/data. API timeout returned no
+release. Synthetic metadata existed only in the failure-test process/cache;
+no GitHub Release was created and production updater code was unchanged.
+
+Actual local ModuBricks 1.1.1 ZIP was temporarily installed/activated, seeded,
+then deactivated before activating the candidate. Imported legacy consent/
+Metrika/GA4/legal/text/version settings and copied-v1 marker passed; unexpected
+new-provider legacy fields were excluded. Repeated migration preserved edited
+ITD Cookies settings. ModuBricks file tree/options unchanged. A temporary local
+HTTP guard blocked owner endpoints (including old update-host) during this test;
+no remote WordPress or update-host request was used. Reset removed ModuBricks/guard.
+
+Real updater check used anonymous public GitHub API without synthetic metadata
+or HTTP filters: candidate sees latest stable v0.2.0 and offers no downgrade.
+Separately installed official v0.1.0, cleared the native update cache, found
+exact v0.2.0 asset, ran standard wp plugin update itd-cookies, and verified
+0.2.0 ACTIVE, canonical folder, settings/marker/page option preserved.
+The initial ad-hoc direct-upgrader harness lacked the standard CLI reactivation
+flow and used an unsupported diagnostic skin method; it was discarded/reset.
+Only the successful standard WP-CLI run counts as real-update PASS. Plugin code
+was not changed. Real 0.2.0 -> 0.3.0 is a future post-publication gate, not run now.
+
+### Final local state and cleanup
+
+Option A: restored the official v0.2.0 baseline. ITD Cookies ACTIVE, only plugin;
+Twenty Twenty-Five 1.5/ru_RU, original default settings and fresh-v1 marker.
+All 491 wp-content paths/hashes and recorded options/activity match the baseline.
+Temporary observer and network guard absent; test options/cache/metadata and
+pages 5, 6 and 8 absent; managed policy and ModuBricks options absent.
+All three consent test cookies were verified absent before reset; no later
+consent action was performed. Homepage reload displays the normal RU banner,
+without helper DOM or provider SDK scripts. Credentials/dump/evidence/private
+tools remain outside Git/package; no installed QA helper is retained.
+
+Private evidence: browser-evidence.json, failure-evidence.json,
+migration-evidence.json, real-candidate-evidence.json, real-stable-evidence.json,
+cleanup-evidence.json and desktop/mobile/restored screenshots under 030-local-qa.
+An independent assertion pass verified all 26 recorded scenarios, preservation,
+policy/IDs/font/geometry and four native failure outcomes.
+
+Remote-access criterion for this stage: remote QA requests to testwp.itdream.su
+= **0**; SSH/FTP operations against Timeweb = **0**; production mutations = **0**.
+Existing remote pages/plugins were not inspected or changed. Historical remote
+restoration remains unverified; no fresh remote cleanup claim is made.
+
+Full nine-job CI on policy/setup commit 9163c7051419725cfec9dcbcd25bc3ec62aeb909
+PASS, including all four WordPress matrix jobs and build:
+[run 37468681592](https://github.com/itdream24/itd-cookies/actions/runs/37468681592).
+The documentation closure commit is pushed on the same feature branch and its
+separate full CI must also pass before handoff; the exact commit/run is reported
+in the completion message. No stable tag/release or main merge in this task.
 
 ## Provider architecture
 
@@ -173,11 +255,10 @@ Keep registry descriptions separate from executable adapters. A potential 0.4.x 
 
 ## Verdict
 
-NOT_READY_FOR_ITD_COOKIES_0_3_0_RELEASE — provider implementation and previous
-automated checks passed, but the required local WordPress installation is
-blocked by dedicated database access. Local baseline, browser/upgrader/failure
-acceptance and restore/cleanup have not run. Historical remote checks do not
-substitute for this gate. No stable tag/release is authorized.
+READY_FOR_ITD_COOKIES_0_3_0_RELEASE — implemented providers, automated CI and
+local baseline/browser/native-upgrader/failure/migration/cleanup acceptance PASS.
+VK remains explicitly deferred pending verified official installation API.
+This accepts the development candidate; no stable tag/release is created.
 
-Remote restoration from the earlier task remains unverified and must not be
-attempted without a new task containing REMOTE FINAL SMOKE AUTHORIZED.
+Historical remote restoration remains unverified and must not be attempted
+without a new task containing REMOTE FINAL SMOKE AUTHORIZED.

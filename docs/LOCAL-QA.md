@@ -75,3 +75,31 @@ Do not publish a stable release merely to test an unpublished dev candidate.
 Actual versions, baseline location, results and final state belong in
 [the 0.3.0 acceptance report](ITD-COOKIES-0.3.0.md). A pending installation or
 unexecuted browser/failure/reset check is not a PASS.
+
+## Verified permanent reference baseline (2026-10-06)
+
+WordPress 7.1.2 / PHP 8.1.5 / MariaDB 10.6, ru_RU, Twenty Twenty-Five 1.5;
+only official ITD Cookies 0.2.0 installed/active. Dedicated itd_cookies_local DB,
+itd_cookies_qa localhost user with grants restricted to it. No production data.
+
+Private task artifacts contain 030-local-qa/baseline: 12-table SQL dump,
+491-file wp-content SHA-256 manifest/copy and settings/theme/plugin state.
+The sibling baseline.ps1 supports Capture (refuses overwrite), Inspect and
+Restore. Capture and repeated Restore were actually verified. Use the existing
+OpenServer PHP 8.1 and verified WP-CLI 2.12.0. SQL export/import paths must use
+forward slashes on Windows; prepend local MariaDB and Git usr/bin to this
+process PATH only. No credentials are needed in command arguments.
+
+Run the private baseline.ps1 -Mode Restore from its saved artifact directory.
+It validates the configured local URL/DB, immutable dump/snapshot hashes and
+exact absolute wp-content target before removal/import, then compares restored
+files/settings/marker/plugins/theme. The QA root never changes. Clear local
+consent test cookies before removing observer instrumentation and reload the
+homepage afterward; browser verification is separate from the reset script.
+Temporary installed helpers/pages/options/cache must be absent. Keep the
+snapshot and private QA admin credentials outside Git/web-root for future work.
+
+The 0.3.0 gate completed direct deployment, native ZIP upgrade, real public
+GitHub 0.1.0 -> 0.2.0 update, actual local ModuBricks migration, browser category
+matrix, responsive and safe failure checks. Final state is this restored
+baseline, not the candidate. See the acceptance report for exact evidence.
