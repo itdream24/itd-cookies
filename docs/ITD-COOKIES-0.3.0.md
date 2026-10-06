@@ -1,8 +1,151 @@
-# ITD Cookies 0.3.0 — Provider Integrations
+# ITD Cookies 0.3.0 — Stable release and Provider Integrations
 
-Branch: feature/itd-cookies-0.3.0. Baseline origin/main: 2705b9f51e71e9ab1db778fd32591c81239ebcf6. Candidate: 0.3.0-dev.1. Published stable v0.2.0 remains unchanged. No stable tag/release is created in this stage.
+Stable v0.3.0 is published and verified locally. Tagged release commit: 0b89247b8f1a711c77fb426c19cdae886c23a6fc. Accepted implementation: feature/itd-cookies-0.3.0 at b89ac218f05e547c0d63ad7dbecef7df061e13f7, originally based on main 2705b9f51e71e9ab1db778fd32591c81239ebcf6. Published v0.2.0 and its assets remain unchanged. The implementation-stage results below are historical; the stable gate is the current result.
 
-## Local QA environment
+## Stable release gate — completed 2026-10-06
+
+### Version, security and CI
+
+Release branch release/itd-cookies-0.3.0 was created from accepted b89ac218.
+Stable metadata commit 24ff44fbace33f31adce63b614ff459e1b193c1e synchronized
+header, constant, package.json/lockfile root versions, readme/changelog, test
+bootstrap and Russian PO/MO metadata to 0.3.0. Dependency graph unchanged;
+no runtime feature was added. Consent schema remains 1; policy version is not
+bumped merely for a plugin release. Changelog retains the GTM container warning;
+VK Ads support is not claimed.
+
+First release CI [37503026156](https://github.com/itdream24/itd-cookies/actions/runs/37503026156)
+failed in all four WordPress smoke jobs: the synthetic test fixture advertised
+fixed v0.3.0 to an already installed 0.3.0 and correctly produced no update.
+Commit 0b89247b8f1a711c77fb426c19cdae886c23a6fc makes only that test advertise
+a strictly newer patch version and matching tag/asset name. Production updater
+and release workflow were not changed. PHP 7.4 syntax and targeted PHPCS PASS.
+
+| Gate | Actual result / source |
+| --- | --- |
+| Gitleaks before merge | PASS, six committed changes scanned, no leaks |
+| Composer audit --locked | PASS, no advisories |
+| npm audit | PASS, 0 vulnerabilities |
+| git diff --check | PASS |
+| Release branch CI | [37503415612](https://github.com/itdream24/itd-cookies/actions/runs/37503415612), 9/9 PASS |
+| Separate main CI | [37503642580](https://github.com/itdream24/itd-cookies/actions/runs/37503642580), 9/9 PASS |
+| Tag workflow | [37503958053](https://github.com/itdream24/itd-cookies/actions/runs/37503958053), 11/11 PASS: validation, nine checks, publication |
+
+Both nine-job CI gates include PHP 7.4/8.5 PHPUnit, quality (PHPCS/PHPStan and
+Composer audit), node (audit/ESLint/translations/JS), all four WordPress matrix
+jobs (5.2/7.4, 5.2.24/7.4, latest/7.4, latest/8.5) and package build/inspector.
+No cancelled or skipped job counts as PASS. main was fast-forwarded without
+rewriting history and matched the accepted release branch. Feature/release
+branches retained. READY_TO_TAG_ITD_COOKIES_V0.3.0 preceded the one-time creation
+of annotated v0.3.0 on exactly 0b89247. Tag/assets were not replaced afterward.
+
+No local DB/admin credentials, dumps, private helper/observer, screenshot/HAR,
+raw cookie or private synthetic metadata file entered Git or the production ZIP.
+Public disposable integration fixtures remain in tests, outside the package.
+
+### Reproducible ZIP and public release
+
+Asset: itd-cookies-0.3.0.zip.
+SHA-256: aa45c5a4ba2c4bc01e4dde683093504ac127db30556227f20a26666bc8c6f9f4.
+Two builds using UTC and Pacific/Honolulu produced the same hash. Inspector and
+PHP 7.4 packaged-file syntax PASS: 15 runtime entries, only itd-cookies/ root,
+main file, provider loader, updater, RU PO/MO, license/readme included; dev,
+tests/docs/private QA excluded. No 0.3.0-dev.1 remains in the stable payload.
+Russian MO compilation: 93 messages. Updater code/hash unchanged.
+
+[GitHub Release v0.3.0](https://github.com/itdream24/itd-cookies/releases/tag/v0.3.0)
+was created automatically by the tag workflow, with ZIP and its .zip.sha256.
+Actual anonymous releases/latest API returned v0.3.0, draft=false,
+prerelease=false. Both assets downloaded anonymously; downloaded ZIP hash,
+checksum file and reproducible local hash match. No manual asset upload.
+
+### Real browser 0.2.0 -> 0.3.0 update — PASS
+
+Restored immutable baseline-v0.2.0 and verified official 0.2.0 ACTIVE first.
+Local observer only counted application calls/SDK resource entries and recorded
+state; no synthetic release metadata, HTTP interception or package substitution.
+Seeded long text, 110% text, four legal links, footer, managed policy page 5,
+365-day lifetime/policy version 1 and Yandex/GA4 test IDs; saved analytics-only
+consent. Draft acceptance page 6 rendered settings/legal/policy shortcodes.
+
+Browser WordPress -> Updates -> Check again offered exactly 0.2.0 -> 0.3.0.
+Checked only ITD Cookies and used the native Update button. WordPress reported
+successful completion and maintenance ended. All 15 installed files match the
+anonymously downloaded published stable ZIP, with no extra plugin file.
+
+Preserved immediately across update:
+
+- canonical itd-cookies/itd-cookies.php, ACTIVE, header/runtime 0.3.0;
+- raw settings SHA-256 0496aa10eb645bbb469913c4b21d9a4289bf61b797933690079df2df191f1f6e;
+- existing consent SHA-256 35a3f5851a722b751b3ec5200df36ac9714c4fb0d3cd9fce74891ab4dd17193a;
+- schema 1, fresh-v1 marker, policy page 5, footer=1, legal/text/lifetime/version
+  and existing Yandex/GA4 settings;
+- absent new GTM/Clarity/Meta fields read as OFF/empty without rewriting the old
+  option; shortcodes and RU labels work, ModuBricks state unchanged (not installed).
+
+Stored Analytics reload bootstrapped Yandex/GA4 once each before new integrations
+were enabled. Ordinary Russian Settings API form then enabled the three new
+synthetic IDs. Dynamic managed policy and shortcodes listed all five services.
+
+### Published provider runtime and UI — PASS
+
+Executed 25 browser runtime captures on the published installed payload; an
+independent assertion pass checked counters, preservation, defaults and geometry.
+Application bootstrap/script counts per document:
+
+| Choice | Yandex / GA4 / GTM / Clarity | Meta |
+| --- | --- | --- |
+| Fresh / Reject and reload | 0 each | 0 |
+| Analytics only | 1 each | 0 |
+| Marketing only | 0 each | 1 |
+| Accept all and repeated Save/Accept/reopen | 1 each, never duplicate | 1, PageView 1 |
+| Revoke Analytics and reload | 0 each | 1 if Marketing retained |
+| Revoke Marketing and reload | 1 each if Analytics retained | 0 |
+
+Blocked categories had zero SDK resource requests. Completed Accept-all captures
+had one resource entry per allowed SDK; immediate captures can precede request
+completion. Fake GTM-TEST123 returned expected 404; successful vendor collection
+with test IDs is not claimed. No SDK response was mocked. Clarity consentv2 ad
+storage changed denied -> granted without another bootstrap.
+
+1440x900 and 390x844 passed with long text/four links/110% size: document width
+1425/375 within viewport; dialog scroll/client widths 703/703 and 334/334.
+Category cards/services/policy/footer and settings modal rendered. Internal
+scroll/keyboard brought Save into view and it was actually used: desktop
+x377.5/y819.09, 176.31x44; mobile x31/y664.84, 298x44. Screenshots inspected.
+Computed Manrope, sans-serif matches the theme; no font override introduced.
+Viewport override reset after QA.
+
+### Cleanup and current baseline — PASS
+
+Cleared all three local consent cookies and verified absence before removing
+instrumentation. Removed only stable observer plugin, its five private options,
+owned pages 5/6 and temporary test/cache data. Restored exact original raw
+settings and fresh-v1 marker, no managed policy option/ModuBricks options/MU
+helper, all providers OFF. A separate CLI assertion verified cleanup; package
+comparison again confirmed all 15 files still match the published ZIP.
+
+Current site: clean official ITD Cookies 0.3.0 ACTIVE, only installed plugin;
+WordPress 7.1.2 / PHP 8.1.5 / MariaDB 10.6 / ru_RU / Twenty Twenty-Five 1.5.
+Native WordPress upgrade also updated standard theme Russian translations;
+core version was not updated. Homepage reload shows the normal RU banner,
+no helper DOM and zero provider SDK scripts; no further consent was granted.
+
+Kept immutable baseline-v0.2.0 unchanged: 491 wp-content files and SQL SHA-256
+30e83507104013fc3b82cb90673d9c4356c059478e2c11c030e562b4e8b49d5e, each file reverified.
+Created separate baseline-v0.3.0: 501 files, SQL SHA-256
+61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9.
+Actually restored this new baseline and compared files/settings/marker/activity/
+theme successfully; local official 0.3.0 remains ACTIVE. Private dump/admin
+credentials/observer source/evidence stay outside web-root and Git/package.
+See [versioned reset procedure](LOCAL-QA.md).
+
+Private stable-release evidence includes public-evidence.json, upgrade-evidence.json,
+browser-evidence.json, cleanup-evidence.json and native/UI/clean-homepage screenshots.
+Remote QA requests = 0; Timeweb SSH/FTP = 0; production mutations = 0.
+Historical remote restoration is outside this gate and was not resumed.
+
+## Implementation-stage local QA environment
 
 The owner's LOCAL-FIRST QA POLICY applies permanently from this stage
 (2026-10-06). See [project rules](../AGENTS.md) and [setup/reset procedure](LOCAL-QA.md).
@@ -124,9 +267,9 @@ exact v0.2.0 asset, ran standard wp plugin update itd-cookies, and verified
 The initial ad-hoc direct-upgrader harness lacked the standard CLI reactivation
 flow and used an unsupported diagnostic skin method; it was discarded/reset.
 Only the successful standard WP-CLI run counts as real-update PASS. Plugin code
-was not changed. Real 0.2.0 -> 0.3.0 is a future post-publication gate, not run now.
+was not changed. At that implementation stage, real 0.2.0 -> 0.3.0 had not run; its later successful published gate is recorded above.
 
-### Final local state and cleanup
+### Implementation-stage local state and cleanup
 
 Option A: restored the official v0.2.0 baseline. ITD Cookies ACTIVE, only plugin;
 Twenty Twenty-Five 1.5/ru_RU, original default settings and fresh-v1 marker.
@@ -154,7 +297,7 @@ PASS, including all four WordPress matrix jobs and build:
 [run 37468681592](https://github.com/itdream24/itd-cookies/actions/runs/37468681592).
 The documentation closure commit is pushed on the same feature branch and its
 separate full CI must also pass before handoff; the exact commit/run is reported
-in the completion message. No stable tag/release or main merge in this task.
+in the completion message. No stable tag/release or main merge occurred during that implementation stage.
 
 ## Provider architecture
 
@@ -206,7 +349,7 @@ Updater SHA-256 remains 8642dc56bfeee4923d1b73d024c9ff7a2ca5f4e4dee64edab350c3de
 
 Local checks (2026-10-06): PHPUnit on PHP 7.4 PASS (21 tests, 340 assertions); JS PASS (31 tests); ESLint PASS; PHPCS PASS; PHPCompatibilityWP for PHP 7.4+ PASS; PHPStan level 5 PASS; Composer audit PASS (no advisories); npm audit PASS (0 vulnerabilities); Russian MO compilation PASS (93 messages); git diff --check PASS; Gitleaks PASS (one feature commit scanned, no leaks). JS reload tests reconstruct the next document with its cookie jar; jsdom emits its expected unsupported navigation notices. PHP tools use a writable local temporary directory; initial local temp-permission failures were resolved without changing project configuration. Coverage includes enabled/disabled/invalid IDs, category matrix, old consent compatibility, registry/policy used-state, legacy defaults, deduplication and reload after revocation. Disposable WordPress smoke additionally checks registry/runtime configuration, local script dependency, policy content and raw settings/marker/page preservation.
 
-Implementation commit: da71f8387adb3d858a026f21145a23855da02a13. [Full existing CI run 37426737141](https://github.com/itdream24/itd-cookies/actions/runs/37426737141) PASS, all nine jobs: PHP 7.4, PHP 8.5, quality, node, WordPress 5.2/PHP 7.4, WordPress 5.2.24/PHP 7.4, latest/PHP 7.4, latest/PHP 8.5, build. No cancelled/skipped job. Production-format dev ZIP inspector PASS: 15 runtime entries, single itd-cookies/ root, version 0.3.0-dev.1, updater/PO/MO included, dev files excluded, all packaged PHP syntax valid on 7.4. Asset name: itd-cookies-0.3.0-dev.1.zip. SHA-256: 66e110a5c3d1da388e735643a4c98fbe2eb600f011827eafc53f55dfac6cb4c9. This ZIP is a test candidate; no stable release is published.
+Implementation commit: da71f8387adb3d858a026f21145a23855da02a13. [Full existing CI run 37426737141](https://github.com/itdream24/itd-cookies/actions/runs/37426737141) PASS, all nine jobs: PHP 7.4, PHP 8.5, quality, node, WordPress 5.2/PHP 7.4, WordPress 5.2.24/PHP 7.4, latest/PHP 7.4, latest/PHP 8.5, build. No cancelled/skipped job. Production-format dev ZIP inspector PASS: 15 runtime entries, single itd-cookies/ root, version 0.3.0-dev.1, updater/PO/MO included, dev files excluded, all packaged PHP syntax valid on 7.4. Asset name: itd-cookies-0.3.0-dev.1.zip. SHA-256: 66e110a5c3d1da388e735643a4c98fbe2eb600f011827eafc53f55dfac6cb4c9. This ZIP was an implementation test candidate; the later stable release is recorded above.
 
 ## Historical remote browser tests (before LOCAL-FIRST policy)
 
@@ -255,10 +398,11 @@ Keep registry descriptions separate from executable adapters. A potential 0.4.x 
 
 ## Verdict
 
-READY_FOR_ITD_COOKIES_0_3_0_RELEASE — implemented providers, automated CI and
-local baseline/browser/native-upgrader/failure/migration/cleanup acceptance PASS.
-VK remains explicitly deferred pending verified official installation API.
-This accepts the development candidate; no stable tag/release is created.
+ITD_COOKIES_V0.3.0_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED — release/main CI,
+public stable publication, real browser 0.2.0 -> 0.3.0, published provider/UI
+runtime, cleanup and versioned baseline restoration PASS. Current local baseline
+is official 0.3.0 ACTIVE. Earlier implementation verdict was
+READY_FOR_ITD_COOKIES_0_3_0_RELEASE; VK remains explicitly deferred.
 
 Historical remote restoration remains unverified and must not be attempted
 without a new task containing REMOTE FINAL SMOKE AUTHORIZED.

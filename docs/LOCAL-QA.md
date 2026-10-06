@@ -76,30 +76,60 @@ Actual versions, baseline location, results and final state belong in
 [the 0.3.0 acceptance report](ITD-COOKIES-0.3.0.md). A pending installation or
 unexecuted browser/failure/reset check is not a PASS.
 
-## Verified permanent reference baseline (2026-10-06)
+## Versioned immutable baselines (2026-10-06)
 
-WordPress 7.1.2 / PHP 8.1.5 / MariaDB 10.6, ru_RU, Twenty Twenty-Five 1.5;
-only official ITD Cookies 0.2.0 installed/active. Dedicated itd_cookies_local DB,
-itd_cookies_qa localhost user with grants restricted to it. No production data.
+Current development baseline: **baseline-v0.3.0**. Official ITD Cookies 0.3.0
+ACTIVE, only installed plugin. WordPress 7.1.2 / PHP 8.1.5 / MariaDB 10.6,
+ru_RU, Twenty Twenty-Five 1.5. Dedicated itd_cookies_local DB and restricted
+itd_cookies_qa localhost user; no production data. Providers OFF, default raw
+settings restored, fresh-v1 marker, no managed policy page or QA helper.
 
-Private task artifacts contain 030-local-qa/baseline: 12-table SQL dump,
-491-file wp-content SHA-256 manifest/copy and settings/theme/plugin state.
-The sibling baseline.ps1 supports Capture (refuses overwrite), Inspect and
-Restore. Capture and repeated Restore were actually verified. Use the existing
-OpenServer PHP 8.1 and verified WP-CLI 2.12.0. SQL export/import paths must use
-forward slashes on Windows; prepend local MariaDB and Git usr/bin to this
-process PATH only. No credentials are needed in command arguments.
+Private QA_STATE/030-local-qa contains separate immutable snapshots:
 
-Run the private baseline.ps1 -Mode Restore from its saved artifact directory.
-It validates the configured local URL/DB, immutable dump/snapshot hashes and
-exact absolute wp-content target before removal/import, then compares restored
-files/settings/marker/plugins/theme. The QA root never changes. Clear local
-consent test cookies before removing observer instrumentation and reload the
-homepage afterward; browser verification is separate from the reset script.
-Temporary installed helpers/pages/options/cache must be absent. Keep the
-snapshot and private QA admin credentials outside Git/web-root for future work.
+| Snapshot | Use | wp-content files | SQL SHA-256 |
+| --- | --- | --- | --- |
+| baseline-v0.2.0 | Previous stable for 0.2.0 -> 0.3.0 upgrade | 491 | 30e83507104013fc3b82cb90673d9c4356c059478e2c11c030e562b4e8b49d5e |
+| baseline-v0.3.0 | Current stable for development/reset | 501 | 61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9 |
 
-The 0.3.0 gate completed direct deployment, native ZIP upgrade, real public
-GitHub 0.1.0 -> 0.2.0 update, actual local ModuBricks migration, browser category
-matrix, responsive and safe failure checks. Final state is this restored
-baseline, not the candidate. See the acceptance report for exact evidence.
+Each has a dedicated SQL dump, wp-content copy/manifest/hashes and JSON
+versions/theme/plugins/settings/marker/policy state. Original unversioned 0.2.0
+baseline was retained; versioned 0.2.0 is an identical verified copy. It was not
+replaced with 0.3.0. The new snapshot includes native WordPress theme-language
+updates performed during the plugin upgrader flow; core remains 7.1.2.
+
+Run the private baseline.ps1 from its saved artifact directory (PowerShell):
+
+```powershell
+# Previous stable, only when preparing an upgrade acceptance test:
+.\baseline.ps1 -Mode Restore -Version 0.2.0
+# Current stable for normal local development/reset:
+.\baseline.ps1 -Mode Restore -Version 0.3.0
+# Inspect the live isolated site without restoration:
+.\baseline.ps1 -Mode Inspect -Version 0.3.0
+# Capture only a NEW accepted version after cleanup; never overwrite:
+.\baseline.ps1 -Mode Capture -Version 0.3.0
+```
+
+The last Capture command has already been run: repeating it refuses to overwrite
+the existing snapshot. Default Version is 0.3.0, but use explicit versions in
+acceptance scripts. Capture checks installed version against the requested
+version. Restore verifies local URL/DB, immutable dump/copy hashes and the exact
+absolute wp-content removal target before importing only this site's database.
+Then it compares restored files/settings/marker/activity/plugins/theme.
+
+Capture and actual Restore of baseline-v0.3.0 both PASS; all 491 files and SQL of
+baseline-v0.2.0 were separately reverified unchanged. Use OpenServer PHP 8.1 and
+verified WP-CLI 2.12.0. SQL paths need forward slashes on Windows; prepend local
+MariaDB and Git usr/bin to the process PATH only. No password in CLI arguments.
+
+Clear browser test consent before removing observer instrumentation; reset does
+not clear browser cookies. Check homepage separately after restoration. Keep
+private credentials/dumps/tools/evidence outside Git/package/web-root. No
+installed observer/helper, private test option/cache/metadata or test page may
+remain in a clean snapshot. A real upgrade gate must finish on the newly accepted
+stable version and create a NEW versioned snapshot, retaining its predecessor.
+
+Real browser WordPress 0.2.0 -> published 0.3.0, provider category matrix,
+1440x900/390x844 UI, cleanup and current-baseline restore PASS. Exact commits,
+CI/Release links and hashes are in [the release report](ITD-COOKIES-0.3.0.md).
+Historical remote state is outside this procedure and must not be resumed.
