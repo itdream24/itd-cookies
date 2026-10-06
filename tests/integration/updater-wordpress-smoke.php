@@ -22,24 +22,27 @@ $itd_cookies_basename = 'itd-cookies/itd-cookies.php';
 $itd_cookies_options  = get_option( 'itd_cookies_settings' );
 $itd_cookies_marker   = get_option( 'itd_cookies_migration_version' );
 $itd_cookies_sha      = hash_file( 'sha256', ITD_COOKIES_FILE );
+// Advertise a strictly newer patch for both development and stable source versions.
+$itd_cookies_parts   = array_map( 'intval', explode( '.', ITD_COOKIES_VERSION ) );
+$itd_cookies_fixture = sprintf( '%d.%d.%d', $itd_cookies_parts[0], $itd_cookies_parts[1], $itd_cookies_parts[2] + 1 );
 
 add_filter(
 	'pre_http_request',
-	static function ( $result, $args, $url ) use ( &$itd_cookies_mode, $itd_cookies_package ) {
-		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v0.3.0/itd-cookies-0.3.0.zip';
+	static function ( $result, $args, $url ) use ( &$itd_cookies_mode, $itd_cookies_package, $itd_cookies_fixture ) {
+		$package_url = 'https://github.com/itdream24/itd-cookies/releases/download/v' . $itd_cookies_fixture . '/itd-cookies-' . $itd_cookies_fixture . '.zip';
 		if ( ITD_Cookies_Updater::API_URL === $url ) {
 			if ( 'timeout' === $itd_cookies_mode ) {
 				return new WP_Error( 'http_request_failed', 'Synthetic GitHub timeout.' );
 			}
 			$body = wp_json_encode(
 				array(
-					'tag_name'   => 'v0.3.0',
+					'tag_name'   => 'v' . $itd_cookies_fixture,
 					'draft'      => false,
 					'prerelease' => false,
 					'body'       => 'Disposable CI fixture, no public release.',
 					'assets'     => array(
 						array(
-							'name'                 => 'itd-cookies-0.3.0.zip',
+							'name'                 => 'itd-cookies-' . $itd_cookies_fixture . '.zip',
 							'browser_download_url' => $package_url,
 							'state'                => 'uploaded',
 							'size'                 => filesize( $itd_cookies_package ),
