@@ -1,6 +1,6 @@
 # ITD Cookies 0.2.0 — Consent UX and legal integration
 
-## State
+## Historical implementation state (before stable release)
 
 Baseline main: 59ff27259895acd49cdd63cd5b1f28798ba70488. Branch feature/itd-cookies-0.2.0 created from freshly fetched origin/main; clean tree at start. Development version 0.2.0-dev.1. Historical v0.1.0 tag/release/assets unchanged.
 
@@ -45,7 +45,7 @@ Implementation commit cee4d55ea180ca4eab6a776e2279381d842beee6: [CI run 37359328
 
 ## Browser acceptance — 2026-10-05
 
-Only the designated test site was used, with owner-confirmed recoverable snapshot and action-time installation approval. WordPress reported 7.1.2; Twenty Twenty-Five theme, Russian locale. Fixture/helper and synthetic metadata are outside the repository and distributable package. No genuine v0.2.0 tag/release exists.
+Only the designated test site was used, with owner-confirmed recoverable snapshot and action-time installation approval. WordPress reported 7.1.2; Twenty Twenty-Five theme, Russian locale. Fixture/helper and synthetic metadata are outside the repository and distributable package. At this pre-release acceptance stage, no genuine v0.2.0 tag/release existed; the later stable publication and real update are recorded below.
 
 Candidate itd-cookies-0.2.0.zip contains the implementation above with version metadata relabeled to 0.2.0 in an isolated copy. SHA-256: 17252f3a21d01d55abf214976a4203267357340f9896c315669c17944a3a35ae. Package inspection and PHP 7.4 syntax PASS; root itd-cookies/, translation files included, development/test files excluded.
 
@@ -93,7 +93,7 @@ Owner confirmed permanent cleanup immediately before deletion. Temporary fixture
 
 WordPress itself emitted a null preg_replace deprecation/header warning on the temporary helper deletion confirmation page (helper lacked Author metadata); final plugin list and homepage were clean. No runtime candidate warning observed; no unrelated core edits made.
 
-## Release boundary and limitations
+## Historical implementation release boundary and limitations
 
 Implementation acceptance PASS. Merge to main may follow the accepted feature CI; keep dev version 0.2.0-dev.1 until a separate release gate synchronizes stable metadata and validates the final commit. Historical v0.1.0 tag, GitHub release and assets, ModuBricks source/update host and production sites unchanged.
 
@@ -101,7 +101,7 @@ Real stable-to-stable 0.1.0 -> 0.2.0 update without synthetic metadata remains a
 
 Policy describes plugin configuration rather than all cookies on a site. Registry extensions describe services but must implement their own existing consent API integration. Page creation reuses the stored page sequentially; concurrent admin requests are not serialized. Theme/layout validation here covers Twenty Twenty-Five and the listed sizes, not every WordPress theme.
 
-## Verdict
+## Historical implementation verdict
 
 READY_FOR_ITD_COOKIES_0_2_0_RELEASE — implementation, full CI, pre-release native updater E2E, UI/responsive/consent/legal acceptance and cleanup PASS. Stable release gate and real stable-to-stable verification are still required.
 
@@ -114,3 +114,75 @@ Source audit found the pre-existing yocto-queue lock entry had erroneously recei
 Updater SHA-256 unchanged from accepted implementation. No temporary browser helper/observer, credentials, cookie/HAR captures, synthetic HTTP metadata or old deployment/update-host configuration in runtime/package. Automated disposable WordPress updater metadata mocks remain development tests and are excluded from ZIP; localhost-only disposable CI credentials are not test-site credentials.
 
 Composer audit PASS (no advisories), npm audit PASS (0 vulnerabilities), diff whitespace check PASS. Production ZIP itd-cookies-0.2.0.zip: 14 allowlisted entries, single itd-cookies root, main/updater/license/readme/Russian PO+MO present, dev/tests/docs/reports excluded. Inspector and PHP 7.4 syntax PASS. Two builds under UTC and Pacific/Auckland matched SHA-256 d4a4251031e1905a7fd15412e8c8c7e3e96eafebc3f59c46037b16f72f6d78e9 (36324 bytes). Tag/publication requires full release-branch CI then a separate full main CI. Real stable-to-stable browser update and cleanup are pending until publication.
+
+## Stable release closure — 2026-10-06
+
+This section records the genuine stable release and supersedes the pending release boundary in the historical implementation/preparation sections above.
+
+### Minimal dependency repair and final checks
+
+After GitHub-hosted runners recovered, complete rerun attempt 4 of commit 929f6466d952ba9b79a4b5317f3ddd908f1f2c37 failed npm audit for GHSA-68fv-2mgg-jv7q in the transitive development dependency source-map-js 1.2.1. All four WordPress jobs passed; build was skipped because node failed. The earlier cancelled runs were infrastructure failures and required no code change.
+
+With explicit owner authorization, supported npm audit fix --package-lock-only --ignore-scripts --no-fund changed only the version, resolved URL and integrity of source-map-js to 1.2.2. package.json did not change. All other lock entries were compared and remained identical; no runtime code or unrelated packages changed. Separate minimal release commit: 748524161d0832043222c21f5c05637f3b40eb40 (Fix source-map-js dev dependency security advisory), on release/itd-cookies-0.2.0.
+
+Actual local results after repair: npm ci PASS; npm audit 0 vulnerabilities; JS 19/19 PASS; ESLint PASS; translation compilation 76 Russian messages PASS and tracked language files unchanged; package inspector and PHP 7.4 syntax PASS; UTC/Pacific-Auckland builds byte-identical; git diff --check PASS. Gitleaks scanned the committed repository history and found no leaks. Composer audit passed in the full CI quality job.
+
+### Release and main gates
+
+Release commit and tag target: 748524161d0832043222c21f5c05637f3b40eb40. After the release CI passed, main was advanced by fast-forward without rewriting history, and a separate main CI completed before tagging.
+
+| Gate | Run | Result |
+| --- | --- | --- |
+| Release branch CI | [37422148688](https://github.com/itdream24/itd-cookies/actions/runs/37422148688) | all 9 jobs PASS |
+| Separate main CI | [37422455430](https://github.com/itdream24/itd-cookies/actions/runs/37422455430) | all 9 jobs PASS |
+| Release workflow | [37422756570](https://github.com/itdream24/itd-cookies/actions/runs/37422756570) | all 11 jobs PASS, including validation, reused CI and publication |
+
+Both full CI runs passed quality, node, PHP 7.4, PHP 8.5, WordPress 5.2/PHP 7.4, WordPress 5.2.24/PHP 7.4, latest WordPress/PHP 7.4, latest WordPress/PHP 8.5, and build. This includes PHPUnit, JS, ESLint, PHPCS, PHPStan, PHPCompatibilityWP, Composer/npm audits, translations and production package inspection.
+
+READY_TO_TAG_ITD_COOKIES_V0.2.0 was recorded after the separate main gate. Annotated v0.2.0 was created and pushed once. The release workflow built and published the assets automatically; no manual asset upload or replacement was performed.
+
+### Public release and ZIP verification
+
+[ITD Cookies 0.2.0](https://github.com/itdream24/itd-cookies/releases/tag/v0.2.0).
+
+Public GitHub API returned tag_name v0.2.0, draft false, prerelease false; releases/latest returned v0.2.0. Both assets downloaded anonymously. ZIP SHA-256 matched the local reproducible build, GitHub asset digest and published checksum file.
+
+- Asset: itd-cookies-0.2.0.zip, 36324 bytes.
+- SHA-256: d4a4251031e1905a7fd15412e8c8c7e3e96eafebc3f59c46037b16f72f6d78e9.
+- Checksum asset: itd-cookies-0.2.0.zip.sha256.
+- Downloaded published ZIP inspector PASS: 14 allowlisted entries, single itd-cookies/ root, main file and updater present, version 0.2.0, Russian PO/MO and license included, development/tests/docs/reports excluded; PHP 7.4 syntax PASS.
+
+### Genuine stable-to-stable WordPress update
+
+Owner confirmed a recoverable site snapshot and installation of the temporary local observer immediately before testing. Only the designated test site was used. The observer measured file/settings hashes and application provider calls; it did not intercept HTTP or substitute synthetic release metadata/package URLs. It is outside Git and the production ZIP.
+
+Installed the immutable official v0.1.0 ZIP via WordPress upload/replace, activated ITD Cookies and temporarily deactivated ModuBricks. Seeded title, five-sentence description, very-large text (110%), three legal URLs/labels, test Metrika/GA4 IDs, 365-day lifetime and existing consent version. Saved analytics-only consent in 0.1.0 and reloaded.
+
+Dashboard > Updates > Check again offered 0.2.0. Only ITD Cookies was selected. Native WordPress upgrader reported successful update and maintenance mode disabled. Expanded upgrader details showed the genuine package URL https://github.com/itdream24/itd-cookies/releases/download/v0.2.0/itd-cookies-0.2.0.zip.
+
+After update:
+
+- Header/runtime version 0.2.0; plugin active; folder itd-cookies/ and basename itd-cookies/itd-cookies.php retained.
+- Raw settings hash identical before/after: 257ed037ca766e865b2be55b217e347a6092f076031bb8bced3607056567135f. Title/text/size, legal links, provider settings, lifetime/version preserved.
+- Existing consent hash unchanged; analytics-only choice persisted after reload with no new prompt. Migration marker copied-v1 preserved; consent schema still 1.
+- Safe defaults: fourth legal URL empty, auto_footer 0. Registry exposed enabled Yandex Metrika and GA4. Settings, legal-links and policy shortcodes rendered correctly in Russian.
+- Updater SHA-256 unchanged: 8642dc56bfeee4923d1b73d024c9ff7a2ca5f4e4dee64edab350c3de5df6b7b8. No synthetic payload marker.
+- Installed 0.2.0 full file tree matched the anonymously downloaded published ZIP: 5342c337a923383bb649e8064be9e52e7c09ca83597753c3023cf208ad6deae0.
+- Before consent: zero provider scripts and initialization calls. With analytics allowed: one script and one initialization per provider. Reload and saving unchanged choices did not duplicate initialization. Revoke saved the choice and reloaded; subsequent reload had zero provider scripts/initializations. Accept all also passed. Instrumentation counts application calls; real vendor collection/backend delivery is not claimed.
+- ModuBricks file tree and settings remained unchanged throughout.
+
+### Published artifact UI smoke
+
+Long description, three legal links and very-large text were checked at 1440 x 900 and 390 x 844. Document scroll width was 1425 and 375 respectively, within the viewport. Mobile dialog scroll/client width matched (334); no horizontal overflow. Banner actions were inside the viewport; panel actions were reached by keyboard/internal scroll and Save worked. Published UI screenshots were inspected. Banner/panel computed font matched the theme: Manrope, sans-serif. Reload continued to render the site and shortcodes normally.
+
+### Release E2E restoration and cleanup
+
+Restored original 01C dev files via native WordPress upload/replace before restoring raw options. Full ITD Cookies tree hash matched the captured baseline: 382758cc1b4c067fa0f291ed5fc445963cfbb4d4afc24d936f4d83839ed141dd. Raw settings hash matched e2f17cbbe92ffa0c813d0550c609786abf21a90d5ba345303db6938c62875b08; migration marker preserved; managed policy page option absent. All three test consent cookies absent again. ModuBricks files/settings unchanged. Plugin activity returned to ModuBricks 1.1.1 active and ITD Cookies 0.1.0-dev.1 inactive.
+
+Owner confirmed permanent cleanup immediately before deletion. Temporary page ID 38 and the observer were permanently deleted; its four test options and GitHub cache were removed by uninstall. The WordPress confirmation dialog required the owner to click OK because browser control could not dismiss it; successful deletion was then verified on the plugin screen. Read-only options inspection showed only itd_cookies_settings and itd_cookies_migration_version, no test options, policy-page option or release cache. Plugin list returned to four original plugins and activity states. Old page ID 14 remains untouched in Trash. Fresh homepage reload showed the original ModuBricks banner, no ITD Cookies/observer/fixture/provider assets, no console errors/warnings and no horizontal overflow. Viewport override reset. Cleanup PASS.
+
+Historical v0.1.0 tag/release/assets were compared before and after publication and remained unchanged. Production, ModuBricks source, update-host and stable manifests were not modified. Published v0.2.0 tag/release/assets remain immutable.
+
+### Final stable release verdict
+
+ITD_COOKIES_V0.2.0_RELEASED_AND_STABLE_UPDATE_VERIFIED — release branch and separate main CI, publication, public API/assets, real stable-to-stable updater E2E, published desktop/mobile smoke, restoration and cleanup all PASS.
