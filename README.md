@@ -37,6 +37,10 @@ npm run inspect
 
 The deterministic ZIP uses an explicit runtime allowlist, fixed timestamps and one `itd-cookies/` root. Its inspector checks paths, main/header/constant versions and PHP syntax. Set `PHP_BINARY` to the PHP executable if it is not on PATH. Dev dependencies never ship.
 
+## Local QA
+
+The primary QA environment is OpenServer at `C:\openserver\domains\itd-cookies.local`, URL `http://itd-cookies.local`. See [Local QA procedure](docs/LOCAL-QA.md) and [project rules](AGENTS.md). Remote WordPress QA requires the explicit authorization phrase `REMOTE FINAL SMOKE AUTHORIZED`. GitHub updater checks run locally.
+
 ## Versions and releases
 
 The first stable version is **0.1.0**: the consent API is young and does not yet warrant a long-term 1.0 compatibility promise. Stable tags must be strict `vX.Y.Z`; prereleases never reach ordinary users.

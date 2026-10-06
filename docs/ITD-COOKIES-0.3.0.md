@@ -2,6 +2,78 @@
 
 Branch: feature/itd-cookies-0.3.0. Baseline origin/main: 2705b9f51e71e9ab1db778fd32591c81239ebcf6. Candidate: 0.3.0-dev.1. Published stable v0.2.0 remains unchanged. No stable tag/release is created in this stage.
 
+## Local QA environment
+
+The owner's LOCAL-FIRST QA POLICY applies permanently from this stage
+(2026-10-06). See [project rules](../AGENTS.md) and [setup/reset procedure](LOCAL-QA.md).
+The previous remote test is historical evidence only; it does not count as
+the local acceptance required now. No return to remote QA is automatic.
+
+- OpenServer document root: `C:\openserver\domains\itd-cookies.local`.
+- URL: `http://itd-cookies.local`; domain/hosts registration is present.
+- Folder was empty before setup. The Git checkout stays separate from runtime.
+- Running OpenServer PHP: 8.1.5; MariaDB: 10.6 (127.0.0.1:3306).
+- Official WordPress 7.1.2 en_US ZIP downloaded and extracted into this folder;
+  core checksums PASS. The ru_RU core download was unavailable via WP-CLI;
+  the native installer successfully downloaded/selects Russian translations.
+- WP-CLI 2.12.0 downloaded from the official builds repository and matched its
+  published SHA-512. The Windows WP-CLI extraction produced no installed files;
+  native ZIP extraction was used and verified instead. No failed step is a PASS.
+- Local browser: Russian setup-config page loads. Database-backed installation
+  is **not complete**. Theme/plugin activation has not started.
+- Dedicated intended database: `itd_cookies_local`. OpenServer root with no
+  password returned Access denied. Neither OpenServer/phpMyAdmin configuration
+  nor client defaults provide saved administrator credentials, and local
+  phpMyAdmin shows its login form. A private SQL bootstrap was prepared outside
+  web-root/Git: it creates only this database and a dedicated localhost user
+  with privileges on this database. The owner was asked to authenticate/import
+  it locally. This import has not been confirmed; no other database was read
+  or used, and no existing account/password was modified.
+- Baseline: **not yet captured**, because installation/database setup is pending.
+  No destructive test is allowed before a recoverable baseline exists.
+- Prepared untracked local tools in the private `030-local-qa` artifact folder:
+  `configure-local.php` validates dedicated localhost DB, writes wp-config and
+  removes private temporary credential inputs outside web-root; `qa-state.php` exports non-secret
+  state; `baseline.ps1 -Mode Capture|Restore|Inspect` exports/imports the
+  dedicated DB, saves wp-content and hashes, checks exact absolute paths and
+  verifies restored options/theme/plugins/files. These procedures are prepared,
+  not yet executed or claimed as verified baseline/reset.
+- No local observer/helper has been installed. No candidate runtime copy has
+  been deployed yet. Final local state: official core files and language files,
+  waiting for wp-config/database/installation.
+
+### Local acceptance execution status
+
+| Check | Actual result in this local-only stage |
+| --- | --- |
+| Official core download/checksums | PASS |
+| WP-CLI checksum and version | PASS |
+| Local domain/installer, Russian language | PASS |
+| Database setup and WordPress installation | BLOCKED: dedicated DB access missing |
+| Baseline DB dump/settings/theme/plugins/wp-content hashes | NOT RUN |
+| Direct development install smoke | NOT RUN |
+| Native v0.2.0 ZIP -> 0.3.0-dev.1 upgrade preservation | NOT RUN |
+| Consent/category/dedup/revoke/reload browser matrix | NOT RUN |
+| Actual SDK requests before/after consent | NOT RUN |
+| Dynamic policy/legal links/footer/shortcodes | NOT RUN |
+| Desktop 1440x900 / mobile 390x844 | NOT RUN |
+| Invalid ZIP / broken package URL / mocked GitHub timeout | NOT RUN |
+| Malformed IDs/settings/consent in local WordPress | NOT RUN |
+| Real anonymous GitHub updater check on local WordPress | NOT RUN |
+| Local baseline restore and cleanup | NOT RUN |
+
+Remote-access criterion for **this stage**: remote QA requests initiated to
+testwp.itdream.su = **0**; SSH/FTP operations against Timeweb = **0**; production
+mutations = **0**. Existing remote pages/plugins were not inspected or changed.
+The earlier remote restoration remains unverified; no fresh remote status or
+cleanup claim is made. A separate explicitly authorized task is required for it.
+
+Before local acceptance, finish the dedicated DB/install, choose ru_RU and
+Twenty Twenty-Five, minimize default plugins, capture and verify baseline.
+Then execute every NOT RUN row above, restore the baseline (or explicitly
+document a useful accepted candidate state), verify no local helper remains
+and run CI on the documentation closure commit. Do not create a stable tag.
+
 ## Provider architecture
 
 ITD_Cookies_Services is the descriptive registry for both category cards and dynamic policy. Each entry exposes id, name, category, enabled, description and provider_type. Older filtered entries without provider_type become external. Runtime configuration is generated only for validated native IDs; descriptive extensions cannot supply executable snippets or arbitrary SDK URLs.
@@ -54,7 +126,7 @@ Local checks (2026-10-06): PHPUnit on PHP 7.4 PASS (21 tests, 340 assertions); J
 
 Implementation commit: da71f8387adb3d858a026f21145a23855da02a13. [Full existing CI run 37426737141](https://github.com/itdream24/itd-cookies/actions/runs/37426737141) PASS, all nine jobs: PHP 7.4, PHP 8.5, quality, node, WordPress 5.2/PHP 7.4, WordPress 5.2.24/PHP 7.4, latest/PHP 7.4, latest/PHP 8.5, build. No cancelled/skipped job. Production-format dev ZIP inspector PASS: 15 runtime entries, single itd-cookies/ root, version 0.3.0-dev.1, updater/PO/MO included, dev files excluded, all packaged PHP syntax valid on 7.4. Asset name: itd-cookies-0.3.0-dev.1.zip. SHA-256: 66e110a5c3d1da388e735643a4c98fbe2eb600f011827eafc53f55dfac6cb4c9. This ZIP is a test candidate; no stable release is published.
 
-## Browser tests
+## Historical remote browser tests (before LOCAL-FIRST policy)
 
 Owner confirmed a recoverable snapshot and the candidate/observer installation immediately before E2E (2026-10-06). Test scope is testwp only. The observer is outside Git/ZIP, restricted to this host and an admin preview; it counts application calls and Performance Resource Timing SDK entries. It does not replace HTTP metadata or SDK responses. Clarity's bootstrap count is its SDK script append; API consentv2 signals are counted separately. This does not claim backend delivery with test IDs.
 
@@ -101,13 +173,11 @@ Keep registry descriptions separate from executable adapters. A potential 0.4.x 
 
 ## Verdict
 
-NOT_READY_FOR_ITD_COOKIES_0_3_0_RELEASE — implementation, local checks, nine-job CI and executed browser runtime/UI checks PASS; final policy verification and testwp restoration/cleanup are blocked by the connection timeout. Do not create a stable tag/release.
+NOT_READY_FOR_ITD_COOKIES_0_3_0_RELEASE — provider implementation and previous
+automated checks passed, but the required local WordPress installation is
+blocked by dedicated database access. Local baseline, browser/upgrader/failure
+acceptance and restore/cleanup have not run. Historical remote checks do not
+substitute for this gate. No stable tag/release is authorized.
 
-### Resume after testwp becomes available
-
-1. Open Tools > ITD Cookies provider acceptance; verify current settings/plugin state and preserve the observer snapshot.
-2. Finish the enabled-service dynamic policy check if needed, then clear the three test consent cookies using the preview control (their baseline presence was all false).
-3. Deactivate ITD Cookies; restore the original 01C dev ZIP through WordPress upload/replace. The original ZIP is retained locally outside Git.
-4. Use Restore settings and trash test page in the observer. Compare original settings/file hashes, migration marker, managed-page option, ModuBricks hashes/settings and cookie absence. Restore plugin activity to ModuBricks active, ITD Cookies inactive; Akismet/Hello Dolly stay inactive.
-5. Permanently remove only temporary pages 43/44 and the observer with its five test options after action-time cleanup confirmation; leave page 14 untouched. Verify original four-plugin list, options/caches, homepage reload and no temporary assets.
-6. Update this report only after verified cleanup; run final CI for the documentation closure commit and then consider READY. No stable tag/release is authorized in this stage.
+Remote restoration from the earlier task remains unverified and must not be
+attempted without a new task containing REMOTE FINAL SMOKE AUTHORIZED.
