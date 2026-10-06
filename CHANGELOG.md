@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0-dev.1 (unreleased)
+- Unified consent-gated native provider loader: GTM/Clarity (analytics), Meta Pixel (marketing).
+- Registry provider types, grouped admin settings, strict ID validation and dynamic policy service descriptions.
+- New integrations default OFF; schema 1 and existing 0.2.0 options/consent retained.
+- Clarity consentv2 follows Analytics/Marketing choices; revoked categories reload without their providers.
+- VK Ads deferred pending verified official installation. No external script firewall or automatic Google Consent Mode.
+
 ## 0.2.0 — 2026-10-05
 
 - New consent banner and category-card settings panel with descriptions and accessible toggles.

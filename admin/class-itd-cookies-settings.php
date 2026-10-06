@@ -49,6 +49,12 @@ final class ITD_Cookies_Settings {
 			'metrika_ecommerce_data_layer'  => 'dataLayer',
 			'ga4_enabled'                   => 0,
 			'ga4_measurement_id'            => '',
+			'gtm_enabled'                   => 0,
+			'gtm_container_id'              => '',
+			'clarity_enabled'               => 0,
+			'clarity_project_id'            => '',
+			'meta_enabled'                  => 0,
+			'meta_pixel_id'                 => '',
 			'consent_days'                  => 365,
 			'consent_version'               => '1',
 		);
@@ -73,15 +79,18 @@ final class ITD_Cookies_Settings {
 	 * @return array<string,int|string>
 	 */
 	public static function sanitize( $input ) {
-		$input = is_array( $input ) ? $input : array();
-		$days  = self::scalar( $input, 'consent_days' );
-		$days  = preg_match( '/\A[0-9]+\z/D', $days ) ? (int) $days : 365;
-		$size  = self::scalar( $input, 'banner_text_size' );
-		$size  = in_array( $size, array( 'very-small', 'small', 'standard', 'large', 'very-large' ), true ) ? $size : 'standard';
-		$id    = self::scalar( $input, 'metrika_id' );
-		$ga4   = self::scalar( $input, 'ga4_measurement_id' );
-		$layer = self::scalar( $input, 'metrika_ecommerce_data_layer' );
-		$ver   = sanitize_text_field( self::scalar( $input, 'consent_version' ) );
+		$input   = is_array( $input ) ? $input : array();
+		$days    = self::scalar( $input, 'consent_days' );
+		$days    = preg_match( '/\A[0-9]+\z/D', $days ) ? (int) $days : 365;
+		$size    = self::scalar( $input, 'banner_text_size' );
+		$size    = in_array( $size, array( 'very-small', 'small', 'standard', 'large', 'very-large' ), true ) ? $size : 'standard';
+		$id      = self::scalar( $input, 'metrika_id' );
+		$ga4     = self::scalar( $input, 'ga4_measurement_id' );
+		$gtm     = isset( $input['gtm_container_id'] ) && is_string( $input['gtm_container_id'] ) ? trim( $input['gtm_container_id'] ) : '';
+		$clarity = isset( $input['clarity_project_id'] ) && is_string( $input['clarity_project_id'] ) ? trim( $input['clarity_project_id'] ) : '';
+		$meta    = isset( $input['meta_pixel_id'] ) && is_string( $input['meta_pixel_id'] ) ? trim( $input['meta_pixel_id'] ) : '';
+		$layer   = self::scalar( $input, 'metrika_ecommerce_data_layer' );
+		$ver     = sanitize_text_field( self::scalar( $input, 'consent_version' ) );
 
 		$title    = sanitize_text_field( self::scalar( $input, 'banner_title' ) );
 		$text     = sanitize_textarea_field( self::scalar( $input, 'banner_text' ) );
@@ -102,6 +111,12 @@ final class ITD_Cookies_Settings {
 			'metrika_ecommerce_data_layer'  => preg_match( '/\A[A-Za-z_$][A-Za-z0-9_$]{0,63}\z/D', $layer ) ? $layer : 'dataLayer',
 			'ga4_enabled'                   => self::flag( $input, 'ga4_enabled' ),
 			'ga4_measurement_id'            => preg_match( '/\AG-[A-Z0-9]{4,32}\z/D', $ga4 ) ? $ga4 : '',
+			'gtm_enabled'                   => self::flag( $input, 'gtm_enabled' ),
+			'gtm_container_id'              => preg_match( '/\AGTM-[A-Z0-9]{4,32}\z/D', $gtm ) ? $gtm : '',
+			'clarity_enabled'               => self::flag( $input, 'clarity_enabled' ),
+			'clarity_project_id'            => preg_match( '/\A[a-z0-9]{1,64}\z/D', $clarity ) ? $clarity : '',
+			'meta_enabled'                  => self::flag( $input, 'meta_enabled' ),
+			'meta_pixel_id'                 => preg_match( '/\A[1-9][0-9]{0,19}\z/D', $meta ) ? $meta : '',
 			'consent_days'                  => max( 1, min( 3650, $days ) ),
 			'consent_version'               => '' !== trim( $ver ) ? substr( $ver, 0, 100 ) : '1',
 		);
@@ -141,7 +156,10 @@ final class ITD_Cookies_Settings {
 			return;
 		}
 
-		$allowed = array_keys( self::defaults() );
+		$allowed = array_diff(
+			array_keys( self::defaults() ),
+			array( 'gtm_enabled', 'gtm_container_id', 'clarity_enabled', 'clarity_project_id', 'meta_enabled', 'meta_pixel_id' )
+		);
 		$copy    = array_intersect_key( $legacy, array_fill_keys( $allowed, true ) );
 		$copy    = array_merge( self::defaults(), $copy );
 		if ( ! array_key_exists( 'metrika_enabled', $legacy ) && ! empty( $legacy['metrika_id'] ) ) {
@@ -246,7 +264,8 @@ final class ITD_Cookies_Settings {
 					<?php self::checkbox_row( __( 'Automatically display legal links at the bottom of the site', 'itd-cookies' ), 'auto_footer', $settings ); ?>
 				</table>
 				<p><?php echo esc_html__( 'Use [itd_cookies_legal_links] to place the links yourself. Automatic output is disabled by default.', 'itd-cookies' ); ?></p>
-				<h2><?php echo esc_html__( 'Yandex Metrika', 'itd-cookies' ); ?></h2>
+				<h2><?php echo esc_html__( 'Analytics', 'itd-cookies' ); ?></h2>
+				<h3><?php echo esc_html__( 'Yandex Metrika', 'itd-cookies' ); ?></h3>
 				<p><?php echo esc_html__( 'Enter the numeric counter ID. Executable snippets are not stored.', 'itd-cookies' ); ?></p>
 				<table class="form-table" role="presentation">
 					<?php self::checkbox_row( __( 'Enable Yandex Metrika', 'itd-cookies' ), 'metrika_enabled', $settings ); ?>
@@ -258,11 +277,30 @@ final class ITD_Cookies_Settings {
 					<?php self::checkbox_row( __( 'Ecommerce', 'itd-cookies' ), 'metrika_ecommerce', $settings ); ?>
 					<?php self::text_row( __( 'Ecommerce data layer', 'itd-cookies' ), 'metrika_ecommerce_data_layer', $settings ); ?>
 				</table>
-				<h2><?php echo esc_html__( 'Google Analytics 4', 'itd-cookies' ); ?></h2>
+				<h3><?php echo esc_html__( 'Google Analytics 4', 'itd-cookies' ); ?></h3>
 				<table class="form-table" role="presentation">
 					<?php self::checkbox_row( __( 'Enable Google Analytics 4', 'itd-cookies' ), 'ga4_enabled', $settings ); ?>
 					<?php self::text_row( __( 'Measurement ID', 'itd-cookies' ), 'ga4_measurement_id', $settings ); ?>
 				</table>
+				<h3><?php echo esc_html__( 'Google Tag Manager', 'itd-cookies' ); ?></h3>
+				<table class="form-table" role="presentation">
+					<?php self::checkbox_row( __( 'Enable Google Tag Manager', 'itd-cookies' ), 'gtm_enabled', $settings ); ?>
+					<?php self::text_row( __( 'Container ID', 'itd-cookies' ), 'gtm_container_id', $settings ); ?>
+				</table>
+				<p><?php echo esc_html__( 'ITD Cookies controls loading of the GTM container after Analytics consent. Tags inside the container depend on its configuration and may require Marketing consent. Google Consent Mode is not configured automatically.', 'itd-cookies' ); ?></p>
+				<h3><?php echo esc_html__( 'Microsoft Clarity', 'itd-cookies' ); ?></h3>
+				<table class="form-table" role="presentation">
+					<?php self::checkbox_row( __( 'Enable Microsoft Clarity', 'itd-cookies' ), 'clarity_enabled', $settings ); ?>
+					<?php self::text_row( __( 'Project ID', 'itd-cookies' ), 'clarity_project_id', $settings ); ?>
+				</table>
+				<h2><?php echo esc_html__( 'Marketing', 'itd-cookies' ); ?></h2>
+				<h3><?php echo esc_html__( 'Meta Pixel', 'itd-cookies' ); ?></h3>
+				<table class="form-table" role="presentation">
+					<?php self::checkbox_row( __( 'Enable Meta Pixel', 'itd-cookies' ), 'meta_enabled', $settings ); ?>
+					<?php self::text_row( __( 'Pixel ID', 'itd-cookies' ), 'meta_pixel_id', $settings ); ?>
+				</table>
+				<h3><?php echo esc_html__( 'VK Ads', 'itd-cookies' ); ?></h3>
+				<p><?php echo esc_html__( 'VK Ads integration is deferred until the official installation method can be verified.', 'itd-cookies' ); ?></p>
 				<p><?php echo esc_html__( 'Place [itd_cookies_settings] in a page or footer to let visitors change their choice.', 'itd-cookies' ); ?></p>
 				<?php submit_button( __( 'Save settings', 'itd-cookies' ) ); ?>
 			</form>

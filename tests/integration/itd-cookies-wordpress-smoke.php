@@ -162,4 +162,50 @@ if ( false === strpos( $footer, '/agreement/' ) || false === strpos( $footer, 'i
 }
 update_option( ITD_Cookies_Settings::OPTION_NAME, $before );
 
+// Provider 0.3.0 checks preserve the stored 0.2.0 option and policy state.
+$original = get_option( ITD_Cookies_Settings::OPTION_NAME );
+$marker   = get_option( ITD_Cookies_Settings::MIGRATION_MARKER );
+$old      = $original;
+foreach ( array( 'gtm_enabled', 'gtm_container_id', 'clarity_enabled', 'clarity_project_id', 'meta_enabled', 'meta_pixel_id' ) as $key ) {
+	unset( $old[ $key ] );
+}
+update_option( ITD_Cookies_Settings::OPTION_NAME, $old );
+$page_id      = ITD_Cookies_Legal::ensure_page();
+$page_content = get_post( $page_id )->post_content;
+ITD_Cookies_Settings::migrate_legacy();
+$new = ITD_Cookies_Settings::get();
+if ( get_option( ITD_Cookies_Settings::OPTION_NAME ) !== $old || get_option( ITD_Cookies_Settings::MIGRATION_MARKER ) !== $marker || ITD_Cookies_Legal::page_id() !== $page_id || get_post( $page_id )->post_content !== $page_content || 1 !== ITD_Cookies_Consent::SCHEMA ) {
+	$fail( '0.2.0 options, marker, managed policy or consent schema changed.' );
+}
+foreach ( array( 'gtm', 'clarity', 'meta' ) as $provider_type ) {
+	if ( 0 !== $new[ $provider_type . '_enabled' ] ) {
+		$fail( 'A new provider was enabled by default.' );
+	}
+}
+$new['gtm_enabled']        = 1;
+$new['gtm_container_id']   = 'GTM-TEST123';
+$new['clarity_enabled']    = 1;
+$new['clarity_project_id'] = 'test12345';
+$new['meta_enabled']       = 1;
+$new['meta_pixel_id']      = '123456789012345';
+update_option( ITD_Cookies_Settings::OPTION_NAME, $new );
+$registry = ITD_Cookies_Services::get( $new );
+if ( 4 !== count( ITD_Cookies_Services::in_category( $registry, 'analytics' ) ) || 1 !== count( ITD_Cookies_Services::in_category( $registry, 'marketing' ) ) || 5 !== count( ITD_Cookies_Services::providers( $new ) ) ) {
+	$fail( 'Native provider configuration did not match the registry.' );
+}
+$policy = do_shortcode( '[itd_cookies_policy]' );
+foreach ( array( 'Google Tag Manager', 'Microsoft Clarity', 'Meta Pixel' ) as $name ) {
+	if ( false === strpos( $policy, $name ) ) {
+		$fail( 'Dynamic policy omitted ' . $name );
+	}
+}
+( new ITD_Cookies_Plugin() )->enqueue_assets();
+$scripts = wp_scripts();
+if ( ! wp_script_is( 'itd-cookies-providers', 'enqueued' ) || ! in_array( 'itd-cookies-providers', $scripts->registered['itd-cookies-consent']->deps, true ) ) {
+	$fail( 'Provider loader is not a consent controller dependency.' );
+}
+update_option( ITD_Cookies_Settings::OPTION_NAME, $original );
+wp_delete_post( $page_id, true );
+delete_option( ITD_Cookies_Legal::PAGE_OPTION );
+
 WP_CLI::success( $persisted ? 'ITD Cookies reactivation preserved migrated settings.' : 'ITD Cookies activation, migration, consent defaults, UI, and Russian translation passed.' );

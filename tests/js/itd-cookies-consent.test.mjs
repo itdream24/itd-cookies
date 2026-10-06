@@ -51,6 +51,7 @@ function createPage({ jar = new CookieJar(), version = "1", configured = provide
 		schema: "1",
 		version,
 	};
+	window.eval(fs.readFileSync(new URL('../../assets/js/providers.js', import.meta.url), 'utf8'));
 	window.eval(source);
 	return dom;
 }
@@ -370,4 +371,84 @@ test('panel Accept all and keyboard wrap work, disabled categories preserve exis
 	click(window, '[data-itd-cookies-save]');
 	assert.equal(choice(window).categories.functional, true);
 	assert.deepEqual(initializationCounts(window), {yandex:1,ga4:1});
+});
+
+const allProviders = [...providers,
+ {type:'gtm',id:'GTM-TEST123',category:'analytics'},
+ {type:'clarity',id:'test12345',category:'analytics'},
+ {type:'meta',id:'123456789012345',category:'marketing'},
+];
+function providerCounts(window) {
+ const scripts=[...window.document.querySelectorAll('script[src]')];
+ return {
+  ...initializationCounts(window),
+  gtm:(window.dataLayer||[]).filter(call=>call.event==='gtm.js').length,
+  clarity:scripts.filter(script=>script.src.startsWith('https://www.clarity.ms/tag/')).length,
+  meta:(window.fbq?.queue||[]).filter(call=>call[0]==='init').length,
+ };
+}
+function assertProviders(window, analytics, marketing) {
+ assert.deepEqual(providerCounts(window),{yandex:+analytics,ga4:+analytics,gtm:+analytics,clarity:+analytics,meta:+marketing});
+ assert.equal(window.document.querySelectorAll('script[src]').length,4*+analytics + +marketing);
+ if (analytics) {
+  const signals=(window.clarity.q||[]).filter(call=>call[0]==='consentv2');
+  assert.equal(signals.at(-1)[1].analytics_Storage,'granted');
+  assert.equal(signals.at(-1)[1].ad_Storage,marketing?'granted':'denied');
+ }
+}
+for (const [name,analytics,marketing] of [['reject',false,false],['analytics only',true,false],['marketing only',false,true],['accept all',true,true]]) {
+ test('all five providers: '+name+' gates and survives reload',t=>{
+  const jar=new CookieJar();const dom=createPage({jar,configured:allProviders});t.after(()=>dom.window.close());
+  assertProviders(dom.window,false,false);
+  click(dom.window,'[data-itd-cookies-customize]');
+  dom.window.document.querySelector('[data-itd-cookies-category="analytics"]').checked=analytics;
+  dom.window.document.querySelector('[data-itd-cookies-category="marketing"]').checked=marketing;
+  click(dom.window,'[data-itd-cookies-save]');assertProviders(dom.window,analytics,marketing);
+  const before=choice(dom.window);
+  const next=createPage({jar,configured:allProviders});t.after(()=>next.window.close());
+  assert.deepEqual(choice(next.window),before);assertProviders(next.window,analytics,marketing);
+ });
+}
+for (const type of ['gtm','clarity','meta']) {
+ test(type+' disabled and malformed IDs fail closed',t=>{
+  const dom=createPage({configured:[]});t.after(()=>dom.window.close());click(dom.window,'[data-itd-cookies-accept]');assertProviders(dom.window,false,false);
+  for(const id of ['', '<script>alert(1)</script>', 'https://example.test/', '123?x=1', {}, 123, 'A'.repeat(100)]) {
+   const bad=createPage({configured:[{type,id}]});t.after(()=>bad.window.close());click(bad.window,'[data-itd-cookies-accept]');assertProviders(bad.window,false,false);
+  }
+ });
+}
+test('dedup: existing consent, reopen/save, repeated accept and custom to accept',t=>{
+ const jar=new CookieJar();const old=createPage({jar,configured:providers});t.after(()=>old.window.close());
+ click(old.window,'[data-itd-cookies-accept]');const original=choice(old.window);
+ const dom=createPage({jar,configured:[...allProviders,...allProviders]});t.after(()=>dom.window.close());
+ assert.deepEqual(choice(dom.window),original);assertProviders(dom.window,true,true);
+ for(let i=0;i<3;i++) {click(dom.window,'[data-itd-cookies-open]');click(dom.window,'[data-itd-cookies-save]');click(dom.window,'[data-itd-cookies-accept]');}
+ dom.window.eval(fs.readFileSync(new URL('../../assets/js/providers.js',import.meta.url),'utf8'));
+ click(dom.window,'[data-itd-cookies-accept]');assertProviders(dom.window,true,true);
+ assert.equal((dom.window.fbq.queue||[]).filter(call=>call[0]==='trackSingle').length,1);
+ const custom=createPage({configured:allProviders});t.after(()=>custom.window.close());
+ click(custom.window,'[data-itd-cookies-customize]');custom.window.document.querySelector('[data-itd-cookies-category="analytics"]').checked=true;click(custom.window,'[data-itd-cookies-save]');assertProviders(custom.window,true,false);
+ click(custom.window,'[data-itd-cookies-accept]');assertProviders(custom.window,true,true);
+});
+for(const category of ['analytics','marketing']) {
+ test('revoking '+category+' persists and prevents its providers next document',t=>{
+  const jar=new CookieJar();const first=createPage({jar,configured:allProviders});t.after(()=>first.window.close());
+  click(first.window,'[data-itd-cookies-accept]');click(first.window,'[data-itd-cookies-open]');
+  first.window.document.querySelector('[data-itd-cookies-category="'+category+'"]').checked=false;click(first.window,'[data-itd-cookies-save]');
+  assert.equal(choice(first.window).categories[category],false);
+  const next=createPage({jar,configured:allProviders});t.after(()=>next.window.close());assertProviders(next.window,category!=='analytics',category!=='marketing');
+ });
+}
+test('unknown/prototype types and category spoofing cannot bypass consent',t=>{
+ const bad=[{type:'__proto__',id:'x'},{type:'constructor',id:'x'},{type:'custom',id:'x',url:'https://example.test/x.js'},
+ {type:'meta',id:'12345678',category:'analytics'},{type:'gtm',id:'GTM-TEST123',category:'necessary'}];
+ const dom=createPage({configured:bad});t.after(()=>dom.window.close());click(dom.window,'[data-itd-cookies-accept]');assertProviders(dom.window,false,false);
+});
+test('existing SDK tags are not reinserted or reinitialized',t=>{
+ const dom=createPage({configured:allProviders});t.after(()=>dom.window.close());
+ for (const src of ['https://mc.yandex.ru/metrika/tag.js','https://www.googletagmanager.com/gtag/js?id=G-TEST12345','https://www.googletagmanager.com/gtm.js?id=GTM-TEST123','https://www.clarity.ms/tag/test12345','https://connect.facebook.net/en_US/fbevents.js']) {
+  const script=dom.window.document.createElement('script');script.src=src;dom.window.document.head.appendChild(script);
+ }
+ click(dom.window,'[data-itd-cookies-accept]');assert.equal(dom.window.document.querySelectorAll('script').length,5);
+ assert.equal(typeof dom.window.fbq,'undefined');assert.equal(typeof dom.window.clarity,'undefined');assert.equal(typeof dom.window.ym,'undefined');
 });

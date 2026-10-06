@@ -45,7 +45,8 @@ final class ITD_Cookies_Plugin {
 		if ( ! $settings['enabled'] ) {
 			return;
 		}
-		wp_enqueue_script( self::ASSET_HANDLE, ITD_COOKIES_URL . 'assets/js/consent.js', array(), ITD_COOKIES_VERSION, true );
+		wp_enqueue_script( 'itd-cookies-providers', ITD_COOKIES_URL . 'assets/js/providers.js', array(), ITD_COOKIES_VERSION, true );
+		wp_enqueue_script( self::ASSET_HANDLE, ITD_COOKIES_URL . 'assets/js/consent.js', array( 'itd-cookies-providers' ), ITD_COOKIES_VERSION, true );
 		wp_localize_script(
 			self::ASSET_HANDLE,
 			'ITDCookiesConfig',
@@ -62,37 +63,14 @@ final class ITD_Cookies_Plugin {
 	}
 
 	/**
-	 * Only numeric Yandex IDs and canonical GA4 IDs are accepted. There is no
+	 * Only validated built-in provider IDs are accepted. There is no
 	 * arbitrary executable snippet setting in the source plugin or this one.
 	 *
 	 * @param array $settings Sanitized settings.
 	 * @return array
 	 */
 	private function providers( array $settings ) {
-		$providers = array();
-		if ( $settings['metrika_enabled'] && '' !== $settings['metrika_id'] ) {
-			$options = array(
-				'clickmap'            => (bool) $settings['metrika_clickmap'],
-				'trackLinks'          => (bool) $settings['metrika_track_links'],
-				'accurateTrackBounce' => (bool) $settings['metrika_accurate_track_bounce'],
-				'webvisor'            => (bool) $settings['metrika_webvisor'],
-			);
-			if ( $settings['metrika_ecommerce'] ) {
-				$options['ecommerce'] = $settings['metrika_ecommerce_data_layer'];
-			}
-			$providers[] = array(
-				'type'    => 'yandex',
-				'id'      => $settings['metrika_id'],
-				'options' => $options,
-			);
-		}
-		if ( $settings['ga4_enabled'] && '' !== $settings['ga4_measurement_id'] ) {
-			$providers[] = array(
-				'type' => 'ga4',
-				'id'   => $settings['ga4_measurement_id'],
-			);
-		}
-		return $providers;
+		return ITD_Cookies_Services::providers( $settings );
 	}
 
 	/**

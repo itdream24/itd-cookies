@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.2.0\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.3.0-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -225,3 +225,54 @@ msgstr "Вы можете изменить выбор через «Настро�
 
 msgid "The Cookie Policy page could not be created."
 msgstr "Не удалось создать страницу политики Cookie."
+
+msgid "Google Tag Manager"
+msgstr "Google Tag Manager"
+
+msgid "Enable Google Tag Manager"
+msgstr "Включить Google Tag Manager"
+
+msgid "Container ID"
+msgstr "ID контейнера"
+
+msgid "Microsoft Clarity"
+msgstr "Microsoft Clarity"
+
+msgid "Enable Microsoft Clarity"
+msgstr "Включить Microsoft Clarity"
+
+msgid "Project ID"
+msgstr "ID проекта"
+
+msgid "Meta Pixel"
+msgstr "Meta Pixel"
+
+msgid "Enable Meta Pixel"
+msgstr "Включить Meta Pixel"
+
+msgid "Pixel ID"
+msgstr "ID пикселя"
+
+msgid "VK Ads"
+msgstr "VK Реклама"
+
+msgid "ITD Cookies controls loading of the GTM container after Analytics consent. Tags inside the container depend on its configuration and may require Marketing consent. Google Consent Mode is not configured automatically."
+msgstr "ITD Cookies управляет загрузкой контейнера GTM после согласия на аналитику. Теги внутри зависят от настроек контейнера и могут требовать согласия на маркетинг. Google Consent Mode автоматически не настраивается."
+
+msgid "VK Ads integration is deferred until the official installation method can be verified."
+msgstr "Интеграция VK Рекламы отложена до проверки официального способа подключения."
+
+msgid "Loads a Google tag container. Tags inside depend on the container configuration and may use marketing services."
+msgstr "Загружает контейнер Google. Его теги зависят от настроек контейнера и могут использовать маркетинговые сервисы."
+
+msgid "Heatmaps and session recordings provided by Microsoft."
+msgstr "Тепловые карты и записи сеансов от Microsoft."
+
+msgid "Advertising measurement provided by Meta."
+msgstr "Измерение эффективности рекламы от Meta."
+
+msgid "When consent is enabled, this plugin loads its built-in services only after you allow their category: Analytics or Marketing. Revoking a category saves your decision and reloads the page without its providers."
+msgstr "При включённом согласии плагин загружает встроенные сервисы только после разрешения их категории: аналитики или маркетинга. Отзыв категории сохраняет выбор и перезагружает страницу без её провайдеров."
+
+msgid "Consent collection and provider loading by this plugin are currently disabled."
+msgstr "Сбор согласия и загрузка провайдеров этим плагином сейчас отключены."

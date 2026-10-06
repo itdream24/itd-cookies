@@ -126,9 +126,9 @@ final class ITD_Cookies_Legal {
 				$html .= '<p>' . esc_html__( 'Not currently used', 'itd-cookies' ) . '</p>';
 			}
 		}
-		$html .= '<p>' . esc_html__( 'When consent is enabled, this plugin loads analytics services only after you allow the Analytics category. Revoking that choice saves your decision and reloads the page without those providers.', 'itd-cookies' ) . '</p>';
+		$html .= '<p>' . esc_html__( 'When consent is enabled, this plugin loads its built-in services only after you allow their category: Analytics or Marketing. Revoking a category saves your decision and reloads the page without its providers.', 'itd-cookies' ) . '</p>';
 		if ( ! $settings['enabled'] ) {
-			$html .= '<p>' . esc_html__( 'Consent collection and analytics loading by this plugin are currently disabled.', 'itd-cookies' ) . '</p>';
+			$html .= '<p>' . esc_html__( 'Consent collection and provider loading by this plugin are currently disabled.', 'itd-cookies' ) . '</p>';
 		}
 		// translators: %d is the configured lifetime of the consent choice in days.
 		$html .= '<p>' . esc_html( sprintf( __( 'Your consent choice is stored for %d days, unless you change it, clear browser cookies or the site changes its consent version.', 'itd-cookies' ), $settings['consent_days'] ) ) . '</p>';

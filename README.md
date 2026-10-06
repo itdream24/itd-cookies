@@ -54,3 +54,15 @@ Version: 0.2.0. Adds service descriptions, Cookie Policy, four legal links and a
 Shortcodes: [itd_cookies_settings], [itd_cookies_policy], [itd_cookies_legal_links]. Automatic footer output is off by default. Cookie Policy page creation is an explicit admin action and never overwrites existing page content.
 
 Registry filter: itd_cookies_services receives an array of id, name, category, enabled and description entries plus sanitized settings. Extensions must implement their own consent-aware loading through the existing APIs; registry entries only describe services.
+
+## 0.3.0 development
+
+Candidate: **0.3.0-dev.1**; published stable stays **0.2.0**. See [acceptance report](docs/ITD-COOKIES-0.3.0.md).
+
+Native Analytics integrations: Yandex Metrika, GA4, Google Tag Manager and Microsoft Clarity. Native Marketing: Meta Pixel. New integrations are off by default, including on legacy import. VK Ads is deferred until its official installation method can be verified.
+
+The service registry adds provider_type; older descriptive extensions default to external. A closed adapter map loads built-in scripts only after their category is allowed and attempts each integration once per document. Revoking an optional category saves the choice and reloads; already executed third-party code cannot be unloaded reliably. Cookie schema stays 1, and upgrades preserve the existing consent version.
+
+External SDK hosts also include www.clarity.ms and connect.facebook.net. ITD Cookies controls loading of the GTM container; tags inside depend on the container configuration and can require Marketing consent. Google Consent Mode is not configured automatically. Configure the container accordingly and avoid configuring the same service both natively and inside GTM. Clarity receives consentv2 with Analytics granted and ad storage following Marketing consent.
+
+Built-in consent gating does not block arbitrary scripts inserted by themes/plugins. No universal firewall, arbitrary script input, vendor backend delivery guarantee or legal compliance guarantee is provided.

@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
 
+= 0.3.0-dev.1 =
+* Development: GTM and Clarity after Analytics consent, Meta Pixel after Marketing consent; unified provider loader and safe OFF defaults. VK Ads deferred.
+
 = 0.2.0 =
 * New consent UI with category cards, descriptions, configured services and accessible toggles.
 * Extensible descriptive service registry showing enabled Yandex Metrika and GA4 in Analytics.
@@ -50,3 +53,6 @@ No. Site owners must choose their policies and provider configuration.
 * One-time allowlisted migration of legacy ModuBricks consent/provider settings.
 * Anonymous stable GitHub Releases updater with cached failure handling and native WordPress installation.
 * Russian translation; WordPress 5.2+ and PHP 7.4+ compatibility.
+
+== Provider limitations ==
+ITD Cookies controls its built-in integrations. It does not block scripts inserted by themes or other plugins. GTM container loading follows Analytics consent; its tags may require Marketing consent and depend on container configuration. Google Consent Mode is not configured automatically. Avoid configuring the same tracker both natively and inside GTM.

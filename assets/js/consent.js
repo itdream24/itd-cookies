@@ -8,7 +8,6 @@
 	var previousFocus = null;
 	var backdrop = document.querySelector('[data-itd-cookies-backdrop]');
 	var state = null;
-	var loaded = {};
 	var categories = ['functional', 'analytics', 'marketing'];
 
 	if (
@@ -228,111 +227,21 @@
 		}
 	}
 
-	function validYandexId(id) {
-		return typeof id === 'string' && /^[1-9][0-9]{0,14}$/.test(id);
-	}
-
-	function validGa4Id(id) {
-		return typeof id === 'string' && /^G-[A-Z0-9]{4,32}$/.test(id);
-	}
-
-	function hasExistingLoader(prefix) {
-		var scripts = document.getElementsByTagName('script');
-		var i;
-		var src;
-		for (i = 0; i < scripts.length; i += 1) {
-			src = scripts[i].getAttribute('src') || '';
-			if (src === prefix || src.indexOf(prefix + '?') === 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	function loadYandex(provider) {
-		var key = 'yandex:' + provider.id;
-		var url = 'https://mc.yandex.ru/metrika/tag.js';
-		var script;
-		if (!validYandexId(provider.id) || loaded[key] || hasExistingLoader(url)) {
-			return;
-		}
-		loaded[key] = true;
-		if (typeof window.ym === 'undefined') {
-			window.ym = function () {
-				(window.ym.a = window.ym.a || []).push(arguments);
-			};
-			window.ym.l = Date.now();
-		}
-		if (typeof window.ym !== 'function') {
-			return;
-		}
-		script = document.createElement('script');
-		script.async = true;
-		script.src = url + '?id=' + encodeURIComponent(provider.id);
-		script.setAttribute('data-itd-cookies-analytics', 'yandex');
-		(document.head || document.documentElement).appendChild(script);
-		window.ym(provider.id, 'init', provider.options && typeof provider.options === 'object' ? provider.options : {});
-	}
-
-	function loadGa4(provider) {
-		var key = 'ga4:' + provider.id;
-		var url = 'https://www.googletagmanager.com/gtag/js';
-		var script;
-		if (!validGa4Id(provider.id) || loaded[key] || hasExistingLoader(url)) {
-			return;
-		}
-		loaded[key] = true;
-		if (!Array.isArray(window.dataLayer)) {
-			if (typeof window.dataLayer !== 'undefined') {
-				return;
-			}
-			window.dataLayer = [];
-		}
-		if (typeof window.gtag === 'undefined') {
-			window.gtag = function () {
-				window.dataLayer.push(arguments);
-			};
-		}
-		if (typeof window.gtag !== 'function') {
-			return;
-		}
-		script = document.createElement('script');
-		script.async = true;
-		script.src = url + '?id=' + encodeURIComponent(provider.id);
-		script.setAttribute('data-itd-cookies-analytics', 'ga4');
-		(document.head || document.documentElement).appendChild(script);
-		window.gtag('js', new Date());
-		window.gtag('config', provider.id);
-	}
-
-	function loadAnalytics() {
-		var providers = Array.isArray(config.providers) ? config.providers : [];
-		if (!allowed('analytics')) {
-			return;
-		}
-		providers.forEach(function (provider) {
-			if (!provider || typeof provider !== 'object') {
-				return;
-			}
-			if (provider.type === 'yandex') {
-				loadYandex(provider);
-			} else if (provider.type === 'ga4') {
-				loadGa4(provider);
-			}
-		});
+	function loadProviders() {
+		if (window.ITDCookiesProviderLoader) { window.ITDCookiesProviderLoader.load(config.providers, allowed); }
 	}
 
 	function saveChoice(choice, source) {
-		var wasAnalyticsAllowed = allowed('analytics');
+		var revoked = categories.filter(allowed);
 		writeConsent(choice);
 		hideBanner();
 		eventChanged(state, source);
-		if (wasAnalyticsAllowed && !allowed('analytics')) {
-			// Yandex and GA4 cannot be reliably unloaded from an active document.
+		if (revoked.some(function (category) { return !allowed(category); })) {
+			// Third-party JavaScript cannot be reliably unloaded from an active document.
 			window.location.reload();
 			return;
 		}
-		loadAnalytics();
+		loadProviders();
 	}
 
 	function button(selector, callback) {
@@ -396,7 +305,7 @@
 	}
 	window.ITDCookies = { allowed: allowed, openSettings: openSettings };
 	if (state) {
-		loadAnalytics();
+		loadProviders();
 	} else {
 		showBanner();
 	}

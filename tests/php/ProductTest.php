@@ -41,6 +41,13 @@ final class ProductTest extends TestCase {
 		Functions\when( 'esc_html__' )->returnArg( 1 );
 		Functions\when( 'esc_attr__' )->returnArg( 1 );
 		Functions\when( 'esc_html' )->alias( 'htmlspecialchars' );
+		Functions\when( 'esc_attr' )->alias( 'htmlspecialchars' );
+		Functions\when( 'disabled' )->alias(
+			static function ( $disabled ) {
+				if ( $disabled ) {
+					echo ' disabled="disabled"'; }
+			}
+		);
 		Functions\when( 'esc_url' )->returnArg( 1 );
 		Functions\when( 'esc_url_raw' )->returnArg( 1 );
 		Functions\when( 'wp_parse_url' )->alias( 'parse_url' );
@@ -121,14 +128,14 @@ final class ProductTest extends TestCase {
 	public function test_registry_and_empty_categories() {
 		$settings = \ITD_Cookies_Settings::get();
 		$list     = \ITD_Cookies_Services::get( $settings );
-		self::assertCount( 2, $list );
+		self::assertCount( 5, $list );
 		self::assertCount( 0, \ITD_Cookies_Services::in_category( $list, 'analytics' ) );
 		$settings['metrika_enabled']    = 1;
 		$settings['metrika_id']         = '12345678';
 		$settings['ga4_enabled']        = 1;
 		$settings['ga4_measurement_id'] = 'G-TEST12345';
 		$list                           = \ITD_Cookies_Services::get( $settings );
-		self::assertSame( array( 'yandex-metrika', 'google-analytics-4' ), array_column( $list, 'id' ) );
+		self::assertSame( array( 'yandex-metrika', 'google-analytics-4', 'google-tag-manager', 'microsoft-clarity', 'meta-pixel' ), array_column( $list, 'id' ) );
 		self::assertCount( 2, \ITD_Cookies_Services::in_category( $list, 'analytics' ) );
 		self::assertCount( 0, \ITD_Cookies_Services::in_category( $list, 'marketing' ) );
 	}
@@ -159,8 +166,9 @@ final class ProductTest extends TestCase {
 			}
 		);
 		$services = \ITD_Cookies_Services::get( \ITD_Cookies_Settings::get() );
-		self::assertCount( 3, $services );
-		self::assertSame( 'Chat', $services[2]['name'] );
+		self::assertCount( 6, $services );
+		self::assertSame( 'Chat', $services[5]['name'] );
+		self::assertSame( 'external', $services[5]['provider_type'] );
 		self::assertCount( 1, \ITD_Cookies_Services::in_category( $services, 'functional' ) );
 	}
 
@@ -227,5 +235,112 @@ final class ProductTest extends TestCase {
 		$legal->render_footer();
 		self::assertStringContainsString( 'itd-cookies-footer', ob_get_clean() );
 		self::assertSame( \ITD_Cookies_Legal::opener(), ( new \ITD_Cookies_Plugin() )->settings_shortcode() );
+	}
+
+	/**
+	 * A 0.2.0 option gains only safe OFF defaults, without writing stored data.
+	 *
+	 * @return void
+	 */
+	public function test_v020_upgrade_preserves_options_and_new_defaults() {
+		$old = \ITD_Cookies_Settings::defaults();
+		foreach ( array( 'gtm_enabled', 'gtm_container_id', 'clarity_enabled', 'clarity_project_id', 'meta_enabled', 'meta_pixel_id' ) as $key ) {
+			unset( $old[ $key ] ); }
+		$old['metrika_enabled']                         = 1;
+		$old['metrika_id']                              = '12345678';
+		$old['ga4_enabled']                             = 1;
+		$old['ga4_measurement_id']                      = 'G-TEST12345';
+		$old['consent_version']                         = 'existing-policy';
+		$old['auto_footer']                             = 1;
+		$old['link_4_url']                              = '/agreement';
+		$this->options['itd_cookies_settings']          = $old;
+		$this->options['itd_cookies_migration_version'] = 'copied-v1';
+		$this->options['itd_cookies_policy_page_id']    = 42;
+		$before = $this->options;
+		$new    = \ITD_Cookies_Settings::get();
+		foreach ( $old as $key => $value ) {
+			self::assertSame( $value, $new[ $key ], $key ); }
+		foreach ( array( 'gtm', 'clarity', 'meta' ) as $type ) {
+			self::assertSame( 0, $new[ $type . '_enabled' ] ); }
+		self::assertSame( $before, $this->options );
+		self::assertCount( 2, \ITD_Cookies_Services::providers( $new ) );
+	}
+
+	/**
+	 * Each new provider requires its flag and a strictly validated ID.
+	 *
+	 * @return void
+	 */
+	public function test_new_provider_validation_registry_policy_and_categories() {
+		$definitions = array(
+			'gtm'     => array( 'gtm_container_id', 'GTM-TEST123' ),
+			'clarity' => array( 'clarity_project_id', 'test12345' ),
+			'meta'    => array( 'meta_pixel_id', '123456789012345' ),
+		);
+		foreach ( $definitions as $type => $definition ) {
+			$settings                   = \ITD_Cookies_Settings::defaults();
+			$settings[ $definition[0] ] = $definition[1];
+			self::assertCount( 0, \ITD_Cookies_Services::providers( $settings ) );
+			$settings[ $type . '_enabled' ] = 1;
+			self::assertSame( $type, \ITD_Cookies_Services::providers( $settings )[0]['type'] );
+			foreach ( array( '<script>alert(1)</script>', 'https://example.test/', 'id?x=1', true, false, 123, 1.5, null, array(), str_repeat( 'A', 100 ) ) as $bad ) {
+				$settings[ $definition[0] ] = $bad;
+				self::assertSame( '', \ITD_Cookies_Settings::sanitize( $settings )[ $definition[0] ] );
+				self::assertCount( 0, \ITD_Cookies_Services::providers( $settings ) );
+			}
+		}
+		$settings = \ITD_Cookies_Settings::defaults();
+		foreach ( $definitions as $type => $definition ) {
+			$settings[ $type . '_enabled' ] = 1;
+			$settings[ $definition[0] ]     = $definition[1]; }
+		$this->options['itd_cookies_settings'] = $settings;
+		$list                                  = \ITD_Cookies_Services::get( $settings );
+		self::assertCount( 2, \ITD_Cookies_Services::in_category( $list, 'analytics' ) );
+		self::assertCount( 1, \ITD_Cookies_Services::in_category( $list, 'marketing' ) );
+		$html = ( new \ITD_Cookies_Legal() )->policy_shortcode();
+		foreach ( array( 'Google Tag Manager', 'Microsoft Clarity', 'Meta Pixel' ) as $name ) {
+			self::assertStringContainsString( $name, $html ); }
+		ob_start();
+		( new \ITD_Cookies_Plugin() )->render_banner();
+		$banner = ob_get_clean();
+		self::assertStringContainsString( 'Meta Pixel', $banner );
+		preg_match( '/<input[^>]*id="itd-cookies-category-marketing"[^>]*>/s', $banner, $match );
+		self::assertNotEmpty( $match );
+		self::assertStringNotContainsString( 'disabled', $match[0] );
+		$settings['meta_enabled'] = 0;
+		self::assertCount( 0, \ITD_Cookies_Services::in_category( \ITD_Cookies_Services::get( $settings ), 'marketing' ) );
+	}
+	/**
+	 * Legacy imports cannot enable providers introduced in 0.3.0.
+	 *
+	 * @return void
+	 */
+	public function test_legacy_import_leaves_new_providers_off() {
+		Functions\when( 'add_option' )->alias(
+			function ( $key, $value ) {
+				$this->options[ $key ] = $value;
+				return true;
+			}
+		);
+		$this->options['itd_modubricks_settings'] = array(
+			'enabled'            => 1,
+			'metrika_id'         => '12345678',
+			'gtm_enabled'        => 1,
+			'gtm_container_id'   => 'GTM-TEST123',
+			'clarity_enabled'    => 1,
+			'clarity_project_id' => 'test12345',
+			'meta_enabled'       => 1,
+			'meta_pixel_id'      => '123456789',
+		);
+		\ITD_Cookies_Settings::migrate_legacy();
+		$settings = \ITD_Cookies_Settings::get();
+		foreach ( array( 'gtm', 'clarity', 'meta' ) as $type ) {
+			self::assertSame( 0, $settings[ $type . '_enabled' ] );
+		}
+		foreach ( array( 'gtm_container_id', 'clarity_project_id', 'meta_pixel_id' ) as $key ) {
+			self::assertSame( '', $settings[ $key ] );
+		}
+		self::assertSame( 'copied-v1', $this->options['itd_cookies_migration_version'] );
+		self::assertCount( 1, \ITD_Cookies_Services::providers( $settings ) );
 	}
 }
