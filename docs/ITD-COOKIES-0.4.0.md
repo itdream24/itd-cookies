@@ -13,8 +13,10 @@ Production was developed on main's architecture, independently of research POCs.
 ## Gate status
 
 Local implementation, automated checks, browser acceptance and exact cleanup:
-**PASS**. Remote feature CI: **PENDING** until all nine jobs finish successfully.
-Current verdict: `NOT_READY_FOR_ITD_COOKIES_0_4_0_RELEASE` (CI gate pending).
+**PASS**. Feature CI: **PASS — all nine jobs**, including build and all four
+WordPress combinations, on accepted runtime commit
+`eb5639f82b99476841096af097cd687b2effbb8c`.
+Verdict: `READY_FOR_ITD_COOKIES_0_4_0_RELEASE`, for **WP_HANDLES_ONLY** only.
 No stable release, tag, merge into main or release workflow change is authorized
 by this task or performed here.
 
@@ -54,7 +56,9 @@ itd_cookies_get_script_group_diagnostics();                 // safe snapshot
 Register ordinary WP scripts/attachments on `wp_enqueue_scripts`, then groups
 on `itd_cookies_register_script_groups` (priority 999 of that action).
 Preparation starts after that dedicated hook returns, before
-core dependency traversal and WP 5.2 datepicker localization at priority 1000. It freezes owned handles and inline attachments; print hooks validate that frozen queue.
+core dependency traversal and WP 5.2 datepicker localization at priority 1000.
+It freezes owned handles and attachment bodies; print hooks validate that queue.
+Native tags render at print time, preserving nonce filters attached later.
 
 Required declaration: strict group ID, existing category, nonempty explicit
 handle/provider-type lists, `resources = array()`. Dependencies come from the
@@ -109,7 +113,8 @@ checks exact version-specific data/before/after tags and nonce filters, dependen
 failures before core recursion, unknown native output and zero-group equivalence.
 CI runs it and the benchmark on all four existing WordPress matrix combinations:
 5.2/PHP 7.4, 5.2.24/PHP 7.4, latest/PHP 7.4, latest/PHP 8.5.
-These remote compatibility results remain pending until the CI table is filled.
+All four combinations passed, including every adapter scenario and benchmark.
+The latest WordPress used by CI was **7.1.3**, PHP **7.4.33 / 8.5.11**.
 
 ## Local browser acceptance
 
@@ -139,8 +144,8 @@ fixture-rendered state. Consent is saved using the actual UI.
 | Unknown code | PASS — local application + neighboring inline once; jQuery, theme, unknown CDN functional |
 | Shortcodes / Russian UI | PASS — settings reopen, generated policy, four legal links and adapter service labels |
 
-Timeout observations: marketing completed at **177 ms**, analytics timed out
-at **5014.2 ms**. The deliberately 7-second SDK still executed later despite
+Timeout observations on the accepted runtime: marketing completed at **213.5 ms**,
+analytics timed out at **5010 ms**. The deliberately 7-second SDK still executed later despite
 removal of its script element. No dependent/after code ran. A timeout prevents
 subsequent controlled steps, not a guaranteed browser network cancellation;
 this limitation is part of the developer contract, not hidden by the verdict.
@@ -149,7 +154,11 @@ The initial hash-policy fixture omitted native WordPress importmap/emoji hashes
 and blob worker permission. Those test-policy omissions were corrected in the
 fixture, without modifying native code. Final nonce/hash profiles allow the
 known WordPress bootstrap and worker, local controllers, SDKs and unknown CDN.
-Neither profile claims arbitrary CSP compatibility.
+Hash values are calculated from the known native bodies before attachments are
+captured. The nonce integration intentionally registers its attribute filter
+after graph preparation to prove print-time preservation. Final CSP recapture,
+all failure cases, the complete consent matrix and ownership/dedup were rerun on
+the accepted runtime and final ZIP. Neither profile claims arbitrary CSP support.
 
 Desktop and **390×844**: long repeated description, four legal links and Large
 text size tested. On mobile, document width **375 ≤ 390**, banner/panel left 12,
@@ -181,8 +190,17 @@ UI, shortcodes and legal output. No baseline data was used from a remote site.
 
 | Groups / handles | Registration | Graph preparation | Capture + manifest |
 | --- | ---: | ---: | ---: |
-| 0 / 0 | 0 ms | 0 ms | 0.0021 ms |
-| 3 / 6 | 0.0651 ms | 0.5891 ms | 0.0310 ms |
+| 0 / 0 | 0 ms | 0.0010 ms | 0.0019 ms |
+| 3 / 6 | 0.0620 ms | 0.3750 ms | 0.2148 ms |
+
+CI medians for 3 groups / 6 handles:
+
+| WordPress / PHP | Registration | Preparation | Capture + manifest |
+| --- | ---: | ---: | ---: |
+| 5.2 / 7.4.33 | 0.0930 ms | 0.5279 ms | 0.0758 ms |
+| 5.2.24 / 7.4.33 | 0.0522 ms | 0.3021 ms | 0.0470 ms |
+| 7.1.3 / 7.4.33 | 0.0629 ms | 0.3700 ms | 0.2520 ms |
+| 7.1.3 / 8.5.11 | 0.0691 ms | 0.3872 ms | 0.2630 ms |
 
 The benchmark uses registration, a real WP queue, capture and manifest, not HTML
 tokenization. Replay measures include actual SDK latency (above), so are not
@@ -219,10 +237,44 @@ dependencies, credentials and private evidence excluded by the builder's
 runtime allowlist. Build timestamps/order/permissions are fixed.
 
 SHA-256: `d7d6f56a44fd3ba1b897036d0292e722d03b6fa35330e11f69369d9ac7f05af2`.
-Final reproducibility check and CI artifact comparison are pending.
+Repeated local builds produce this same hash. The CI build inspector reports
+the identical ZIP hash and 18-file inventory. This is the archive installed by
+the final native upgrade acceptance. The outer Actions artifact container has
+its own hash, which is not the plugin ZIP hash.
 
 ## Feature CI
 
-Initial run [37594945763](https://github.com/itdream24/itd-cookies/actions/runs/37594945763) failed: both WP 5.2 jobs reached the cycle fixture, then exhausted the runner. The old native datepicker query traversed the cycle at enqueue priority 1000 before preparation. Registration/preparation now runs at priority 999, with a regression assertion before the native query. The replacement [37595897343](https://github.com/itdream24/itd-cookies/actions/runs/37595897343) passed all nine jobs. Local CSP recapture then exposed early tag rendering before late nonce filters; attachment bodies now freeze early and native tags render at print time. The smoke checks a nonce filter registered at priority 1000. A complete final CI run and browser recapture remain pending. Required jobs: PHP 7.4, PHP 8.5, quality, node,
-four WordPress matrix jobs and build — **all nine must be SUCCESS** for READY.
-No release job or stable tag is part of this gate.
+Accepted runtime [CI 37596606001](https://github.com/itdream24/itd-cookies/actions/runs/37596606001)
+for `eb5639f82b99476841096af097cd687b2effbb8c`: **SUCCESS**.
+
+| Job | Result |
+| --- | --- |
+| PHP 7.4 | PASS |
+| PHP 8.5 | PASS |
+| Quality: PHPCS, PHPStan, Composer audit | PASS |
+| Node: audit, ESLint, translations, JS tests | PASS |
+| WordPress 5.2 / PHP 7.4 | PASS |
+| WordPress 5.2.24 / PHP 7.4 | PASS |
+| WordPress latest (7.1.3) / PHP 7.4 | PASS |
+| WordPress latest (7.1.3) / PHP 8.5 | PASS |
+| Build / inspector / artifact | PASS |
+
+Initial [37594945763](https://github.com/itdream24/itd-cookies/actions/runs/37594945763)
+failed: both WP 5.2 jobs stopped in the cycle scenario and ended with runner
+shutdown / exit 143. The native datepicker queue query at priority 1000 could
+recurse through owned cycles before the original print-time preparation.
+Registration/preparation now runs at 999, with an explicit regression assertion
+before the native query. The replacement
+[37595897343](https://github.com/itdream24/itd-cookies/actions/runs/37595897343)
+passed all nine jobs.
+
+Local CSP recapture then found that early tag rendering preceded late nonce
+filters. Attachments now freeze early and native tags render at print time;
+the real WordPress smoke checks a filter registered at priority 1000. The
+accepted runtime CI and final browser nonce/hash profiles both pass.
+This is a corrected lifecycle issue, not a waived infrastructure failure.
+
+The final report/reference-fixture closure changes no production ZIP bytes.
+Its branch-head CI is also required to pass all nine jobs before task completion;
+that link and final HEAD are supplied in the task's final report. No release job
+or stable tag is part of this gate.

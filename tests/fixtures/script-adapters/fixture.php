@@ -142,7 +142,9 @@ add_action( 'wp_enqueue_scripts', static function () {
         }
 		header( "Content-Security-Policy: script-src 'self' https://cdnjs.cloudflare.com " . implode( ' ', array_unique( $hashes ) ) . "; worker-src 'self' blob:; object-src 'none'" );
 	}
-}, 1100 );
+// Hash the known native bodies before adapters freeze their attachments.
+// Keep nonce registration late to exercise the native print-time renderer.
+}, 'hash' === itd_adapter_fixture_mode() ? 998 : 1100 );
 
 add_action( 'wp_footer', static function () {
 	$mode = itd_adapter_fixture_mode();
