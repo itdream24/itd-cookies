@@ -37,7 +37,7 @@ add_action('wp_head',function(){if(itd_r2_case())echo '<script>window.R2Fixture=
 function itd_r2_controller() {
     if(empty($GLOBALS['itd_r2_adapter']))return;
     echo '<script id="itd-bounded-manifest" type="application/json">'.wp_json_encode(array('groups'=>$GLOBALS['itd_r2_adapter']->manifest(),'timeoutMs'=>1000),JSON_HEX_TAG|JSON_HEX_AMP).'</script>';
-    foreach(array('group-engine.js','controller.js') as $file)echo '<script src="'.esc_url(plugins_url('../bounded-adapters/'.$file,__FILE__)).'"></script>';
+    foreach(array('group-engine.js','controller.js') as $file)echo '<script src="'.esc_url(add_query_arg('ver',filemtime(__DIR__.'/../bounded-adapters/'.$file),plugins_url('../bounded-adapters/'.$file,__FILE__))).'"></script>';
 }
 add_action('wp_footer','itd_r2_controller',1000);
 function itd_r2_panel($standalone=false) {

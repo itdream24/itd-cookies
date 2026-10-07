@@ -63,6 +63,12 @@ final class ITD_Bounded_WP_Adapter {
                     $this->captured[$handle][$phase] = $this->inline_tag($scripts, $handle, $phase);
                     unset($scripts->registered[$handle]->extra[$phase]);
                 }
+                if (!empty($group['issue'])) {
+                    // WP resolves its graph before script_loader_tag. Quarantine
+                    // only explicitly owned invalid handles before that traversal.
+                    wp_dequeue_script($handle);
+                    $scripts->registered[$handle]->deps = array();
+                }
             }
         }
         unset($group);

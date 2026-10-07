@@ -41,6 +41,9 @@ foreach(array('MISSING_DEPENDENCY','CYCLE','FAILED_OWNERSHIP_CONFLICT','UNSUPPOR
     wp_register_script('r2-a','http://itd-cookies.local/a.js',$deps,null);
     if($issue==='CYCLE')wp_register_script('r2-b','http://itd-cookies.local/b.js',array('r2-a'),null);
     wp_add_inline_script('r2-a','window.shouldNotRun=true;');
+    wp_enqueue_script('r2-a');
+    wp_register_script('r2-independent','http://itd-cookies.local/independent.js',array(),null);
+    wp_enqueue_script('r2-independent');
     $group=r2_group($issue==='CYCLE'?array('r2-a','r2-b'):array('r2-a'));
     if($issue==='FAILED_OWNERSHIP_CONFLICT')$group['provider']='ga4';
     if($issue==='UNSUPPORTED_ANCILLARY_RESOURCES')$group['resources']=array('pixel','noscript','preload');
@@ -48,5 +51,7 @@ foreach(array('MISSING_DEPENDENCY','CYCLE','FAILED_OWNERSHIP_CONFLICT','UNSUPPOR
     r2_check($bad->groups[0]['issue']===$issue,$issue.' missing');
     r2_check(empty($scripts->registered['r2-a']->extra['after']),$issue.' inline leaked');
     r2_check($bad->tag('<script src="http://itd-cookies.local/a.js"></script>','r2-a')==='',$issue.' SDK leaked');
+    ob_start();$scripts->do_head_items();$safe=ob_get_clean();
+    r2_check(strpos($safe,'independent.js')!==false && strpos($safe,'/a.js')===false,$issue.' native WP traversal did not finish safely');
 }
 echo 'Experimental WordPress integration PASS: '.$GLOBALS['checks'].' assertions; WP '.get_bloginfo('version').'; PHP '.PHP_VERSION."\n";
