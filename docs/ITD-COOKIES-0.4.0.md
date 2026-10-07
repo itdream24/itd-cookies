@@ -1,4 +1,57 @@
-# ITD Cookies 0.4.0 — Limited Script Adapters acceptance
+# ITD Cookies 0.4.0 — Stable release gate
+
+Stable version: **0.4.0**. Scope: **WP_HANDLES_ONLY**.
+Release branch: `release/itd-cookies-0.4.0`, created strictly from accepted
+`815e8b828bd4ca9923e0a565ca07dafebf2fd201`.
+No new functions or runtime logic changes. Only stable metadata, translations,
+readme/changelog and release documentation differ from the accepted feature.
+Consent schema remains **1** and the policy-version setting is unchanged.
+
+## Pre-publication gates
+
+Local PHPUnit (40 tests / 374 assertions), JS (41 tests), ESLint, PHPCS,
+PHPStan, translation build (94 messages), Composer audit (0 advisories),
+npm audit (0 vulnerabilities), Gitleaks (0 leaks) and diff check: **PASS**.
+No DB/OpenServer credentials, baseline dumps, session/cookie evidence,
+screenshots, private observer/helper or synthetic secrets are committed or
+packaged. The accepted local-only public-API reference fixture stays dev-only.
+
+Production ZIP `itd-cookies-0.4.0.zip`: **18 files**, one `itd-cookies/` root,
+registry/API/replay/translations/updater included, tests/fixtures/experiments/
+docs/private evidence excluded. PHP **7.4** ZIP lint and inspector **PASS**.
+Two repeated builds match SHA-256:
+`4afebd473bbd191a2f81c50257367228b3e584b0c44cc8c7f5b2c24c698f8c09`.
+
+Release-branch CI, stable production browser regressions, merge/main CI,
+tag/Release, anonymous asset verification and real stable updater E2E:
+**PENDING**. No published-release verdict is claimed.
+The final gate is
+`ITD_COOKIES_V0.4.0_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED`
+only after the real public update, published adapter matrix and clean new
+immutable baseline-v0.4.0 have been verified.
+
+Stable notes explicitly exclude hardcoded scripts, raw HTML firewall,
+dynamic DOM injection, modules/import graphs, preload/pixels/noscript/iframes,
+custom arbitrary JS and universal tracker detection. The timeout limitation
+in [SCRIPT-ADAPTERS.md](SCRIPT-ADAPTERS.md) remains: request removal cannot
+guarantee physical cancellation/late SDK execution; dependent/after code is
+withheld, failure recorded, no retry in that document.
+
+The existing release workflow is unchanged: strict vX.Y.Z, ancestry to main,
+full reusable CI, automatic once-only Release/ZIP/checksum creation. Main/tag
+gates require separate full 9/9 SUCCESS runs; cancelled/skipped jobs cannot pass.
+Immutable tags/assets are never replaced. Any post-publication defect requires
+0.4.1 and stops the 0.4.0 verification gate.
+
+Remote QA/testwp/Timeweb/production operations: **0**.
+baseline-v0.3.0 remains immutable (501 files, SQL SHA-256
+`61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9`).
+No baseline-v0.4.0 existed before this gate; it is created only after cleanup
+from the clean official published 0.4.0, then actually restored.
+
+---
+
+## Accepted implementation history (0.4.0-dev.1)
 
 Candidate: **0.4.0-dev.1**. Scope: **WP_HANDLES_ONLY**.
 

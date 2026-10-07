@@ -1,11 +1,13 @@
 # Changelog
 
-## 0.4.0-dev.1 — Unreleased
+## 0.4.0 — 2026-10-07
 
 - Developer API for explicitly registered closed classic WordPress script-handle groups.
 - Complete native data/before/external/after capture and per-group dependency replay after existing consent.
 - Native provider ownership priority, bounded registration and safe developer diagnostics.
-- No groups by default; no universal firewall, ancillary resource blocking, module replay or admin script editor.
+- No groups by default; existing sites retain their behavior until an integration explicitly registers a group.
+- Unsupported: arbitrary hardcoded scripts, raw HTML firewall, dynamic DOM injection, modules/import graphs, preload, pixels, noscript, iframes, custom arbitrary JS and universal tracker detection.
+- Timeout withholds dependent/after code, reports failure and prevents retry in that document; removing a script cannot guarantee cancellation of an already started browser request or late SDK execution.
 - Existing consent schema 1, provider settings, legal integration and GitHub updater retained.
 
 ## 0.3.0 — 2026-10-06

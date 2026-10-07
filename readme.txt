@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.0-dev.1
+Stable tag: 0.4.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,10 @@ Necessary, functional, analytics and marketing preferences. Analytics providers 
 Distributed through GitHub Releases, not the WordPress.org directory. Automatic updates accept stable releases only. Update checks contact api.github.com from admin/cron, with cached results. Packages download from GitHub over HTTPS through the native WordPress upgrader. No GitHub token is required.
 
 When enabled, Yandex Metrika (mc.yandex.ru), GA4 and Google Tag Manager (www.googletagmanager.com), and Microsoft Clarity (www.clarity.ms) load after Analytics consent. Meta Pixel (connect.facebook.net) loads after Marketing consent. Configure provider IDs in Settings > ITD Cookies and legal documents according to your site. New GTM/Clarity/Meta integrations are off by default. VK Ads is not supported.
+
+Limited Script Adapters are a developer API for explicit, closed classic WordPress script-handle groups. They retain native data/localization, inline before, external SDK and inline after, replay dependencies after the selected consent category, isolate failures and protect native provider ownership. Each group activates at most once per document. No groups are registered by default; existing settings and consent schema 1 are retained.
+
+Unsupported: arbitrary hardcoded script tags, raw HTML firewall, dynamic DOM injection, modules/import graphs, preload, pixels, noscript, iframes, custom arbitrary JS and universal tracker detection. A timed-out SDK request may still complete or execute later; dependent/after code is withheld, a failure diagnostic is recorded and the group is not retried in that document. See the repository developer documentation for the supported nonce/hash CSP contract.
 
 == Installation ==
 
@@ -32,7 +36,7 @@ No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
 
-= 0.4.0-dev.1 (development candidate) =
+= 0.4.0 =
 * Limited developer adapters for closed classic WordPress script handles and native inline attachments.
 * Existing consent categories and native provider ownership are retained; no groups are registered by default.
 * Ancillary tracking resources, modules and universal external-script blocking are unsupported.
