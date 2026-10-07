@@ -30,7 +30,11 @@
     });
     const runner=new window.ITDBoundedRunner(config.groups,execute);
     window.ITDBoundedResearch=runner;
-    const apply=()=>runner.grant({analytics:!!window.ITDCookies?.allowed('analytics'),marketing:!!window.ITDCookies?.allowed('marketing')});
+    const apply=async()=>{
+        manifest.dataset.settled='false';
+        await runner.grant({analytics:!!window.ITDCookies?.allowed('analytics'),marketing:!!window.ITDCookies?.allowed('marketing')});
+        manifest.dataset.settled='true';
+    };
     window.addEventListener('itd_cookies_consent_changed',apply);
     apply();
 })(window,document);

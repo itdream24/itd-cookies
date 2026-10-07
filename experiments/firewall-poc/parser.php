@@ -89,6 +89,9 @@ final class ITD_FW_POC_Parser {
         $this->outcome = 'UNCHANGED';
         if (strlen($html) > 2 * 1024 * 1024) { $this->diagnostics[] = 'size-cap-bypass'; $this->outcome='BYPASS_UNSUPPORTED_HTML'; return $html; }
         if (!preg_match('//u',$html)) { $this->diagnostics[]='encoding-bypass'; $this->outcome='BYPASS_UNSUPPORTED_HTML'; return $html; }
+        // PHP 7.4 stripos case-folds the whole haystack on each call. One
+        // comparison copy avoids quadratic work for dense raw-text tags.
+        $searchHtml = strtolower($html);
         $edits = array(); $position = 0; $templateDepth = 0;
         try {
             while (($start = strpos($html,'<',$position)) !== false) {
@@ -102,7 +105,7 @@ final class ITD_FW_POC_Parser {
                 if ($name === 'template') { $templateDepth += $closing ? -1 : 1; if ($templateDepth < 0) throw new RuntimeException('template-context'); continue; }
                 if ($closing) continue;
                 if (in_array($name,array('script','style','textarea','title','xmp','noembed','noframes','iframe','noscript'),true)) {
-                    $close = stripos($html,'</'.$name,$end); if ($close === false) throw new RuntimeException('incomplete-rawtext');
+                    $close = strpos($searchHtml,'</'.$name,$end); if ($close === false) throw new RuntimeException('incomplete-rawtext');
                     $boundary = substr($html,$close+strlen($name)+2,1);
                     if ($boundary!== '>' && !ctype_space($boundary)) throw new RuntimeException('rawtext-end-boundary');
                     $position=$this->end_tag($html,$close); if ($position === false) throw new RuntimeException('incomplete-rawtext');
