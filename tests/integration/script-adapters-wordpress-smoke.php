@@ -132,6 +132,16 @@ add_action(
 		);
 	}
 );
+if ( 'cycle' === $scenario ) {
+	add_action(
+		'wp_enqueue_scripts',
+		static function () use ( $scripts, $check ) {
+			$check( in_array( 'CYCLE', array_column( itd_cookies_get_script_group_diagnostics(), 'code' ), true ), 'Cycle was not quarantined before priority 1000.' );
+			$check( array() === $scripts->registered['fixture-library']->deps, 'Native dependency query can still enter the owned cycle.' );
+		},
+		1000
+	);
+}
 do_action( 'wp_enqueue_scripts' );
 do_action( 'wp_print_scripts' );
 ob_start();

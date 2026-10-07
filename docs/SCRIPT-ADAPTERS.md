@@ -12,10 +12,13 @@ itd_cookies_get_script_group_diagnostics();                 // read-only array
 
 Register scripts, dependencies and inline data normally on `wp_enqueue_scripts`
 (usually priority 10). Register groups on **`itd_cookies_register_script_groups`**,
-dispatched at `wp_enqueue_scripts` priority 1000. Direct earlier registration is
-also supported. All handles and inline attachments must exist before the first
-`wp_print_scripts` / `wp_print_footer_scripts` action. That boundary freezes the
-registry **before WordPress traverses dependencies**. Edits to owned footer
+dispatched at `wp_enqueue_scripts` priority **999**. Direct earlier frontend
+registration is also supported. All handles and inline attachments must exist
+before this dedicated hook returns. Preparation then freezes the registry
+**before WordPress traverses dependencies**, including the native datepicker
+queue query at priority 1000 in WordPress 5.2. Native head/footer print actions
+also validate the frozen queue and provide a fallback for direct early
+registration when the normal enqueue action is absent. Edits to owned footer
 handles after freezing are unsupported and withheld. Themes must run `wp_head`
 and `wp_footer` normally; the graph manifest is emitted at footer priority 10000.
 Do not register or print new owned handles after that manifest.

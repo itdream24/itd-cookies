@@ -52,9 +52,9 @@ itd_cookies_get_script_group_diagnostics();                 // safe snapshot
 ```
 
 Register ordinary WP scripts/attachments on `wp_enqueue_scripts`, then groups
-on `itd_cookies_register_script_groups` (priority 1000 of that action).
-Preparation starts at the first native head/footer script-print action, before
-core dependency traversal. It freezes owned handles and inline attachments.
+on `itd_cookies_register_script_groups` (priority 999 of that action).
+Preparation starts after that dedicated hook returns, before
+core dependency traversal and WP 5.2 datepicker localization at priority 1000. It freezes owned handles and inline attachments; print hooks validate that frozen queue.
 
 Required declaration: strict group ID, existing category, nonempty explicit
 handle/provider-type lists, `resources = array()`. Dependencies come from the
@@ -218,11 +218,11 @@ PHP syntax/metadata inspector PASS. Tests, fixture, docs, reports, experiments,
 dependencies, credentials and private evidence excluded by the builder's
 runtime allowlist. Build timestamps/order/permissions are fixed.
 
-SHA-256: `f542f62a85c5ae8fe33995943e973b4a25ecea5c5aa179b2b0932d6192b19119`.
+SHA-256: `b48255ce4ac470a27bc295a692089c93896039d072d35bb325a20059a368484b`.
 Final reproducibility check and CI artifact comparison are pending.
 
 ## Feature CI
 
-Pending feature push. Required jobs: PHP 7.4, PHP 8.5, quality, node,
+Initial run [37594945763](https://github.com/itdream24/itd-cookies/actions/runs/37594945763) failed: both WP 5.2 jobs reached the cycle fixture, then exhausted the runner. The old native datepicker query traversed the cycle at enqueue priority 1000 before preparation. Registration/preparation now runs at priority 999, with a regression assertion before the native query. A complete replacement CI run and local recapture are pending. Required jobs: PHP 7.4, PHP 8.5, quality, node,
 four WordPress matrix jobs and build — **all nine must be SUCCESS** for READY.
 No release job or stable tag is part of this gate.

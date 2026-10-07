@@ -66,7 +66,7 @@ final class ITD_Cookies_Script_Adapters {
 	 * @return void
 	 */
 	public function register() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'registration_hook' ), 1000 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'registration_hook' ), 999 );
 		add_action( 'wp_print_scripts', array( $this, 'prepare' ), 0 );
 		add_action( 'wp_print_footer_scripts', array( $this, 'prepare' ), 0 );
 		add_filter( 'script_loader_tag', array( $this, 'restore_tag' ), PHP_INT_MIN, 2 );
@@ -83,6 +83,9 @@ final class ITD_Cookies_Script_Adapters {
 	public function registration_hook() {
 		if ( ! is_admin() ) {
 			do_action( 'itd_cookies_register_script_groups' );
+			// WP 5.2 queries dependencies for datepicker at priority 1000.
+			// Quarantine owned cycles before that native recursive query, too.
+			$this->prepare();
 		}
 	}
 
