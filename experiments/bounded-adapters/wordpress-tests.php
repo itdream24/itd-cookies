@@ -54,4 +54,7 @@ foreach(array('MISSING_DEPENDENCY','CYCLE','FAILED_OWNERSHIP_CONFLICT','UNSUPPOR
     ob_start();$scripts->do_head_items();$safe=ob_get_clean();
     r2_check(strpos($safe,'independent.js')!==false && strpos($safe,'/a.js')===false,$issue.' native WP traversal did not finish safely');
 }
+$scripts=r2_scripts();wp_register_script('r2-unprinted','http://itd-cookies.local/unprinted.js',array(),null);
+$unprinted=new ITD_Bounded_WP_Adapter(array(r2_group(array('r2-unprinted'))));$unprinted->prepare();
+r2_check($unprinted->manifest()[0]['issue']==='UNSUPPORTED_UNPRINTED_HANDLE','an unprinted group was mislabeled complete');
 echo 'Experimental WordPress integration PASS: '.$GLOBALS['checks'].' assertions; WP '.get_bloginfo('version').'; PHP '.PHP_VERSION."\n";

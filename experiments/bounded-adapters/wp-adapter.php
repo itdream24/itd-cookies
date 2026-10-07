@@ -109,7 +109,11 @@ final class ITD_Bounded_WP_Adapter {
     }
     public function manifest() {
         $output = array();
-        foreach ($this->groups as $group) { unset($group['handles'], $group['provider']); $output[] = $group; }
+        foreach ($this->groups as $group) {
+            $ids = array_column($group['nodes'], 'id');
+            foreach ($group['handles'] as $handle) if (empty($group['issue']) && !in_array($handle . ':end', $ids, true)) $group['issue'] = 'UNSUPPORTED_UNPRINTED_HANDLE';
+            unset($group['handles'], $group['provider']); $output[] = $group;
+        }
         return $output;
     }
 }

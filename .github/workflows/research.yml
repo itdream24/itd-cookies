@@ -48,7 +48,7 @@ jobs:
           php-version: '7.4'
           coverage: none
       - run: npm ci
-      - run: node --test experiments/firewall-poc/controller-tests.mjs experiments/bounded-adapters/controller-tests.mjs
+      - run: node --test experiments/firewall-poc/controller-tests.mjs experiments/bounded-adapters/controller-tests.mjs experiments/bounded-adapters/negative-tests.mjs
       - run: node experiments/firewall-poc/dom-tests.mjs
       - run: npx eslint -c experiments/firewall-poc/eslint.config.mjs experiments/firewall-poc/*.js experiments/firewall-poc/*.mjs experiments/firewall-fixtures/*.js
       - run: npx eslint -c experiments/bounded-adapters/eslint.config.mjs experiments/bounded-adapters/*.js experiments/bounded-adapters/*.mjs experiments/bounded-fixtures/*.js
