@@ -1,0 +1,6 @@
+{
+  "declaredBeforeMeasurements": "2026-10-07",
+  "cases": [{"kib":100,"tags":20,"medianMs":50},{"kib":500,"tags":20,"medianMs":100},{"kib":1024,"tags":20,"medianMs":150},{"kib":1024,"tags":2000,"medianMs":250}],
+  "maxMs":500,"peakMiB":32,"deltaMiB":16,"processTimeoutMs":15000,
+  "rationale":"An optional HTML transform should stay below 150ms for a typical 1MiB document, with a bounded 250ms allowance for unusually dense 2000-tag pages. It must not consume more than a quarter of a 128MiB PHP worker on its own. WP-handles adapters avoid this document-size cost. These are upper rejection limits, not an SLA."
+}

@@ -1,0 +1,131 @@
+name: Bounded adapters research
+on:
+  push:
+    branches: [research/itd-cookies-0.4.0-firewall]
+  pull_request:
+    paths: ['experiments/**', '.github/workflows/research.yml']
+permissions:
+  contents: read
+jobs:
+  php:
+    name: Experimental PHP tests (${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.5']
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: find experiments -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: php experiments/firewall-poc/tests.php
+      - run: php experiments/bounded-adapters/tests.php
+      - run: node experiments/bounded-adapters/benchmark-tests.mjs
+  controller:
+    name: Experimental controller/DOM tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+      - run: npm ci
+      - run: node --test experiments/firewall-poc/controller-tests.mjs experiments/bounded-adapters/controller-tests.mjs
+      - run: node experiments/firewall-poc/dom-tests.mjs
+      - run: npx eslint -c experiments/firewall-poc/eslint.config.mjs experiments/firewall-poc/*.js experiments/firewall-poc/*.mjs experiments/firewall-fixtures/*.js
+      - run: npx eslint -c experiments/bounded-adapters/eslint.config.mjs experiments/bounded-adapters/*.js experiments/bounded-adapters/*.mjs experiments/bounded-fixtures/*.js
+  wordpress:
+    name: Experimental WordPress integration checks (${{ matrix.wordpress }}, PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wordpress: '5.2'
+            php: '7.4'
+          - wordpress: '5.2.24'
+            php: '7.4'
+          - wordpress: latest
+            php: '7.4'
+          - wordpress: latest
+            php: '8.5'
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_DATABASE: research
+          MARIADB_ROOT_PASSWORD: disposable-ci-only
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mysqli, mbstring
+          tools: wp-cli
+          coverage: none
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm ci && npm run build
+      - name: Explicit groups on a disposable WordPress
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          wp_path="$RUNNER_TEMP/research-wordpress"
+          wp core download --path="$wp_path" --version='${{ matrix.wordpress }}'
+          wp config create --path="$wp_path" --dbname=research --dbuser=root --dbpass=disposable-ci-only --dbhost=127.0.0.1:3306 --skip-check
+          wp core install --path="$wp_path" --url=http://itd-cookies.local --title='Disposable research' --admin_user=ci --admin_password=disposable-ci-only --admin_email=ci@example.test --skip-email
+          wp plugin install "$GITHUB_WORKSPACE/dist/itd-cookies-0.3.0.zip" --activate --path="$wp_path"
+          wp eval-file "$GITHUB_WORKSPACE/experiments/bounded-adapters/wordpress-tests.php" --path="$wp_path"
+  isolation:
+    name: Production package isolation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+      - run: npm ci && npm run build && npm run inspect
+        env:
+          TZ: UTC
+      - name: Byte-identical to the immutable published stable ZIP
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          curl --fail --location --retry 2 https://github.com/itdream24/itd-cookies/releases/download/v0.3.0/itd-cookies-0.3.0.zip --output "$RUNNER_TEMP/stable.zip"
+          echo 'aa45c5a4ba2c4bc01e4dde683093504ac127db30556227f20a26666bc8c6f9f4  dist/itd-cookies-0.3.0.zip' | sha256sum --check
+          cmp dist/itd-cookies-0.3.0.zip "$RUNNER_TEMP/stable.zip"

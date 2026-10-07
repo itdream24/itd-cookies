@@ -11,4 +11,5 @@ for($i=0;$i<15;$i++) {
  else $output=$parser->rewrite($html);
  $times[]=(microtime(true)-$start)*1000;
 }
-sort($times);echo json_encode(array('php'=>PHP_VERSION,'kb'=>$kb,'method'=>$method,'scripts'=>$scripts,'median_ms'=>round($times[7],3),'max_ms'=>round(max($times),3),'peak_bytes'=>memory_get_peak_usage(true),'peak_delta_bytes'=>memory_get_peak_usage(true)-$base,'output_delta_bytes'=>strlen($output)-strlen($html)),JSON_PRETTY_PRINT)."\n";
+$correct=$method==='tokenizer' ? substr_count($output,'data-itd-poc-category="analytics"')===$scripts && !$parser->diagnostics : true;
+sort($times);echo json_encode(array('php'=>PHP_VERSION,'kb'=>$kb,'method'=>$method,'scripts'=>$scripts,'correct'=>$correct,'median_ms'=>round($times[7],3),'max_ms'=>round(max($times),3),'peak_bytes'=>memory_get_peak_usage(true),'peak_delta_bytes'=>memory_get_peak_usage(true)-$base,'output_delta_bytes'=>strlen($output)-strlen($html)),JSON_PRETTY_PRINT)."\n";

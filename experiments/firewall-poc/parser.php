@@ -2,6 +2,7 @@
 /** Original, dev-only limited tokenizer experiment. GPL-2.0-or-later. */
 final class ITD_FW_POC_Parser {
     public $diagnostics = array();
+    public $outcome = 'UNCHANGED';
     private $rules;
     public function __construct(array $rules) { $this->rules = $rules; }
     public function category(array $attrs, $body = '') {
@@ -85,8 +86,9 @@ final class ITD_FW_POC_Parser {
     }
     public function rewrite($html, $hints = false) {
         $this->diagnostics = array();
-        if (strlen($html) > 2 * 1024 * 1024) { $this->diagnostics[] = 'size-cap-bypass'; return $html; }
-        if (!preg_match('//u',$html)) { $this->diagnostics[]='encoding-bypass'; return $html; }
+        $this->outcome = 'UNCHANGED';
+        if (strlen($html) > 2 * 1024 * 1024) { $this->diagnostics[] = 'size-cap-bypass'; $this->outcome='BYPASS_UNSUPPORTED_HTML'; return $html; }
+        if (!preg_match('//u',$html)) { $this->diagnostics[]='encoding-bypass'; $this->outcome='BYPASS_UNSUPPORTED_HTML'; return $html; }
         $edits = array(); $position = 0; $templateDepth = 0;
         try {
             while (($start = strpos($html,'<',$position)) !== false) {
@@ -101,7 +103,8 @@ final class ITD_FW_POC_Parser {
                 if ($closing) continue;
                 if (in_array($name,array('script','style','textarea','title','xmp','noembed','noframes','iframe','noscript'),true)) {
                     $close = stripos($html,'</'.$name,$end); if ($close === false) throw new RuntimeException('incomplete-rawtext');
-                    if (!preg_match('/^<\/'.preg_quote($name,'/').'(?:\s|>)/i',substr($html,$close))) throw new RuntimeException('rawtext-end-boundary');
+                    $boundary = substr($html,$close+strlen($name)+2,1);
+                    if ($boundary!== '>' && !ctype_space($boundary)) throw new RuntimeException('rawtext-end-boundary');
                     $position=$this->end_tag($html,$close); if ($position === false) throw new RuntimeException('incomplete-rawtext');
                     if ($name !== 'script' || $templateDepth > 0) continue;
                     $body=substr($html,$end,$close-$end);
@@ -120,9 +123,17 @@ final class ITD_FW_POC_Parser {
                 }
             }
             if ($templateDepth!==0) throw new RuntimeException('template-context');
-        } catch (RuntimeException $e) { $this->diagnostics[]=$e->getMessage(); return $html; }
+        } catch (RuntimeException $e) { $this->diagnostics[]=$e->getMessage(); $this->outcome='BYPASS_UNSUPPORTED_HTML'; return $html; }
         // Byte edits only; no DOM serialization or inline code modification.
-        for ($i=count($edits)-1;$i>=0;$i--) $html=substr_replace($html,$edits[$i][2],$edits[$i][0],$edits[$i][1]);
-        return $html;
+        if (!$edits) return $html;
+        $chunks=array(); $cursor=0;
+        foreach($edits as $edit) {
+            $chunks[]=substr($html,$cursor,$edit[0]-$cursor);
+            $chunks[]=$edit[2];
+            $cursor=$edit[0]+$edit[1];
+        }
+        $chunks[]=substr($html,$cursor);
+        $this->outcome='TRANSFORMED';
+        return implode('',$chunks);
     }
 }

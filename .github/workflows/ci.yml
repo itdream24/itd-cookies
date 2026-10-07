@@ -1,4 +1,4 @@
-name: CI
+name: Stable plugin checks
 on:
   push:
     branches: ['**']
