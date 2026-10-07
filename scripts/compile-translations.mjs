@@ -28,6 +28,7 @@ const phpFiles = [
 	"public/class-itd-cookies-plugin.php",
     "includes/class-itd-cookies-updater.php",
 	"includes/class-itd-cookies-services.php",
+	"includes/class-itd-cookies-script-adapters.php",
 	"includes/class-itd-cookies-legal.php",
 ];
 for (const file of phpFiles) {

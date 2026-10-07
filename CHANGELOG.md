@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0-dev.1 — Unreleased
+
+- Developer API for explicitly registered closed classic WordPress script-handle groups.
+- Complete native data/before/external/after capture and per-group dependency replay after existing consent.
+- Native provider ownership priority, bounded registration and safe developer diagnostics.
+- No groups by default; no universal firewall, ancillary resource blocking, module replay or admin script editor.
+- Existing consent schema 1, provider settings, legal integration and GitHub updater retained.
+
 ## 0.3.0 — 2026-10-06
 
 - Analytics integrations: existing Yandex Metrika/GA4 retained; added Google Tag Manager and Microsoft Clarity.

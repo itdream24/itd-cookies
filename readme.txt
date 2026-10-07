@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,12 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.4.0-dev.1 (development candidate) =
+* Limited developer adapters for closed classic WordPress script handles and native inline attachments.
+* Existing consent categories and native provider ownership are retained; no groups are registered by default.
+* Ancillary tracking resources, modules and universal external-script blocking are unsupported.
+
 
 = 0.3.0 =
 * Analytics: existing Yandex Metrika/GA4 retained; added Google Tag Manager and Microsoft Clarity after Analytics consent.
@@ -60,4 +66,4 @@ No. Site owners must choose their policies and provider configuration.
 * Russian translation; WordPress 5.2+ and PHP 7.4+ compatibility.
 
 == Provider limitations ==
-ITD Cookies controls its built-in integrations. It does not block scripts inserted by themes or other plugins. GTM container loading follows Analytics consent; its tags may require Marketing consent and depend on container configuration. Google Consent Mode is not configured automatically. Avoid configuring the same tracker both natively and inside GTM.
+ITD Cookies controls its built-in integrations and explicitly registered closed classic WordPress script-handle groups. It does not automatically block unknown theme/plugin scripts or tracking resources. Limited adapters are a developer API, not a universal cookie firewall. GTM container loading follows Analytics consent; its tags may require Marketing consent and depend on container configuration. Google Consent Mode is not configured automatically. Avoid configuring the same tracker both natively and inside GTM.

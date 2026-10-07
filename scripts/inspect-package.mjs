@@ -61,7 +61,7 @@ export function inspectPackage(file, version, php = process.env.PHP_BINARY || "p
 	if (!entries.get("itd-cookies/readme.txt")?.toString("utf8").includes(`Stable tag: ${version}\n`)) {
 		throw new Error("ZIP readme version mismatch");
 	}
-	for (const required of ["LICENSE", "readme.txt", "includes/class-itd-cookies-updater.php", "languages/itd-cookies-ru_RU.mo"]) {
+	for (const required of ["LICENSE", "readme.txt", "includes/class-itd-cookies-updater.php", "includes/class-itd-cookies-script-adapters.php", "includes/functions-script-adapters.php", "assets/js/script-adapters.js", "languages/itd-cookies-ru_RU.mo"]) {
 		if (!entries.has(`itd-cookies/${required}`)) throw new Error(`Missing ${required}`);
 	}
 	return { count, sha256: crypto.createHash("sha256").update(zip).digest("hex") };

@@ -125,6 +125,10 @@ jobs:
           wp plugin activate itd-cookies --path="$wp_path"
           CHECK_PERSISTED=1 wp eval-file "$GITHUB_WORKSPACE/tests/integration/itd-cookies-wordpress-smoke.php" --path="$wp_path"
           PACKAGE_PATH="$GITHUB_WORKSPACE/dist/itd-cookies-$version.zip" wp eval-file "$GITHUB_WORKSPACE/tests/integration/updater-wordpress-smoke.php" --path="$wp_path"
+          for scenario in zero supported missing-handle missing-dependency cycle ownership ancillary unprinted late; do
+            ADAPTER_SCENARIO="$scenario" wp eval-file "$GITHUB_WORKSPACE/tests/integration/script-adapters-wordpress-smoke.php" --path="$wp_path"
+          done
+          wp eval-file "$GITHUB_WORKSPACE/tests/integration/script-adapters-benchmark.php" --path="$wp_path"
           if [[ -f "$wp_path/wp-content/debug.log" ]] && grep -Ei 'itd-cookies.*(fatal|warning|deprecated)|(fatal|warning|deprecated).*itd-cookies' "$wp_path/wp-content/debug.log"; then exit 1; fi
   build:
     needs: [php, quality, node, wordpress]
