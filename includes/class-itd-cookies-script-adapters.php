@@ -232,14 +232,18 @@ final class ITD_Cookies_Script_Adapters {
 				if ( ! isset( $scripts->registered[ $handle ] ) ) {
 					continue;
 				}
-				$inline                    = $failure ? '' : $this->inline_tags( $scripts, $handle );
+				$attachments = array();
+				foreach ( array( 'data', 'before', 'after' ) as $key ) {
+					$attachments[ $key ] = $failure ? '' : $scripts->get_data( $handle, $key );
+				}
 				$group['nodes'][ $handle ] = array(
-					'handle'   => $handle,
-					'deps'     => $failure ? array() : $graph[ $handle ],
-					'template' => 'itd-cookies-script-' . $handle,
-					'inline'   => $inline,
-					'printed'  => false,
-					'source'   => $scripts->registered[ $handle ]->src,
+					'handle'      => $handle,
+					'deps'        => $failure ? array() : $graph[ $handle ],
+					'template'    => 'itd-cookies-script-' . $handle,
+					'inline'      => array(),
+					'attachments' => $attachments,
+					'printed'     => false,
+					'source'      => $scripts->registered[ $handle ]->src,
 				);
 				foreach ( array( 'data', 'before', 'after' ) as $key ) {
 					$scripts->add_data( $handle, $key, '' );
@@ -379,7 +383,23 @@ final class ITD_Cookies_Script_Adapters {
 		if ( $this->groups[ $id ]['failure'] || ! isset( $this->groups[ $id ]['nodes'][ $handle ] ) ) {
 			return '';
 		}
-		$inline = $this->groups[ $id ]['nodes'][ $handle ]['inline'];
+		$node = &$this->groups[ $id ]['nodes'][ $handle ];
+		if ( ! $node['inline'] ) {
+			$scripts = wp_scripts();
+			// Render at native print time, after late nonce/attribute filters exist.
+			// Only the known handle is restored, inside this synchronous call.
+			try {
+				foreach ( $node['attachments'] as $key => $value ) {
+					$scripts->add_data( $handle, $key, $value );
+				}
+				$node['inline'] = $this->inline_tags( $scripts, $handle );
+			} finally {
+				foreach ( array( 'data', 'before', 'after' ) as $key ) {
+					$scripts->add_data( $handle, $key, '' );
+				}
+			}
+		}
+		$inline = $node['inline'];
 		return $inline['before'] . $tag . $inline['after'];
 	}
 	/**
@@ -430,7 +450,7 @@ final class ITD_Cookies_Script_Adapters {
 			}
 			$nodes = array();
 			foreach ( $group['nodes'] as $node ) {
-				unset( $node['inline'], $node['printed'], $node['source'] );
+				unset( $node['inline'], $node['attachments'], $node['printed'], $node['source'] );
 				$nodes[] = $node;
 			}
 			$groups[] = array(

@@ -218,11 +218,11 @@ PHP syntax/metadata inspector PASS. Tests, fixture, docs, reports, experiments,
 dependencies, credentials and private evidence excluded by the builder's
 runtime allowlist. Build timestamps/order/permissions are fixed.
 
-SHA-256: `b48255ce4ac470a27bc295a692089c93896039d072d35bb325a20059a368484b`.
+SHA-256: `d7d6f56a44fd3ba1b897036d0292e722d03b6fa35330e11f69369d9ac7f05af2`.
 Final reproducibility check and CI artifact comparison are pending.
 
 ## Feature CI
 
-Initial run [37594945763](https://github.com/itdream24/itd-cookies/actions/runs/37594945763) failed: both WP 5.2 jobs reached the cycle fixture, then exhausted the runner. The old native datepicker query traversed the cycle at enqueue priority 1000 before preparation. Registration/preparation now runs at priority 999, with a regression assertion before the native query. A complete replacement CI run and local recapture are pending. Required jobs: PHP 7.4, PHP 8.5, quality, node,
+Initial run [37594945763](https://github.com/itdream24/itd-cookies/actions/runs/37594945763) failed: both WP 5.2 jobs reached the cycle fixture, then exhausted the runner. The old native datepicker query traversed the cycle at enqueue priority 1000 before preparation. Registration/preparation now runs at priority 999, with a regression assertion before the native query. The replacement [37595897343](https://github.com/itdream24/itd-cookies/actions/runs/37595897343) passed all nine jobs. Local CSP recapture then exposed early tag rendering before late nonce filters; attachment bodies now freeze early and native tags render at print time. The smoke checks a nonce filter registered at priority 1000. A complete final CI run and browser recapture remain pending. Required jobs: PHP 7.4, PHP 8.5, quality, node,
 four WordPress matrix jobs and build — **all nine must be SUCCESS** for READY.
 No release job or stable tag is part of this gate.

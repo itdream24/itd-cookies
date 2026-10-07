@@ -61,7 +61,7 @@ do not acquire ownership of theme scripts or a shared jQuery handle.
 
 The graph is taken from WordPress's registered `deps`, not guessed from URLs.
 Head and footer handles can belong to one group. Each handle retains the native
-order: data/localization → before → external → after. Core renderers produce the
+order: data/localization → before → external → after. Attachments are frozen early, while tags are rendered at the native print boundary so later nonce filters still apply. Core renderers produce the
 inline tags, including version-specific wrappers/sourceURL comments. The normal
 `script_loader_tag` pipeline sees its native before/external/after bundle; data
 remains outside it as in WordPress. Only owned script output is placed in inert

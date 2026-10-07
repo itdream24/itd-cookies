@@ -46,13 +46,11 @@ wp_enqueue_script( 'fixture-dependent' );
 wp_localize_script( 'fixture-library', 'FixtureData', array( 'value' => 'localization<&' ) );
 wp_add_inline_script( 'fixture-library', "window.fixtureBefore = 'before';\n// untouched body", 'before' );
 wp_add_inline_script( 'fixture-library', "window.fixtureAfter = 'after';", 'after' );
-add_filter(
-	'wp_inline_script_attributes',
-	static function ( $attributes ) {
-		$attributes['nonce'] = 'fixture-nonce';
-		return $attributes;
-	}
-);
+$inline_nonce = static function ( $attributes ) {
+	$attributes['nonce'] = 'fixture-nonce';
+	return $attributes;
+};
+add_filter( 'wp_inline_script_attributes', $inline_nonce );
 add_filter(
 	'script_loader_tag',
 	static function ( $tag ) {
@@ -79,6 +77,15 @@ if ( method_exists( $scripts, 'get_inline_script_tag' ) ) {
 	$scripts->print_inline_script( 'fixture-library', 'after' );
 }
 $expected_after = apply_filters( 'script_loader_tag', ob_get_clean(), 'fixture-library' );
+// A legitimate nonce integration can attach its filters after group preparation.
+remove_filter( 'wp_inline_script_attributes', $inline_nonce );
+add_action(
+	'wp_enqueue_scripts',
+	static function () use ( $inline_nonce ) {
+		add_filter( 'wp_inline_script_attributes', $inline_nonce );
+	},
+	1000
+);
 
 $args     = array(
 	'category'       => 'analytics',
