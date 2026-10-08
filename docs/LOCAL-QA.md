@@ -133,3 +133,14 @@ Real browser WordPress 0.2.0 -> published 0.3.0, provider category matrix,
 1440x900/390x844 UI, cleanup and current-baseline restore PASS. Exact commits,
 CI/Release links and hashes are in [the release report](ITD-COOKIES-0.3.0.md).
 Historical remote state is outside this procedure and must not be resumed.
+
+## 0.4.0 pre-merge regression (2026-10-08)
+
+Native local ZIP 0.3.0 -> 0.4.0 and shipped Script Adapter browser/API/CSP/UI
+regression PASS. The immutable 0.3.0 snapshot was actually restored both before
+and after testing. Final 501 file hashes and all 12 database tables match; QA
+consent/analytics cookies and temporary plugins/pages/options/counters are gone.
+Current baseline remains **v0.3.0**, official plugin ACTIVE. No v0.4.0 baseline
+exists yet; capture/actual Restore of a new clean official snapshot waits for
+publication and real public updater acceptance. Previous snapshots remain intact.
+See [the 0.4.0 stable gate report](ITD-COOKIES-0.4.0.md).

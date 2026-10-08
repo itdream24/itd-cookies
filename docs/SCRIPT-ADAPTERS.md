@@ -166,3 +166,12 @@ add_action( 'itd_cookies_register_script_groups', function () {
 public functions and ordinary WordPress APIs. It includes positive analytics/
 marketing groups and public-API negative cases. It is never packaged, must only
 run on the named disposable local QA site, and must be removed after acceptance.
+
+## Stable 0.4.0 pre-publication verification
+
+The production ZIP regression on the isolated local site passed category gating,
+closed dependency order, repeated Save, revoke/reload, public API negative cases,
+all five native ownership types, classic nonce/hash CSP, zero-group behavior and
+desktop/mobile smoke. Timeout late-SDK execution remains subject to the limitation
+above. Publication and real public updater verification remain pending; see
+[the stable gate report](ITD-COOKIES-0.4.0.md) for actual runs and scope.

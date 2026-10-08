@@ -22,9 +22,51 @@ docs/private evidence excluded. PHP **7.4** ZIP lint and inspector **PASS**.
 Two repeated builds match SHA-256:
 `4afebd473bbd191a2f81c50257367228b3e584b0c44cc8c7f5b2c24c698f8c09`.
 
-Release-branch CI, stable production browser regressions, merge/main CI,
-tag/Release, anonymous asset verification and real stable updater E2E:
-**PENDING**. No published-release verdict is claimed.
+Stable metadata commit: `abc7af53f360c772ef1b6b06e845cc9279512a20`.
+Its [release-branch CI](https://github.com/itdream24/itd-cookies/actions/runs/37607821546)
+is **9/9 PASS**, including all four WordPress matrix jobs and build.
+The documentation-only regression commit requires another full release CI before merge.
+
+## Local stable ZIP regression and cleanup (2026-10-08)
+
+Immutable baseline-v0.3.0 was verified and actually restored before testing.
+The native WordPress Plugin_Upgrader installed the production-format 0.4.0 ZIP
+over official active 0.3.0. Folder/activity, complete raw settings hash, full
+persisted synthetic consent (including expiry), schema 1, fresh-v1 migration
+marker, managed Cookie Policy page, legal links, text size, footer and all five
+native provider configurations were preserved. No synthetic release metadata
+was used; this is **local ZIP acceptance**, not the pending public updater check.
+
+| Shipped runtime gate | Actual result |
+| --- | --- |
+| Zero groups, before/after upgrade | PASS: no adapter asset/manifest/template, no SDK requests or owned inline; ordinary application/jQuery/CDN/theme unchanged |
+| Fresh / Reject | PASS: optional SDK requests and owned inline executions = 0 |
+| Analytics / Marketing / Accept all | PASS: category gating, data-before-SDK-after/dependent order and one init per document |
+| Repeat consent / repeat Save | PASS: no new SDK requests or duplicate init |
+| Revoke / reload | PASS: revoked group trace empty, cumulative request counters unchanged |
+| Missing handle/dependency, cycle, 404, timeout, unprinted, ancillary, late | PASS: public API controlled diagnostics, independent group/site unaffected |
+| Native ownership | PASS: real WordPress API for Yandex/GA4/GTM/Clarity/Meta; browser GA4 one tag/config after repeat, conflicting adapter requests = 0 |
+| Classic nonce / hash CSP | PASS: dependency/inline replay, zero recorded CSP violations |
+| 1440x900 / 390x844 | PASS: no horizontal overflow, theme Manrope retained, long description/four legal links, mobile switches/Save operable |
+| Unknown functional JS | PASS: application/neighbor exactly once, jQuery/CDN/theme work through errors |
+
+All nine real WordPress API smoke scenarios PASS. Performance (30 iterations,
+PHP 8.1.5 / WordPress 7.1.2, median): 0 groups ~0.002 ms; 3 groups / 6 handles
+registration 0.062 ms, preparation 0.373 ms, capture/manifest 0.204 ms.
+The timeout test observed late SDK execution after its 5-second deadline;
+after/dependent execution and current-document retry remained withheld.
+
+Cleanup **PASS**: QA consent and test analytics cookies cleared, then complete
+baseline-v0.3.0 Restore removed fixture, temporary policy page/options/counters.
+All **501 installed files** match the immutable manifest; all **12 database
+tables**, schemas and INSERT rows match, canonical SHA-256
+`5e4de59abce9821678a8b76d5641ae6a1af8fb28811fecd22c3e4206b0759c1f`.
+Browser homepage fresh banner and no fixture output verified. Official 0.3.0
+remains ACTIVE, original settings restored. Previous baselines are unchanged.
+Raw evidence, cookies, SQL and cleanup instrumentation remain private outside Git.
+
+Merge/main CI, tag/Release, anonymous asset verification and real stable updater
+E2E: **PENDING**. No published-release verdict is claimed.
 The final gate is
 `ITD_COOKIES_V0.4.0_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED`
 only after the real public update, published adapter matrix and clean new
