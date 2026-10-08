@@ -1,4 +1,107 @@
-# ITD Cookies 0.4.0 — Stable release gate
+# ITD Cookies 0.4.0 — Published release and local stable acceptance
+
+Version: **0.4.0**. Date: **2026-10-08**. Scope: **WP_HANDLES_ONLY**.
+Completion verdict (requires final documentation main CI **9/9 PASS**):
+**`ITD_COOKIES_V0.4.0_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED`**.
+Publication, public assets, real native stable update, shipped browser regression
+and clean baseline Capture/actual Restore are **PASS**. The report-only follow-up
+commit receives its own final main CI; that status is reported with the commit.
+
+## Immutable publication and CI
+
+- Annotated tag: `v0.4.0`; tag object
+  `2d8e7089d5181a58e5f8cdc8d4737ba4c87a5ee4`.
+- Tag/main commit: `0f6710647ac9453e016edefdcc3ea3abd3c8ba93`.
+- [Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.0)
+  created automatically, once, by the unchanged workflow.
+- Fresh fetch, clean worktree, matching origin/main and the three accepted CI
+  runs were checked before tagging. [Release branch CI](https://github.com/itdream24/itd-cookies/actions/runs/37742761405),
+  [independent main CI](https://github.com/itdream24/itd-cookies/actions/runs/37742985345),
+  [tagged HEAD main CI](https://github.com/itdream24/itd-cookies/actions/runs/37743289136):
+  each **9/9 PASS**, including all WordPress matrix jobs and build.
+- [Stable release workflow](https://github.com/itdream24/itd-cookies/actions/runs/37751744589):
+  **11/11 PASS**: strict tag/main validation, all nine reusable CI jobs, publish.
+- Public anonymous GitHub API: latest **v0.4.0**, draft **false**, prerelease **false**.
+- ZIP `itd-cookies-0.4.0.zip` and matching `.zip.sha256` downloaded anonymously;
+  local rebuild, uploaded GitHub digest and downloaded ZIP/checksum match:
+  `4afebd473bbd191a2f81c50257367228b3e584b0c44cc8c7f5b2c24c698f8c09`.
+- Package inspector/PHP 7.4 syntax PASS: **18 files**, one itd-cookies root,
+  stable metadata/translations/updater/adapters present, dev/private files absent.
+  Assets IDs **621260269** (ZIP), **621260272** (checksum). No replacement,
+  re-tagging or manual asset upload was performed.
+
+## Real 0.3.0 -> 0.4.0 through WordPress
+
+The immutable official baseline-v0.3.0 was verified and actually restored.
+Only synthetic settings/IDs/consent were seeded locally. The previously accepted
+local-only reference fixture uses public script-group APIs and local SDK counters;
+it does **not** provide synthetic GitHub metadata or intercept updater HTTP.
+
+Dashboard -> Updates -> **Check again** advertised installed **0.3.0** -> **0.4.0**.
+The native update record contained the real GitHub Release download URL.
+Only ITD Cookies was checked; **Update plugins** completed successfully in the
+standard WordPress interface. No runtime files were manually substituted.
+
+Preservation **PASS**: active plugin and itd-cookies folder, all 18 installed file
+hashes identical to public ZIP, complete raw settings, five native provider
+configurations, legal links, text size, footer, managed Cookie Policy page ID,
+fresh-v1 migration marker and persisted consent including expiry. Schema stays 1;
+the policy version and choice are unchanged. Core/theme/locale/activity did not
+change. Fresh reload and existing frontend work normally. Zero registered groups
+before/after introduce no adapter assets/manifest/templates, owned inline or SDK
+requests; existing application/jQuery/CDN/theme behavior remains intact.
+
+## Published runtime acceptance
+
+| Gate | Actual result |
+| --- | --- |
+| Fresh / Reject / Reject reload | PASS: no optional SDK requests or owned inline; choice persists |
+| Analytics / Marketing / Accept all | PASS: category gating, closed dependency order, localization/before/SDK/after preserved |
+| Repeat event / repeat Save | PASS: SDK/init once per document, counters unchanged |
+| Revoke/reload | PASS: revoked group no longer executes or adds requests |
+| Missing handle/dependency, cycle, 404, timeout, ancillary, unprinted, late | PASS: controlled public API diagnostics, independent group and site unaffected |
+| Native ownership | PASS: real WP API for Yandex/GA4/GTM/Clarity/Meta; browser GA4 one tag/config after repeat, conflicting adapter requests 0 |
+| Classic nonce / hash CSP | PASS: replay succeeds, recorded CSP violations 0 |
+| 1440x900 / 390x844 | PASS: no horizontal overflow, long description/four links, theme font, toggles/Save accessible |
+| Unknown functional JS | PASS: application/neighbor once; jQuery/CDN/theme work through negative cases |
+| Performance smoke, 30 iterations | PASS: 0 groups ~0.003 ms; 3 groups/6 handles ~0.656 ms total median on PHP 8.1.5 / WP 7.1.2 |
+
+All nine installed-runtime WordPress API scenarios also PASS. Timeout retained
+the documented limitation: the slow SDK executed late after the 5-second timeout,
+while after/dependent code stayed withheld, failure was recorded, no retry occurred.
+This does not claim physical cancellation or universal script/CSP coverage.
+
+## Cleanup, new baseline and final site
+
+QA consent and analytics cookies cleared and absence rechecked. Complete original
+local DB/wp-content Restore removed the reference fixture, temporary policy page,
+test options/counters and cleanup instrumentation. The anonymously downloaded
+official ZIP was then installed using native Plugin_Upgrader for a clean 0.4.0.
+There is only one installed/active plugin. Original raw settings/marker/policy
+absence/theme/core are retained; providers OFF. No temporary observer, fixture,
+test page, synthetic metadata, test option/cache/counter or helper script remains.
+
+Old baseline-v0.3.0 remains immutable: **501 files**, dump SHA-256
+`61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9`.
+New separate baseline-v0.4.0 was captured after cleanup and **actually restored**:
+**504 files**, installed/copy manifest hashes PASS; versions/settings/markers,
+theme/plugins/activity PASS. Dump SHA-256
+`c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93`.
+All **12 DB tables**, schemas and INSERT rows exactly match the new snapshot;
+canonical SHA-256
+`5ef5e08a66edc59ce7f0cb546ce2e5fb286b70a78c93ae1682ce4241e496a234`.
+
+Final localhost: **official 0.4.0 ACTIVE**, normal clean fresh banner/homepage,
+zero adapter assets and no fixture output. Current baseline is **v0.4.0**.
+Snapshots/raw SQL/session/cookie/screenshots/private tools stay outside Git and
+web-root. [LOCAL-QA.md](LOCAL-QA.md) records explicit versioned Restore commands.
+Research audit and runtime/version metadata are unchanged by this final docs pass.
+Remote testwp/Timeweb/production QA and mutations: **0**. Published tags/assets
+remain immutable; any subsequent defect requires **0.4.1**.
+
+---
+
+## Pre-publication gate history
 
 Stable version: **0.4.0**. Scope: **WP_HANDLES_ONLY**.
 Release branch: `release/itd-cookies-0.4.0`, created strictly from accepted

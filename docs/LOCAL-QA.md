@@ -73,12 +73,12 @@ Do not publish a stable release merely to test an unpublished dev candidate.
 ## Current execution evidence
 
 Actual versions, baseline location, results and final state belong in
-[the 0.3.0 acceptance report](ITD-COOKIES-0.3.0.md). A pending installation or
+[the 0.4.0 release report](ITD-COOKIES-0.4.0.md). A pending installation or
 unexecuted browser/failure/reset check is not a PASS.
 
-## Versioned immutable baselines (2026-10-06)
+## Versioned immutable baselines (2026-10-08)
 
-Current development baseline: **baseline-v0.3.0**. Official ITD Cookies 0.3.0
+Current development baseline: **baseline-v0.4.0**. Official ITD Cookies 0.4.0
 ACTIVE, only installed plugin. WordPress 7.1.2 / PHP 8.1.5 / MariaDB 10.6,
 ru_RU, Twenty Twenty-Five 1.5. Dedicated itd_cookies_local DB and restricted
 itd_cookies_qa localhost user; no production data. Providers OFF, default raw
@@ -89,7 +89,8 @@ Private QA_STATE/030-local-qa contains separate immutable snapshots:
 | Snapshot | Use | wp-content files | SQL SHA-256 |
 | --- | --- | --- | --- |
 | baseline-v0.2.0 | Previous stable for 0.2.0 -> 0.3.0 upgrade | 491 | 30e83507104013fc3b82cb90673d9c4356c059478e2c11c030e562b4e8b49d5e |
-| baseline-v0.3.0 | Current stable for development/reset | 501 | 61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9 |
+| baseline-v0.3.0 | Previous stable for 0.3.0 -> 0.4.0 upgrade | 501 | 61eeb52f5597c8360d31a44edfc64c819d6b56e9bbe22aac5e0f816439873ab9 |
+| baseline-v0.4.0 | Current stable for development/reset | 504 | c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93 |
 
 Each has a dedicated SQL dump, wp-content copy/manifest/hashes and JSON
 versions/theme/plugins/settings/marker/policy state. Original unversioned 0.2.0
@@ -101,17 +102,17 @@ Run the private baseline.ps1 from its saved artifact directory (PowerShell):
 
 ```powershell
 # Previous stable, only when preparing an upgrade acceptance test:
-.\baseline.ps1 -Mode Restore -Version 0.2.0
-# Current stable for normal local development/reset:
 .\baseline.ps1 -Mode Restore -Version 0.3.0
+# Current stable for normal local development/reset:
+.\baseline.ps1 -Mode Restore -Version 0.4.0
 # Inspect the live isolated site without restoration:
-.\baseline.ps1 -Mode Inspect -Version 0.3.0
+.\baseline.ps1 -Mode Inspect -Version 0.4.0
 # Capture only a NEW accepted version after cleanup; never overwrite:
-.\baseline.ps1 -Mode Capture -Version 0.3.0
+.\baseline.ps1 -Mode Capture -Version 0.4.0
 ```
 
 The last Capture command has already been run: repeating it refuses to overwrite
-the existing snapshot. Default Version is 0.3.0, but use explicit versions in
+the existing snapshot. Default Version is 0.4.0, but use explicit versions in
 acceptance scripts. Capture checks installed version against the requested
 version. Restore verifies local URL/DB, immutable dump/copy hashes and the exact
 absolute wp-content removal target before importing only this site's database.
@@ -134,7 +135,7 @@ Real browser WordPress 0.2.0 -> published 0.3.0, provider category matrix,
 CI/Release links and hashes are in [the release report](ITD-COOKIES-0.3.0.md).
 Historical remote state is outside this procedure and must not be resumed.
 
-## 0.4.0 pre-merge regression (2026-10-08)
+## Historical 0.4.0 pre-merge regression (2026-10-08)
 
 Native local ZIP 0.3.0 -> 0.4.0 and shipped Script Adapter browser/API/CSP/UI
 regression PASS. The immutable 0.3.0 snapshot was actually restored both before
@@ -144,3 +145,16 @@ Current baseline remains **v0.3.0**, official plugin ACTIVE. No v0.4.0 baseline
 exists yet; capture/actual Restore of a new clean official snapshot waits for
 publication and real public updater acceptance. Previous snapshots remain intact.
 See [the 0.4.0 stable gate report](ITD-COOKIES-0.4.0.md).
+
+## Published 0.4.0 acceptance and current reset
+
+Real GitHub Check again -> native WordPress 0.3.0 -> published 0.4.0 PASS,
+including complete settings/consent preservation, shipped public adapter
+category/error/ownership/CSP/UI/performance gates. Cleanup removed all temporary
+plugins/pages/options/counters and QA cookies. Official 0.4.0 is the only
+installed/active plugin. Capture and actual Restore of NEW baseline-v0.4.0 PASS:
+504 file hashes and all 12 DB tables/schema/INSERT rows match. The prior 0.3.0
+snapshot (501 files/dump) was reverified unchanged. No baseline was overwritten.
+Use explicit `-Version 0.4.0` for current QA resets. Historical pre-merge reset
+to 0.3.0 above is superseded by this published acceptance. Exact release/CI/tag
+links, ZIP and database hashes are in [the 0.4.0 report](ITD-COOKIES-0.4.0.md).
