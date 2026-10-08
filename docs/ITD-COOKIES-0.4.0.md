@@ -25,7 +25,13 @@ Two repeated builds match SHA-256:
 Stable metadata commit: `abc7af53f360c772ef1b6b06e845cc9279512a20`.
 Its [release-branch CI](https://github.com/itdream24/itd-cookies/actions/runs/37607821546)
 is **9/9 PASS**, including all four WordPress matrix jobs and build.
-The documentation-only regression commit requires another full release CI before merge.
+Regression documentation/stable candidate commit:
+`cfc0efd7e09d0f8ee71f08e19a35ae1488e4d304`.
+Its separate [release CI](https://github.com/itdream24/itd-cookies/actions/runs/37742761405)
+and [main CI](https://github.com/itdream24/itd-cookies/actions/runs/37742985345)
+are both **9/9 PASS**, all jobs completed SUCCESS, no cancellation/skips.
+Main was fast-forwarded without rewriting history and matched the release-branch tree.
+Runtime, package hash and historical research audit did not change.
 
 ## Local stable ZIP regression and cleanup (2026-10-08)
 
@@ -65,8 +71,14 @@ Browser homepage fresh banner and no fixture output verified. Official 0.3.0
 remains ACTIVE, original settings restored. Previous baselines are unchanged.
 Raw evidence, cookies, SQL and cleanup instrumentation remain private outside Git.
 
-Merge/main CI, tag/Release, anonymous asset verification and real stable updater
-E2E: **PENDING**. No published-release verdict is claimed.
+Pre-publication verdict: **`READY_TO_TAG_ITD_COOKIES_V0.4.0`**.
+The owner's 2026-10-08 continuation completed local ZIP/browser acceptance,
+exact baseline-v0.3.0 cleanup, merge and separate main CI/readiness.
+No tag or GitHub Release was created during this continuation. Public release
+download verification, native real GitHub stable updater E2E and baseline-v0.4.0
+capture/Restore remain **PENDING**. No published-release verdict is claimed.
+Readiness documentation is excluded from the ZIP; its follow-up main CI is a
+separate check and cannot replace the accepted candidate's main CI above.
 The final gate is
 `ITD_COOKIES_V0.4.0_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED`
 only after the real public update, published adapter matrix and clean new
