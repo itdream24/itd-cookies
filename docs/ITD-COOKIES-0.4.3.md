@@ -387,3 +387,15 @@ Restore. `final-clicks.json` records four PASS, zero JS exceptions and empty QA
 cookies. `final-panel-actions-success.png` is additional screenshot evidence.
 The final post-click Restore again matched all 504 files and all 12 tables;
 official 0.4.2 ACTIVE. The earlier 48-screen matrix evidence remains preserved.
+
+
+## Stable release gate — preparation
+
+Accepted browser commit: 37a1fd55fd91b60cbda96edc4836d7c4f1d23673, CI 37976010185 13/13 PASS. Release branch is created strictly from it. Version 0.4.3 synchronized; WP 5.2/PHP 7.4 activation floor retained. Recommended lower compatibility combination is WP 5.3/PHP 7.4; production should use current security-supported Core/PHP. WP 5.0 support is not declared.
+
+Lockfile correction: the previous broad candidate-version replacement accidentally changed ESLint’s @humanwhocodes/retry range from ^0.4.2 to ^0.4.3-dev.1. Restored ^0.4.2 from the ESLint manifest; all resolved dependency versions/integrities unchanged. No consent schema, adapters, provider list or runtime logic changes. Stable publication and real updater acceptance remain pending.
+
+Stable production ZIP: `itd-cookies-0.4.3.zip`.
+Two builds/package inspection with PHP 7.4: PASS, 18 production files.
+Stable SHA-256: `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`.
+This differs from the accepted dev ZIP hash. Translation build: 97 messages.

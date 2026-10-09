@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.3-dev.1 — unreleased
+## 0.4.3 — 2026-10-09
 
 - Expose the public consent function only after a supported bootstrap loads the engine.
 - Reject foreign same-basename update records on cache reads and writes; only canonical GitHub stable packages are trusted.

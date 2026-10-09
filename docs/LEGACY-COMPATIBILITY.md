@@ -43,7 +43,7 @@ ownership на pre5.8, полный security/quality CI и функционал�
 analytics acceptance → согласовать rollout. Ни один smoke на неподдержанном
 Core/PHP не заменяет официальную матрицу или security support PHP.
 
-## Изменения кандидата 0.4.3-dev.1
+## Изменения 0.4.3
 
 Опубликованная stable остаётся 0.4.2. Кандидат не разрешает production rollout.
 Основная проверяемая линия начинается с WP 5.3 / PHP 7.4; новые production сайты

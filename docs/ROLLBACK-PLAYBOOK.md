@@ -40,11 +40,11 @@ checksum, сделать backup/settings capture и установить шта�
 
 После запуска 0.4.2 Dashboard → Updates → Check again сбрасывает GitHub cache
 и update_plugins и получает настоящий stable Release. Защита источника
-обновлений на Core <5.8 добавлена в кандидате 0.4.3; Update URI там не работает.
+обновлений на Core <5.8 добавлена в 0.4.3; Update URI там не работает.
 Повторить native upgrade, settings/marker/consent persistence и Network gate.
 Не создавать synthetic GitHub Release для recovery и не понижать minimum PHP.
 
-## Изменения кандидата 0.4.3-dev.1
+## Изменения 0.4.3
 
 Опубликованная stable остаётся 0.4.2. Кандидат не разрешает production rollout.
 Основная проверяемая линия начинается с WP 5.3 / PHP 7.4; новые production сайты

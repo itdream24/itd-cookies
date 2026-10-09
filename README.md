@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Stable version: **0.4.2**. Candidate: **0.4.3-dev.1**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.4.3**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
