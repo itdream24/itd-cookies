@@ -9,8 +9,7 @@ not merged. Published stable remains **v0.4.2**; no tag, Release or main changes
 
 ## Current verdict
 
-**NOT_READY_FOR_ITD_COOKIES_0_4_3_RELEASE** — browser acceptance and full CI are
-pending. This is an implementation checkpoint, not a claim of release readiness.
+**NOT_READY_FOR_ITD_COOKIES_0_4_3_RELEASE** — browser acceptance is pending. Full CI passed 13/13. This is an implementation checkpoint, not a claim of release readiness.
 
 Browser candidate installation has not occurred. A computer-use action-time
 confirmation is pending for the exact ZIP, temporary reference fixture/observer,
@@ -130,7 +129,12 @@ Root `itd-cookies/`; main file/updater/local assets/Russian PO+MO included.
 No docs/tests/private fixtures/observers/vendor/node_modules/dev manifests.
 Two builds with fixed archive timestamp/ordering/permissions are identical.
 
-## CI configuration (result pending)
+## CI — 13/13 PASS
+
+Implementation commit: 9f4d90757195bc81a63c31f438a043959ea2b7d8.
+[CI run 37939916826](https://github.com/itdream24/itd-cookies/actions/runs/37939916826): completed, success, **13/13 jobs PASS**.
+Latest resolved to WP **7.1.3**, PHP **7.4.33 / 8.5.11**. WP 5.3.26 used PHP 7.4.33. Both WP 5.0 guard jobs passed; all five functional WP jobs passed source collision, manual refresh, native upgrader and adapter regressions.
+Linux build inspector reported 18 files and the same SHA-256 as Windows; second build verification passed.
 
 Mandatory total **13 jobs**, not 9: PHP 7.4/8.5 (2), quality, node,
 WordPress 5.2/5.2.24/5.3.26 with PHP 7.4 and latest with PHP 7.4/8.5 (5),
