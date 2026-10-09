@@ -4,8 +4,9 @@ Date: 2026-10-09. Candidate: **0.4.1-dev.1**.
 
 Branch: `fix/itd-cookies-0.4.1-ux`, created after a fresh fetch from
 `origin/main` at `32e79276f8651d892b8ac5bb437d5f8d084d8e23` (clean checkout).
-Local acceptance: **PASS**. Full branch CI: **PENDING**.
-Final release-readiness verdict remains pending CI; no merge/tag/Release authorized.
+Local acceptance: **PASS**. Full candidate CI: **PASS — 9/9 jobs**.
+Verdict: **READY_FOR_ITD_COOKIES_0_4_1_RELEASE**.
+This accepts the development candidate; it does not authorize a merge/tag/Release.
 
 ## Actual behavior changes
 
@@ -119,7 +120,10 @@ main, published v0.4.0 tag/Release/assets and old baselines were not changed.
 
 ## Full CI
 
-Pending initial branch push. Release readiness requires all nine jobs PASS:
-PHP 7.4 and 8.5, quality, node, WordPress 5.2/PHP7.4, 5.2.24/PHP7.4,
-latest/PHP7.4, latest/PHP8.5 and build. No merge, stable version/tag or Release
-will be produced by this task.
+PASS on code/acceptance commit `695611e7679eb390d4718261a5cca05c1c44862f`:
+[CI 37895915175](https://github.com/itdream24/itd-cookies/actions/runs/37895915175).
+All nine jobs completed successfully: PHP 7.4 and 8.5, quality, node,
+WordPress 5.2/PHP7.4, 5.2.24/PHP7.4, latest/PHP7.4, latest/PHP8.5 and build.
+The separate report-only follow-up runs the same full CI before final handoff;
+its final run URL/status is retained in the task acceptance evidence.
+No merge, stable version/tag or Release was produced.
