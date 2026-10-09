@@ -348,6 +348,37 @@ final class UpdaterTest extends TestCase {
 	}
 
 	/**
+	 * Old Core's final uncached record has no checked list; skip provisional data.
+	 *
+	 * @return void
+	 */
+	public function test_old_core_manual_final_record_without_checked() {
+		$updater = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' );
+		$final   = (object) array(
+			'response'  => array(),
+			'no_update' => array(),
+		);
+		self::assertSame( $final, $updater->update_plugins( $final ) );
+		self::assertSame( 0, $this->requests );
+		$_GET['force-check'] = '1';
+		$updater->manual_refresh();
+		$provisional = (object) array( 'last_checked' => 123 );
+		self::assertSame( $provisional, $updater->update_plugins( $provisional ) );
+		$unrelated = (object) array(
+			'checked'  => array( 'other/plugin.php' => '1.0.0' ),
+			'response' => array(),
+		);
+		self::assertSame( $unrelated, $updater->update_plugins( $unrelated ) );
+		self::assertSame( 0, $this->requests );
+		$result = $updater->update_plugins( $final );
+		self::assertSame( array( 'itd-cookies/itd-cookies.php' => '0.4.0' ), $result->checked );
+		self::assertSame( '1.1.0', $result->response['itd-cookies/itd-cookies.php']->new_version );
+		$updater->update_plugins( $final );
+		self::assertSame( 1, $this->requests );
+		unset( $_GET['force-check'] );
+	}
+
+	/**
 	 * Reject unrelated requests without changing either cache or its TTL.
 	 *
 	 * @return void

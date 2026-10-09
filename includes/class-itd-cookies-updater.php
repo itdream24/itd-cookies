@@ -180,6 +180,13 @@ final class ITD_Cookies_Updater {
 	 * @return mixed
 	 */
 	public function update_plugins( $transient ) {
+		// WordPress 5.2 omits checked after an uncached successful check.
+		// Recover only our installed version on the final native manual result;
+		// never fetch metadata for Core's provisional last_checked-only write.
+		if ( $this->manual_refreshed && is_object( $transient ) && ! isset( $transient->checked ) &&
+			isset( $transient->response ) && is_array( $transient->response ) ) {
+			$transient->checked = array( $this->basename => $this->version );
+		}
 		if ( ! is_object( $transient ) || empty( $transient->checked[ $this->basename ] ) ) {
 			return $transient;
 		}

@@ -4,7 +4,7 @@ Date: 2026-10-09. Branch: fix/itd-cookies-0.4.2-updater-refresh.
 Fresh origin/main base: af3ccfd2a06696f909a0c297f77eac1ce410a7ca.
 Candidate: 0.4.2-dev.1. Published v0.4.1 remains immutable.
 
-Verdict: **PENDING_FULL_CI** (local acceptance PASS; no release authorization).
+Verdict: **PENDING_FULL_CI** (updated WP 5.2 compatibility candidate awaits repeated Browser E2E; no release authorization).
 
 ## Cause and native execution order
 
@@ -59,7 +59,7 @@ four WordPress jobs; the job count and matrix stay unchanged.
 
 | Check | Result |
 | --- | --- |
-| PHP 7.4 PHPUnit | PASS — 49 tests, 480 assertions |
+| PHP 7.4 PHPUnit | PASS — 50 tests, 494 assertions |
 | PHP 7.4 compatibility, PHPCS, PHPStan | PASS |
 | JS suite, ESLint | PASS — 42 JS tests |
 | npm ci and npm audit | PASS — zero vulnerabilities |
@@ -149,3 +149,5 @@ remain unchanged. No Timeweb, testwp or production access; LOCAL-FIRST maintaine
 ## CI execution history
 
 Initial run https://github.com/itdream24/itd-cookies/actions/runs/37902096673: PHP, quality and node PASS; four WordPress jobs FAIL and build skipped. The new test included an ordinary-view WordPress.org HTTP event in the expected manual-only trace. Its checks for one GitHub request and refreshed update metadata passed before the trace assertion. Resetting only test trace between the ordinary and manual phases fixes that unrelated-event assumption. Production source and accepted ZIP SHA-256 are unchanged. Full CI on the corrected test remains required.
+
+Run https://github.com/itdream24/itd-cookies/actions/runs/37902472907: six jobs PASS (including both latest WordPress jobs); WP 5.2/5.2.24 FAIL and build skipped. Official old Core omits checked in its final result after an uncached check. A bounded compatibility path now adds only this active plugin’s installed version to that final manual-check record, identified by its response array, never to the provisional record or ordinary requests. New unit regression covers these distinctions. Updated ZIP SHA-256: 6c20b96becb1f1d00374bb0d291d45efd24a07692bb4a6c8946b8318c5b050ed. Earlier f42 ZIP browser evidence does not cover this additional path; repeat acceptance and full CI are required.
