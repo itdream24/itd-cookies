@@ -36,7 +36,7 @@ runtime на PHP 7.3. Синтаксическая совместимость н
 
 PASS в столбце guard означает безопасный отказ собственного runtime,
 а не поддержку функциональности. NOT_RUN означает намеренно не запускалось.
-Результаты актуального CI должны читаться по research HEAD, отдельно от main.
+Результаты CI ниже относятся к research commit, отдельно от main. CI legacy PHP 7.3 = 7.3.33, PHP 7.4 = 7.4.33.
 
 | Core | PHP локально | Официально Core | Bootstrap | Полный runtime | Проверка |
 | --- | --- | --- | --- | --- | --- |
@@ -46,8 +46,8 @@ PASS в столбце guard означает безопасный отказ с
 | 5.1.27 | 7.3.33 | Да | PASS: отказ PHP | NOT_RUN | CLI guard |
 | 5.2.24 | 7.3.33 | Да | PASS: отказ PHP | NOT_RUN | CLI guard |
 | 5.3.26 | 7.4.29 | Да | PASS | PASS | CLI integration + browser E2E |
-| 5.2 / 5.2.24 | CI PHP 7.4 | Нет | CI regression | CI regression | Существующие 2 jobs сохранены; не официальная поддержка Core |
-| latest WordPress | CI PHP 7.4 / 8.5 | По текущей Core matrix | CI | CI | Существующие 2 jobs сохранены |
+| 5.2 / 5.2.24 | CI PHP 7.4.33 | Нет | PASS | PASS regression | Существующие 2 jobs PASS; не официальная поддержка Core |
+| latest = 7.1.3 | CI PHP 7.4.33 / 8.5.11 | Да | PASS | PASS | Существующие 2 jobs PASS |
 
 Расширение legacy-research.yml выполняет еще шесть jobs: пять guard-only и
 один функциональный 5.3.26/PHP 7.4. В исходном ci.yml остаются все девять jobs:
@@ -297,6 +297,18 @@ GitHub CI ссылки и результаты фиксируются для т�
 [additional research matrix](https://github.com/itdream24/itd-cookies/actions/workflows/legacy-research.yml?query=branch%3Aresearch%2Fitd-cookies-wp50-feasibility).
 До завершения run нельзя считать CI PASS; это не release gate и не разрешение merge.
 
+## Принятые GitHub CI результаты
+
+Research/test commit 0063b8c227f0e74f53910b3ebcc265838d6577ae:
+
+- [CI run 37927381690](https://github.com/itdream24/itd-cookies/actions/runs/37927381690): **9/9 PASS**, completed/success, включая четыре WordPress matrix jobs и build.
+- [Legacy run 37927381861](https://github.com/itdream24/itd-cookies/actions/runs/37927381861): **6/6 PASS**, completed/success; пять отказов guard и functional 5.3.26.
+- CI latest фактически скачал Core **7.1.3**; PHP **7.4.33 / 8.5.11** подтверждены job logs. CI build повторил официальный SHA-256 58b60e6295c5c831cc94a80315a17d9c20a5543b3063031fbcd8d4da8a3befb6.
+
+Итоговая правка только этого отчёта запускает оба workflow ещё раз на новом
+HEAD. Финальный ответ фиксирует результат этих последних run; предыдущий PASS
+не подменяет проверку итогового commit. Research PASS не означает WP 5.0
+functional support или разрешение merge/release.
 Приватные browser evidence: wp50-safe-refusal.png, wp53-real-update-offered.png,
 wp53-native-update-complete.png, wp53-fresh-desktop.png, wp53-panel-1440.png,
 wp53-panel-390.png, wp53-panel-320.png. Они сохранены локально отдельно от Git,
