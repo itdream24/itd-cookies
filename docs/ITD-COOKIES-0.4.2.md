@@ -1,10 +1,11 @@
 # ITD Cookies 0.4.2 — native GitHub updater refresh
 
-Date: 2026-10-09. Branch: fix/itd-cookies-0.4.2-updater-refresh.
+Date: 2026-10-09. Stable tag: v0.4.2. Release commit: d242f3bdaa8d787ae173eeb27507fff2d3e8631f.
+Historical implementation branch: fix/itd-cookies-0.4.2-updater-refresh.
 Fresh origin/main base: af3ccfd2a06696f909a0c297f77eac1ce410a7ca.
-Candidate: 0.4.2-dev.1. Published v0.4.1 remains immutable.
+Stable: 0.4.2. Historical candidate: 0.4.2-dev.1. Published older tags/assets remain immutable.
 
-Verdict: **READY_FOR_ITD_COOKIES_0_4_2_RELEASE** — exact final artifact Browser E2E and cleanup PASS; implementation CI 9/9 PASS. This is implementation readiness, not permission to merge, tag or publish. Final report-commit CI is checked after push.
+Verdict: **ITD_COOKIES_V0.4.2_RELEASED_WITH_ASSISTED_UPDATE_ONLY** for the original cached-old-updater scenario. Publication and fixed updater PASS; automatic migration after natural expiry of that old cache was not executed. A separate native update on the clean restored snapshot with no pre-existing GitHub cache also PASS (scope below).
 
 ## Cause and native execution order
 
@@ -259,3 +260,186 @@ No main merge/push, tag/Release, stable asset changes or remote WordPress access
 Implementation CI: https://github.com/itdream24/itd-cookies/actions/runs/37903786635
 — all nine jobs PASS. Final documentation commit is pushed only to the current
 fix branch; its separate full CI result is verified in the completion report.
+
+
+## Stable release gate — 2026-10-09
+
+Accepted fix commit: 43521b565d17b9a11bbba8cc98bef0500f614b35.
+Release branch: release/itd-cookies-0.4.2. Stable/tag commit:
+d242f3bdaa8d787ae173eeb27507fff2d3e8631f. main was fast-forwarded only
+after release-branch CI and pre-release local acceptance; no history rewritten.
+Stable preparation changed versions/changelog/readme/ru_RU metadata and rebuilt
+the 96-message MO; no new runtime feature, consent/UI/adapter/API changes.
+
+Release: https://github.com/itdream24/itd-cookies/releases/tag/v0.4.2
+
+| Gate | Actual result |
+| --- | --- |
+| Release branch CI | 9/9 PASS — https://github.com/itdream24/itd-cookies/actions/runs/37912484706 |
+| Separate main CI before tag | 9/9 PASS — https://github.com/itdream24/itd-cookies/actions/runs/37913645264 |
+| Tag release workflow | 11/11 PASS — https://github.com/itdream24/itd-cookies/actions/runs/37913905135 |
+| Public releases/latest | v0.4.2, draft=false, prerelease=false |
+| Anonymous ZIP/checksum download | PASS, no authentication supplied |
+| Production package | 18 files, itd-cookies/ root, main/updater/adapters/translations included; tests/docs/dev excluded |
+| Reproducible build | Two local ZIPs and published asset identical |
+
+ZIP: itd-cookies-0.4.2.zip.
+SHA-256: **58b60e6295c5c831cc94a80315a17d9c20a5543b3063031fbcd8d4da8a3befb6**.
+The published .zip.sha256 contains this hash and exact filename. PHP 7.4 package
+syntax and inspector were run again on the anonymously downloaded archive.
+No older tag/Release/asset was changed, replaced or rebuilt for publication.
+
+Local quality/security checks actually run: PHPUnit PHP 7.4 (50 tests,
+494 assertions), JS (42 tests), ESLint, PHPCS (20 files), PHPStan,
+PHPCompatibilityWP (7.4+), Composer locked audit (0 advisories), npm audit
+(0 vulnerabilities), Gitleaks (47 commits, no leaks), translations,
+version/tag validation, package inspector and reproducibility — PASS.
+The full CI also ran PHP 7.4/8.5 and all four WordPress jobs: 5.2/PHP7.4,
+5.2.24/PHP7.4, latest/PHP7.4, latest/PHP8.5. No cancelled/skipped job was
+counted as PASS. Final documentation main CI is checked after this commit/push.
+
+### Stable pre-release local acceptance — PASS
+
+Immutable baseline-v0.4.0 was actually restored first. Browser native Upload/
+Replace 0.4.0 -> production-format 0.4.2 preserved raw settings, activity,
+consent (including its original expiration) and migration marker. All 18 live
+files matched the stable ZIP. In this first pass the policy option was absent
+both before/after; actual policy preservation was tested in published pass A.
+
+Controlled stale GitHub v0.4.0 + WordPress update_plugins were seeded only on
+new 0.4.2. Ordinary Updates preserved the six-hour timeout with zero GitHub
+calls. The actual Check again link invalidated BOTH records before Core,
+made one real HTTP 200 GitHub request and received the then-current public
+v0.4.1. No downgrade. A following ordinary check reused the same expiry with
+zero calls. Subscriber capability test: access denied, zero calls, both caches
+and timeout unchanged; administrator role restored.
+
+No HTTP interception or synthetic release metadata was used for that real
+public response. Separate Core integration/mock tests for a newer release
+and update notice passed in the four WordPress CI jobs.
+
+Pre-release cleanup PASS: 504 paths/hashes and all 12 schemas/every INSERT row
+equal baseline-v0.4.0; temporary files/options/pages/counters removed and QA
+consent/legacy cookies cleared through the reference reset button.
+
+## Обновление с версий 0.4.0/0.4.1
+
+### A1 — существующий кеш старого updater: assisted recovery
+
+На официальной 0.4.0 до публикации обычный запрос WordPress получил настоящую
+публичную metadata v0.4.1 (HTTP 200), TTL 6 часов. Значение не подменялось;
+timeout не сокращался, кеш вручную не удалялся. Сохранены синтетические
+настройки, Reject-consent, fresh-v1 marker и созданная штатной кнопкой политика
+Cookie (page 7). После публикации настоящая кнопка «Проверить снова» сохранила
+v0.4.1 и прежний timeout; GitHub requests=0; осталось 21326 секунд.
+
+Естественное истечение этих шести часов **не ожидалось и не проверено**.
+Это не доказательство автоматического обновления после TTL. Исправление 0.4.2
+не может изменить ещё выполняющийся старый updater. Отдельный browser тест
+старой 0.4.1 не выполнялся; общий механизм старых 0.4.0/0.4.1 подтверждён кодом.
+
+Выполнен разрешённый assisted recovery: анонимно скачанный опубликованный ZIP
+загружен через WordPress Plugins -> Upload -> Replace. PASS: официальная 0.4.2
+ACTIVE, папка itd-cookies, все 18 файлов равны опубликованному ZIP; settings
+и список активности совпадают, consent полностью совпадает (без потери срока),
+marker и Cookie Policy ID/все поля страницы сохранены; юридические ссылки и
+шорткоды работают. Это **не автоматическое обнаружение нового release старым
+закешированным updater** и не ручная подмена файлов.
+
+Практический путь владельцу старой версии: дождаться естественного TTL и
+обычной проверки WordPress; если обновление нужно сразу — сделать backup,
+скачать официальный ZIP выше, проверить SHA-256, Upload/Replace в WordPress.
+После запуска 0.4.2 штатная кнопка «Проверить снова» уже сбрасывает оба кеша.
+Для восстановления использовать backup сайта, не изменять старые GitHub assets.
+
+### A2 — cache miss на чистом baseline: native updater PASS
+
+После полного удаления QA-состояния восстановлен исходный immutable snapshot
+0.4.0, в котором изначально **нет GitHub metadata/timeout**. Обычный вход в
+WordPress после публикации получил настоящий v0.4.2. В Updates была видна
+0.4.0 -> 0.4.2; выбрана только ITD Cookies и нажата «Обновить плагины».
+Native upgrader анонимно скачал release package; iframe подтвердил успех.
+Все 18 файлов совпали с опубликованным архивом; официальный плагин ACTIVE.
+
+Не было synthetic metadata, целевого удаления кеша или вмешательства в HTTP.
+Однако это **новый чистый контекст после восстановления БД**, а не продолжение
+A1 и не истечение его старого TTL; результат не выдаётся за доказательство
+полной автоматической миграции сайтов с сохранённым старым кешем. Поэтому
+итоговый verdict для исходного A1 остаётся WITH_ASSISTED_UPDATE_ONLY.
+
+При первом открытии Plugins после native upgrade осталось старое update notice
+с той же 0.4.2: upgrader ещё исполнял bootstrap 0.4.0. Новая настоящая «Проверить
+снова» на уже установленной 0.4.2 убрала его; Plugins/Updates больше не предлагают
+равную версию. Кеш не исправлялся через CLI. Это наблюдение сохранено отдельно.
+
+### B — новый официальный updater: PASS
+
+На установленной официальной 0.4.2 отдельно создан контролируемый старый кеш
+v0.4.0 и update_plugins. Настоящая «Проверить снова»: оба записи отсутствуют
+до Core; один реальный GitHub HTTP 200; public metadata v0.4.2, корректный ZIP
+URL/changelog; no_update=0.4.2, update notice/downgrade отсутствует. Следующая
+обычная проверка: zero GitHub requests, тот же шестичасовой timeout.
+Это реальный API, без подмены HTTP. Будущий update notice проверен отдельным
+mock/Core regression CI; фиктивный GitHub Release не создавался.
+
+### Published runtime browser smoke — PASS
+
+- Сохранённый Reject/reload; Customize/Analytics-only; Accept all; Save/reopen;
+  revoke двух категорий с настоящим reload; Back, Escape и возврат фокуса.
+- Tab от Save переводит фокус на Accept all. Necessary checked/disabled.
+- До согласия owned SDK counters/trace пусты; analytics library/dependent по
+  одному запросу, порядок before/library/after/dependent/dependent-init.
+- Повтор consent event не меняет counters/trace. Accept all запускает marketing
+  один раз. Revoke оставляет analytics/marketing=false, новый trace пустой.
+- Zero groups: diagnostics/counters пусты, application/neighbor/theme/jquery
+  продолжают работать. Все три shortcode и реальная Cookie Policy работают;
+  HTTPS/relative/generated legal links сохранены. Встроенные providers выключены;
+  использованы только синтетические ID и локальные SDK, никаких client IDs.
+- Изучены screenshots 1440x900 и 390x844: mobile document scrollWidth=clientWidth
+  375 (viewport 390 с scrollbar), панель 351px, кнопки доступны, overflow нет.
+- В checked published-case Console warnings/errors отсутствуют; PHP observer
+  errors=[]; CSP violations=[]. Полный новый аудит внешних провайдеров/CSP не
+  выполнялся, это целевой smoke поверх уже принятой implementation матрицы.
+- В pre-release Console были ошибки JSON polling **самого fixture** при
+  временном переводе его текущего пользователя в subscriber: endpoint вернул
+  HTML access-denied. Роль восстановлена, published-case таких ошибок нет;
+  это не ошибка shipped runtime. Не скрыто и не включено в утверждение zero.
+
+Private evidence: 042-stable-release/*.json and pre-upgrade-success.jpg,
+pre-refresh.jpg, A-old-updater-cache.jpg, A-assisted-official-upgrade.jpg,
+B-public-042-refresh.jpg, official-desktop-panel.jpg, official-mobile-panel.jpg,
+official-mobile-fresh.jpg, clean-baseline-native-offer.jpg,
+clean-native-upgrade-success.jpg, final-official-042-active.jpg.
+Private tools/dumps/credentials/screenshots excluded from Git and production ZIP.
+
+### Final cleanup / immutable baselines — PASS
+
+Reference reset verified consent=null and cleared QA consent/legacy cookies.
+Restored immutable baseline-v0.4.0, then compared all 504 files and 12 complete
+table schemas/INSERT rows again. That removed observer/reference, policy page 7,
+upload attachments, synthetic settings/metadata/options/counters. Its SQL SHA
+is unchanged: c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93;
+canonical DB hash 5ef5e08a66edc59ce7f0cb546ce2e5fb286b70a78c93ae1682ce4241e496a234.
+
+After clean native update described in A2, checked official default options,
+marker, no managed policy and only one installed/active plugin. Fresh homepage
+verified, no QA cookies. Captured NEW baseline-v0.4.2 outside web-root/Git;
+Capture refuses overwrite. Actually restored it, verified all **504 file hashes**,
+settings, locale/theme/plugin/activity, then exact DB import/export proved all
+**12 table schemas and every INSERT row** equal. No WordPress request after
+the final DB comparison. Official **0.4.2 ACTIVE**, no temporary tools or data.
+
+New baseline SQL SHA-256:
+09c7599b3f8570444a95b27b5ce9380f1b6b3fdd096b49cc85341a2c00dc8aa4.
+Canonical DB SHA-256:
+b3e80e63d2c2ba256bd9153c081927785c405ce950fde176f04d66d529b13f76.
+Old baselines were not overwritten. Timeweb/testwp/prod requests and mutations=0.
+
+### Передача следующей задаче — WordPress 5.0 / PHP 7.4
+
+Published stable v0.4.2, current local reset baseline-v0.4.2, upstream main.
+Minimum supported WordPress remains **5.2**, PHP **7.4**. WordPress 5.0 was NOT
+tested or declared supported here. Next task should create a separate branch,
+inventory 5.0 APIs/Core updater hooks and add a real WP5.0/PHP7.4 integration
+job before lowering metadata. Preserve release assets/older baselines and the
+separate A1 cache limitation. No compatibility work started in this release.

@@ -175,3 +175,30 @@ QA cookies and temporary fixture/pages/options/counters are removed. Snapshot
 SQL remains c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93.
 No baseline-v0.4.1 was created. Continue to use explicit Restore -Version 0.4.0
 until a separate 0.4.2 task resolves and verifies the real updater gate.
+
+
+## Published 0.4.2 / current immutable reset (2026-10-09)
+
+Current baseline is **baseline-v0.4.2**, clean official **0.4.2 ACTIVE**.
+Use baseline.ps1 -Mode Restore -Version 0.4.2 (explicit version; tool default
+remains 0.4.0 for backward compatibility). New Capture and actual Restore PASS:
+all 504 wp-content paths/hashes, raw settings/marker/activity/theme/locale and
+all 12 table schemas/every INSERT row equal. Old baseline-v0.4.0 remains immutable.
+New SQL hash 09c7599b3f8570444a95b27b5ce9380f1b6b3fdd096b49cc85341a2c00dc8aa4;
+canonical DB b3e80e63d2c2ba256bd9153c081927785c405ce950fde176f04d66d529b13f76.
+No temporary observer/reference, policy page, counters/options/synthetic metadata
+or QA consent cookies in the clean snapshot. Only normal public updater cache.
+
+Publication workflow 11/11 PASS; downloaded official ZIP/checksum match local
+reproducible SHA. Original old updater with genuine six-hour pre-publication
+cache used assisted Upload/Replace, with settings/consent/policy preserved;
+natural TTL expiry was NOT tested. New 0.4.2 manual refresh PASS (both caches,
+one real GitHub HTTP request, correct public 0.4.2, six-hour ordinary reuse).
+Separately, native Updates 0.4.0 -> 0.4.2 also PASS on the clean restored snapshot
+which originally had no GitHub cache. This cache-miss test must not be presented
+as natural expiry or automatic migration of the cached old instance.
+Overall conservative verdict: ITD_COOKIES_V0.4.2_RELEASED_WITH_ASSISTED_UPDATE_ONLY.
+See [the 0.4.2 release report](ITD-COOKIES-0.4.2.md) for independent A1/A2/B,
+CI/Release links, hashes, screenshots and limitations. LOCAL-FIRST remains in
+force. Next WP5.0/PHP7.4 compatibility task starts separately; minimum WP5.2
+has not been changed. Never overwrite snapshots or published release assets.
