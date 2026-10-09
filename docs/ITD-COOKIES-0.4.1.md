@@ -136,3 +136,18 @@ Only version/changelog/readme/translation metadata changed for stable 0.4.1;
 production runtime logic is identical to the accepted 0.4.1-dev.1.
 Stable ZIP, release/main CI, local pre-release acceptance, publication, real
 GitHub update and the new immutable baseline are pending. No stable verdict yet.
+
+### Pre-release stable acceptance — PASS (2026-10-09)
+
+- Stable preparation commit: be54be7633f8f9e2a93c8225787559f26a88937c.
+- Release branch CI: https://github.com/itdream24/itd-cookies/actions/runs/37897719440 — all nine jobs PASS, including PHP 7.4/8.5, all four WordPress matrix jobs and build.
+- Reproducible production ZIP: itd-cookies-0.4.1.zip; SHA-256: 2249a465a7e400d6125a860ef37cedd24f17602d4993a21f62483ea790e74665. Two builds identical; inspector and all 18 installed file hashes PASS.
+- Local native WordPress Upload/Replace 0.4.0 → 0.4.1 PASS. Activity, all settings/legal links, fresh-v1 migration marker, existing Cookie Policy ID/content and consent schema/version/expiry/categories unchanged.
+- Rejected external HTTP URL produces a Russian Settings API error and retains the previous HTTPS value. It does not show a success-only result.
+- 320×568 at 110%: «Функциональные» stays whole, toggle visible; separate category scroller leaves Save/Accept all/Back available. Long synthetic service list also checked at 390×844, 768×1024 and 1440×900: no horizontal overflow or footer overlap.
+- Fresh, Reject, Customize/Save, Accept all, reopen/Back, Escape/Tab/focus return, consent reload and revoke PASS. All three shortcodes and auto legal footer/actual Cookie Policy page render.
+- Public Script Adapters: dependency order, per-document deduplication, independent marketing after analytics error, CSP nonce/hash and zero registered groups PASS; ordinary application/jQuery/theme resources preserved. No unexpected console errors; deliberate 404 uses LOAD_ERROR/SKIPPED_DEPENDENCY/FAILED diagnostics.
+- Local checks actually executed: PHPUnit 44 tests/424 assertions; JS 42 tests; ESLint, PHPCS, PHPStan, PHPCompatibilityWP, strict Composer validation, translation build (96 messages), package inspector, Composer/npm audits (zero advisories/vulnerabilities) and Gitleaks (39 commits, no leaks) PASS.
+- Cleanup PASS: QA cookies cleared; baseline-v0.4.0 restored; 504 wp-content files and all 12 database schemas/INSERT rows equal. Snapshot SQL SHA-256 remains c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93; canonical restored DB SHA-256 5ef5e08a66edc59ce7f0cb546ce2e5fb286b70a78c93ae1682ce4241e496a234. Only official 0.4.0 ACTIVE remains.
+- Browser screenshots/counter evidence are private local QA artifacts, excluded from Git and production ZIP. No remote WordPress QA, Timeweb or production operations.
+- Main CI, tag/publication, real GitHub updater acceptance and new baseline remain pending.
