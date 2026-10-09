@@ -158,3 +158,20 @@ snapshot (501 files/dump) was reverified unchanged. No baseline was overwritten.
 Use explicit `-Version 0.4.0` for current QA resets. Historical pre-merge reset
 to 0.3.0 above is superseded by this published acceptance. Exact release/CI/tag
 links, ZIP and database hashes are in [the 0.4.0 report](ITD-COOKIES-0.4.0.md).
+
+## 0.4.1 publication / blocked real updater gate (2026-10-09)
+
+Official v0.4.1 was published after accepted pre-release native ZIP/browser QA,
+release-branch 9/9 CI and separate main 9/9 CI. Publication workflow 11/11 PASS;
+anonymous ZIP/checksum match the reproducible build. However, native «Check
+again» on restored official 0.4.0 did not invalidate cached v0.4.0 GitHub metadata,
+so the real stable updater acceptance did not complete. See
+[the 0.4.1 gate report](ITD-COOKIES-0.4.1.md) for reproduction and exact evidence.
+
+Per the post-publication stop rule, no published tag/asset/runtime fix was made.
+The local site was fully restored to immutable **baseline-v0.4.0**, official
+0.4.0 ACTIVE. All 504 file hashes and 12 database schemas/all INSERT rows match;
+QA cookies and temporary fixture/pages/options/counters are removed. Snapshot
+SQL remains c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93.
+No baseline-v0.4.1 was created. Continue to use explicit Restore -Version 0.4.0
+until a separate 0.4.2 task resolves and verifies the real updater gate.

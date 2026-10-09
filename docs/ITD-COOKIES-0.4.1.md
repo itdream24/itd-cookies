@@ -151,3 +151,34 @@ GitHub update and the new immutable baseline are pending. No stable verdict yet.
 - Cleanup PASS: QA cookies cleared; baseline-v0.4.0 restored; 504 wp-content files and all 12 database schemas/INSERT rows equal. Snapshot SQL SHA-256 remains c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93; canonical restored DB SHA-256 5ef5e08a66edc59ce7f0cb546ce2e5fb286b70a78c93ae1682ce4241e496a234. Only official 0.4.0 ACTIVE remains.
 - Browser screenshots/counter evidence are private local QA artifacts, excluded from Git and production ZIP. No remote WordPress QA, Timeweb or production operations.
 - Main CI, tag/publication, real GitHub updater acceptance and new baseline remain pending.
+
+### Publication PASS; real updater acceptance STOPPED (2026-10-09)
+
+Status: **BLOCKED_BY_REAL_UPDATER_CACHE_INVALIDATION**. The complete stable release gate is NOT PASS; do not claim ITD_COOKIES_V0.4.1_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED.
+
+- Release branch report commit and tagged main commit: 8639c8e1b72fecbbc8b49d6abc412c219068397f. Fast-forward preserved history and the accepted feature branch.
+- Release branch CI https://github.com/itdream24/itd-cookies/actions/runs/37898259705 — 9/9 PASS.
+- Separate main CI https://github.com/itdream24/itd-cookies/actions/runs/37898386664 — 9/9 PASS.
+- Annotated v0.4.1 points to that main commit. Release workflow https://github.com/itdream24/itd-cookies/actions/runs/37898549921 — 11/11 PASS (validate, nine checks, publish).
+- Published release: https://github.com/itdream24/itd-cookies/releases/tag/v0.4.1. Anonymous latest API: v0.4.1, draft=false, prerelease=false. Anonymous ZIP and checksum downloads available; checksum and reproducible local build identical: 2249a465a7e400d6125a860ef37cedd24f17602d4993a21f62483ea790e74665. Downloaded-package inspector PASS: 18 expected files and valid PHP. Published tag/assets were not edited or rebuilt.
+
+#### P2 — manual Check again leaves stale GitHub release metadata
+
+Reproduction: actually restore baseline-v0.4.0 (official 0.4.0 ACTIVE), seed synthetic settings/legal links/Yandex and GA4 ID fields, create Cookie Policy and save analytics consent. Visit WordPress Updates and click «Проверить снова.» after public latest becomes v0.4.1. No synthetic metadata, HTTP filter or update cache manipulation was used.
+
+Expected: WordPress offers ITD Cookies 0.4.1. Actual: «Ваши плагины не требуют обновления». Read-only inspection shows itd_cookies_github_release still contains version 0.4.0, and update_plugins.no_update lists installed 0.4.0/package v0.4.0. Screenshot: private QA_STATE/041-stable-release/real-update-not-detected.jpg. Saved cache/update record/API evidence contains no credentials and remains outside Git.
+
+Cause: includes/class-itd-cookies-updater.php:54 invalidates its cache only on delete_site_transient_update_plugins; lines 72–74 immediately return cached release metadata; line 96 retains a valid result for six hours. In the tested WordPress 7.1.2, update-core.php:1061–1062 makes force-check affect the core version check; loading Updates calls wp_update_plugins but this path did not delete update_plugins or clear the plugin's own cached GitHub release. The misleading comment at updater line 53 assumes native Check again always deletes that transient. The updater is unchanged from 0.4.0, so this is an inherited manual-refresh defect, not evidence of a malformed 0.4.1 ZIP. Automatic discovery after cache expiry was not tested.
+
+Real stable-to-stable upgrade was **not performed**: no update was offered. Published-runtime UX revalidation and a new baseline-v0.4.1 were **not performed/created**. The successful pre-release native ZIP/browser checks above do not substitute for this gate. No workaround or runtime fix was applied after publication.
+
+Suggested separate 0.4.2 work: minimally invalidate GitHub metadata on the authenticated native manual plugin-update check, before WordPress refreshes plugin data; preserve capability checks and bounded caching for ordinary requests. Add an actual WordPress regression with an existing cached older stable release followed by manual refresh, and verify WP 5.2+/current WP and all CI jobs. Existing installed copies may require normal cache expiry to obtain that fix; do not rewrite prior tags/assets.
+
+#### Final cleanup — PASS
+
+- Cleared local QA consent/legacy marker cookies; the cleanup endpoint then returned an empty list.
+- Restored immutable baseline-v0.4.0 again. All 504 live wp-content paths/hashes equal the original; original snapshot copy and SQL remain unchanged. Only official ITD Cookies 0.4.0 is installed and ACTIVE; 18 runtime file hashes match the published 0.4.0 ZIP.
+- All 12 restored database schemas and every INSERT row equal baseline-v0.4.0. SQL SHA-256 c247f4c0c96f71159a0dd806e08302f5b39def68415cd73a0c6f08b38bf47d93; canonical DB SHA-256 5ef5e08a66edc59ce7f0cb546ce2e5fb286b70a78c93ae1682ce4241e496a234. Original settings, marker, absent policy option, plugin/theme activity restored.
+- Temporary fixture, generated policy/upload pages, counters/options/cache and synthetic settings removed through complete file/DB restoration. Homepage shows the fresh default banner, without fixture UI. No further local WordPress requests were made after final DB equality verification.
+- Local site intentionally remains clean official 0.4.0 ACTIVE because the user requires stopping for a separate 0.4.2 fix after a post-publication problem. baseline-v0.4.1 does not exist. No Timeweb/testwp/production access; old releases and assets unchanged.
+- Only this report and LOCAL-QA.md are changed after publication. Final report-commit main CI is a separate check, recorded in the final handoff; it cannot turn the failed real updater acceptance into PASS.
