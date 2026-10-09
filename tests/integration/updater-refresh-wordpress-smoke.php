@@ -114,10 +114,14 @@ $itd_refresh_record = get_site_transient( 'update_plugins' );
 if ( 1 !== $itd_refresh_requests || '0.4.1' !== $itd_refresh_record->response[ $itd_refresh_basename ]->new_version || isset( $itd_refresh_record->no_update[ $itd_refresh_basename ] ) || '0.4.1' !== get_transient( ITD_Cookies_Updater::CACHE_KEY )['release']['version'] ) {
 	WP_CLI::error( 'Stale cached 0.4.0 did not offer 0.4.1 after native manual refresh.' );
 }
+if ( array( 'cleared-before-core', 'WordPress', 'github' ) !== $itd_refresh_trace ) {
+	WP_CLI::error( 'Manual hook ordering failed: ' . wp_json_encode( $itd_refresh_trace ) );
+}
+// Old Core may repeat its own HTTP check; our GitHub call remains deduplicated.
 do_action( 'load-update-core.php' );
 $itd_refresh_updater->release();
-if ( 1 !== $itd_refresh_requests || array( 'cleared-before-core', 'WordPress', 'github' ) !== $itd_refresh_trace ) {
-	WP_CLI::error( 'Manual hook ordering or per-request HTTP deduplication failed: ' . wp_json_encode( $itd_refresh_trace ) );
+if ( 1 !== $itd_refresh_requests ) {
+	WP_CLI::error( 'Per-request GitHub HTTP deduplication failed.' );
 }
 remove_filter( 'pre_http_request', $itd_refresh_http, 10 );
 foreach ( $itd_refresh_hooks as $itd_refresh_hook => $itd_refresh_saved ) {
