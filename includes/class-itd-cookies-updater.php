@@ -32,6 +32,20 @@ final class ITD_Cookies_Updater {
 	private $version;
 
 	/**
+	 * Whether this request already invalidated manual-check metadata.
+	 *
+	 * @var bool
+	 */
+	private $manual_refreshed = false;
+
+	/**
+	 * Fresh HTTP result from this request; null means no request yet.
+	 *
+	 * @var array|false|null
+	 */
+	private $request_release = null;
+
+	/**
 	 * Configure this installation.
 	 *
 	 * @param string $file    Main plugin file.
@@ -50,8 +64,34 @@ final class ITD_Cookies_Updater {
 	public function register() {
 		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins' ) );
 		add_filter( 'plugins_api', array( $this, 'plugin_information' ), 10, 3 );
-		// A native manual "Check again" clears WordPress's update cache.
+		// Keep explicit WordPress cache deletion in sync with GitHub metadata.
 		add_action( 'delete_site_transient_update_plugins', array( $this, 'clear_cache' ) );
+		add_action( 'load-update-core.php', array( $this, 'manual_refresh' ), 1 );
+	}
+
+	/**
+	 * Invalidate both caches before Core's native plugin check at priority 10.
+	 *
+	 * The existing Core Check again link has no nonce; require its authenticated
+	 * admin screen, exact flag and plugin-update capability. No network here.
+	 *
+	 * @return void
+	 */
+	public function manual_refresh() {
+		if ( $this->manual_refreshed || ! is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ||
+			'load-update-core.php' !== current_filter() || ! current_user_can( 'update_plugins' ) ||
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Core manual check has no nonce; screen and capability checks gate cache invalidation.
+			! isset( $_GET['force-check'] ) || ! is_string( $_GET['force-check'] ) || '1' !== $_GET['force-check'] ) {
+			return;
+		}
+		$this->manual_refreshed = true;
+		$this->clear_cache();
+		delete_site_transient( 'update_plugins' );
+		// admin_init may already have checked expired metadata in this request.
+		// Reuse that fresh result after invalidation instead of making a second call.
+		if ( null !== $this->request_release ) {
+			set_transient( self::CACHE_KEY, array( 'release' => $this->request_release ), $this->request_release ? 6 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
+		}
 	}
 
 	/**
@@ -93,6 +133,7 @@ final class ITD_Cookies_Updater {
 		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
 			$release = $this->validate_release( json_decode( wp_remote_retrieve_body( $response ), true ) );
 		}
+		$this->request_release = $release ? $release : false;
 		set_transient( self::CACHE_KEY, array( 'release' => $release ? $release : false ), $release ? 6 * HOUR_IN_SECONDS : 15 * MINUTE_IN_SECONDS );
 		return $release;
 	}

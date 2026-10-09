@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2-dev.1 — Unreleased
+
+- Refresh cached GitHub release metadata and WordPress plugin update records on the native authenticated manual update check.
+- Preserve ordinary six-hour/15-minute caching and avoid repeated invalidation within one request.
+
 ## 0.4.1 — 2026-10-09
 
 - Save-time legal URL errors keep the previous valid link; ordinary reads stay silent.

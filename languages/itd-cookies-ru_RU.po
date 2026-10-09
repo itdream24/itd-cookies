@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.4.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.4.2-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."

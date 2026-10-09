@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.1
+Stable tag: 0.4.2-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,9 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.4.2-dev.1 =
+* Native authenticated manual update checks refresh GitHub and WordPress plugin metadata.
 
 = 0.4.1 =
 * Legal URL validation reports rejected input and keeps the previous valid link. Exact same-site HTTP links become relative paths; external HTTP remains forbidden.

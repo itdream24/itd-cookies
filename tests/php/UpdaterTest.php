@@ -47,6 +47,32 @@ final class UpdaterTest extends TestCase {
 	private $admin = true;
 
 	/**
+	 * Plugin update permission.
+	 *
+	 * @var bool
+	 */
+	private $allowed = true;
+	/**
+	 * AJAX request.
+	 *
+	 * @var bool
+	 */
+	private $ajax = false;
+	/**
+	 * Active hook.
+	 *
+	 * @var string
+	 */
+	private $hook = 'load-update-core.php';
+	/**
+	 * WordPress cache invalidations.
+	 *
+	 * @var int
+	 */
+	private $deletions = 0;
+
+
+	/**
 	 * Configure a small HTTP/transient boundary.
 	 *
 	 * @return void
@@ -64,6 +90,30 @@ final class UpdaterTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_doing_cron' )->justReturn( false );
+		Functions\when( 'wp_doing_ajax' )->alias(
+			function () {
+				return $this->ajax;
+			}
+		);
+		Functions\when( 'current_filter' )->alias(
+			function () {
+				return $this->hook;
+			}
+		);
+		Functions\when( 'current_user_can' )->alias(
+			function ( $cap ) {
+				self::assertSame( 'update_plugins', $cap );
+				return $this->allowed;
+			}
+		);
+		Functions\when( 'delete_site_transient' )->alias(
+			function ( $key ) {
+				self::assertSame( 'update_plugins', $key );
+				++$this->deletions;
+				return true;
+			}
+		);
+
 		Functions\when( 'get_transient' )->alias(
 			function () {
 				return $this->cache;
@@ -264,5 +314,122 @@ final class UpdaterTest extends TestCase {
 		self::assertSame( '1.1.0', $info->version );
 		self::assertSame( '7.4', $info->requires_php );
 		self::assertStringNotContainsString( '<script>', $info->sections['changelog'] );
+	}
+	/**
+	 * Cached old stable metadata is refreshed once before native filtering.
+	 *
+	 * @return void
+	 */
+	public function test_cached_old_stable_manual_refresh() {
+		$updater             = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' );
+		$old                 = $updater->validate_release( $this->fixture( '0.4.0' ) );
+		$this->cache         = array( 'release' => $old );
+		$this->http['body']  = json_encode( $this->fixture( '0.4.1' ) );
+		$_GET['force-check'] = '1';
+		$updater->register();
+		self::assertSame( 1, has_action( 'load-update-core.php', array( $updater, 'manual_refresh' ) ) );
+		$updater->manual_refresh();
+		self::assertSame( 0, $this->requests );
+		self::assertFalse( $this->cache );
+		self::assertSame( 1, $this->deletions );
+		$record = (object) array(
+			'checked'   => array( 'itd-cookies/itd-cookies.php' => '0.4.0' ),
+			'no_update' => array( 'itd-cookies/itd-cookies.php' => (object) array( 'new_version' => '0.4.0' ) ),
+		);
+		$result = $updater->update_plugins( $record );
+		self::assertSame( '0.4.1', $result->response['itd-cookies/itd-cookies.php']->new_version );
+		self::assertArrayNotHasKey( 'itd-cookies/itd-cookies.php', $result->no_update );
+		$updater->manual_refresh();
+		$updater->update_plugins( $record );
+		self::assertSame( 1, $this->deletions );
+		self::assertSame( 1, $this->requests );
+		self::assertSame( 21600, $this->ttl );
+		unset( $_GET['force-check'] );
+	}
+
+	/**
+	 * Reject unrelated requests without changing either cache or its TTL.
+	 *
+	 * @return void
+	 */
+	public function test_manual_refresh_guards() {
+		$this->cache = array( 'release' => array( 'version' => '0.4.0' ) );
+		foreach ( array( null, '', '0', 'true', array( '1' ) ) as $flag ) {
+			$_GET['force-check'] = $flag;
+			( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		}
+		$_GET['force-check'] = '1';
+		$this->allowed       = false;
+		( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		$this->allowed = true;
+		$this->admin   = false;
+		( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		$this->admin = true;
+		$this->ajax  = true;
+		( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		$this->ajax = false;
+		$this->hook = 'load-plugins.php';
+		( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		self::assertSame( 0, $this->deletions );
+		self::assertSame( 0, $this->requests );
+		self::assertSame( '0.4.0', $this->cache['release']['version'] );
+		unset( $_GET['force-check'] );
+	}
+
+	/**
+	 * REST requests never invalidate update caches.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @return void
+	 */
+	public function test_rest_manual_refresh_is_ignored() {
+		define( 'REST_REQUEST', true );
+		$_GET['force-check'] = '1';
+		( new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' ) )->manual_refresh();
+		self::assertSame( 0, $this->deletions );
+		unset( $_GET['force-check'] );
+	}
+
+	/**
+	 * Manual retries within a request keep API failures negatively cached.
+	 *
+	 * @return void
+	 */
+	public function test_manual_refresh_failure_is_cached_once() {
+		$_GET['force-check'] = '1';
+		$this->http          = (object) array( 'error' => 'timeout' );
+		$updater             = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' );
+		$updater->manual_refresh();
+		self::assertNull( $updater->release() );
+		$updater->manual_refresh();
+		self::assertNull( $updater->release() );
+		self::assertSame( 1, $this->requests );
+		self::assertSame( 1, $this->deletions );
+		self::assertSame( 900, $this->ttl );
+		unset( $_GET['force-check'] );
+	}
+	/**
+	 * Core admin_init can fetch before the screen hook; do not fetch again.
+	 *
+	 * @return void
+	 */
+	public function test_prior_request_result_is_reused_for_manual_check() {
+		foreach ( array( 200, 500 ) as $code ) {
+			$this->cache         = false;
+			$this->http          = array(
+				'code' => $code,
+				'body' => json_encode( $this->fixture() ),
+			);
+			$updater             = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '0.4.0' );
+			$before              = $this->requests;
+			$first               = $updater->release();
+			$_GET['force-check'] = '1';
+			$updater->manual_refresh();
+			self::assertSame( $first, $updater->release() );
+			self::assertSame( $before + 1, $this->requests );
+			self::assertSame( 200 === $code ? 21600 : 900, $this->ttl );
+			unset( $_GET['force-check'] );
+		}
 	}
 }

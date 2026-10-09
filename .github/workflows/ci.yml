@@ -124,6 +124,7 @@ jobs:
           wp plugin deactivate itd-cookies --path="$wp_path"
           wp plugin activate itd-cookies --path="$wp_path"
           CHECK_PERSISTED=1 wp eval-file "$GITHUB_WORKSPACE/tests/integration/itd-cookies-wordpress-smoke.php" --path="$wp_path"
+          wp eval-file "$GITHUB_WORKSPACE/tests/integration/updater-refresh-wordpress-smoke.php" --path="$wp_path"
           PACKAGE_PATH="$GITHUB_WORKSPACE/dist/itd-cookies-$version.zip" wp eval-file "$GITHUB_WORKSPACE/tests/integration/updater-wordpress-smoke.php" --path="$wp_path"
           for scenario in zero supported missing-handle missing-dependency cycle ownership ancillary unprinted late; do
             ADAPTER_SCENARIO="$scenario" wp eval-file "$GITHUB_WORKSPACE/tests/integration/script-adapters-wordpress-smoke.php" --path="$wp_path"
