@@ -7,12 +7,12 @@ Verdict исследования: **WP50_COMPATIBILITY_NOT_RECOMMENDED**.
 | --- | --- |
 | WP 5.0–5.2 / PHP 7.3 | Core compatible, но ниже floor ITD Cookies; только safe refusal проверен. Не устанавливать как поддержанный runtime |
 | WP 5.0–5.2 / PHP 7.4 | Core unsupported, даже если отдельные tests зелёные; не заявлять официальную поддержку |
-| WP 5.3.26 / PHP 7.4 | Research 0.4.2 integration/browser PASS; кандидат 0.4.3 CLI PASS, Browser pending; PHP EOL |
+| WP 5.3.26 / PHP 7.4 | Research 0.4.2 integration/browser PASS; 0.4.3 CLI/CI PASS, stable legacy Browser NOT_RUN; PHP EOL |
 | Актуальный WP / PHP с security support | Предпочтительный rollout после staging и полного CI |
 
 [Официальная матрица](https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/)
-и [PHP EOL](https://www.php.net/eol.php) проверены 2026-10-09. Текущая stable
-metadata 0.4.2 не изменена: WP 5.2+, PHP 7.4+. Для основного продукта при
+и [PHP EOL](https://www.php.net/eol.php) проверены 2026-10-09. Stable
+metadata 0.4.3 сохраняет floor: WP 5.2+, PHP 7.4+. Для основного продукта при
 PHP 7.4 технически обоснованный minimum Core — 5.3; решение о повышении
 заявленного floor должно быть отдельным согласованным изменением.
 
@@ -21,12 +21,12 @@ PHP 7.4 технически обоснованный minimum Core — 5.3; ре
 - WP <5.2 не валидирует requirements так же, как новый Core. Возможна пометка
   ACTIVE при отказавшем bootstrap; это не означает работающий consent engine.
 - WP <5.8 не использует Update URI как защиту от same-slug WordPress.org
-  update collision. В кандидате 0.4.3 добавлена узкая проверка собственного updater.
+  update collision. В stable 0.4.3 добавлена узкая проверка собственного updater.
 - WP <5.5 не имеет native Upload/Replace для существующей папки plugin.
   Native GitHub updater на 5.3 работает; ручное восстановление описано отдельно.
 - Modern inline API имеет существующий fallback print_inline_script.
   Полный legacy strict CSP nonce/hash Browser E2E в этом исследовании NOT_RUN.
-- Кандидат 0.4.3 исправляет контраст и public API после guard; опубликованный
+- Stable 0.4.3 исправляет контраст и public API после guard; опубликованный
   stable 0.4.2 остаётся неизменным.
 
 ## Если владелец всё-таки выберет PHP 7.3
@@ -45,7 +45,7 @@ Core/PHP не заменяет официальную матрицу или secu
 
 ## Изменения 0.4.3
 
-Опубликованная stable остаётся 0.4.2. Кандидат не разрешает production rollout.
+Опубликованная и локально принятая stable — 0.4.3. Production rollout требует отдельного разрешения владельца.
 Основная проверяемая линия начинается с WP 5.3 / PHP 7.4; новые production сайты
 должны использовать актуальный Core и PHP с security support. WP 5.0–5.2
 не включены в официальную матрицу поддерживаемых сочетаний. Тесты WP 5.2 /
@@ -58,7 +58,7 @@ Metadata и runtime guard WP 5.2 сохранены: немедленное по
 
 На отказавшем bootstrap consent API отсутствует. Интеграция должна проверять
 function_exists('itd_cookies_allowed'); отсутствие API не означает согласие.
-На WP ниже 5.8 кандидат проверяет собственные update records при сохранении
+На WP ниже 5.8 версия 0.4.3 проверяет собственные update records при сохранении
 и чтении: только canonical stable GitHub asset доверен. При ошибке GitHub
 чужая запись того же basename удаляется, остальные плагины не изменяются.
 Details modal возвращает WP_Error вместо fallback на каталог WordPress.org.
@@ -75,4 +75,7 @@ Assisted recovery не считать автоматическим обновл�
 Не запускайте два consent engines. До включения провайдера проверьте theme,
 MU plugins, snippets и GTM на уже встроенный SDK; отключение одной интеграции
 не удаляет чужой tracking code. Rollback файлов не требует слепого возврата
-устаревшей production БД с потерей новых данных. [Проверки кандидата](ITD-COOKIES-0.4.3.md).
+устаревшей production БД с потерей новых данных. [Приёмка релиза](ITD-COOKIES-0.4.3.md).
+
+
+Stable v0.4.3: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3), built asset `itd-cookies-0.4.3.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.

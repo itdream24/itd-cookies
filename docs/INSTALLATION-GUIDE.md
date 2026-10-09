@@ -1,12 +1,12 @@
 # ITD Cookies — установка
 
-Основание: официальный v0.4.2 и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
+Основание: официальный v0.4.3 и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
 Это инструкция для будущего согласованного rollout; установка на production
 в рамках исследования не выполнялась.
 
 ## До установки
 
-1. На отдельном staging проверьте версии Core/PHP. Header 0.4.2 заявляет
+1. На отдельном staging проверьте версии Core/PHP. Header 0.4.3 заявляет
    WP 5.2+, PHP 7.4+, но официальная совместимость Core с PHP 7.4 начинается
    с WP 5.3. PHP 7.3/7.4 EOL; для новых сайтов выбирайте актуальные Core и
    PHP с security support. WP 5.0 не является принятой поддержкой плагина.
@@ -23,10 +23,10 @@
 
 ## Установка и настройка
 
-1. Скачайте построенный asset itd-cookies-0.4.2.zip и checksum из
-   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.2).
+1. Скачайте построенный asset itd-cookies-0.4.3.zip и checksum из
+   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3).
    Source code ZIP GitHub не является installable production package.
-2. Проверьте SHA-256: 58b60e6295c5c831cc94a80315a17d9c20a5543b3063031fbcd8d4da8a3befb6.
+2. Проверьте SHA-256: 09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d.
    В архиве один root itd-cookies/, main file, local assets и ru_RU translations;
    tests/docs/vendor/node_modules отсутствуют.
 3. Plugins → Add New → Upload Plugin → Install → Activate. Для уже установленной
@@ -67,7 +67,7 @@ Descriptive service registry entry сама по себе скрипт не бл
 
 ## Изменения 0.4.3
 
-Опубликованная stable остаётся 0.4.2. Кандидат не разрешает production rollout.
+Опубликованная и локально принятая stable — 0.4.3. Production rollout требует отдельного разрешения владельца.
 Основная проверяемая линия начинается с WP 5.3 / PHP 7.4; новые production сайты
 должны использовать актуальный Core и PHP с security support. WP 5.0–5.2
 не включены в официальную матрицу поддерживаемых сочетаний. Тесты WP 5.2 /
@@ -80,7 +80,7 @@ Metadata и runtime guard WP 5.2 сохранены: немедленное по
 
 На отказавшем bootstrap consent API отсутствует. Интеграция должна проверять
 function_exists('itd_cookies_allowed'); отсутствие API не означает согласие.
-На WP ниже 5.8 кандидат проверяет собственные update records при сохранении
+На WP ниже 5.8 версия 0.4.3 проверяет собственные update records при сохранении
 и чтении: только canonical stable GitHub asset доверен. При ошибке GitHub
 чужая запись того же basename удаляется, остальные плагины не изменяются.
 Details modal возвращает WP_Error вместо fallback на каталог WordPress.org.
@@ -97,4 +97,7 @@ Assisted recovery не считать автоматическим обновл�
 Не запускайте два consent engines. До включения провайдера проверьте theme,
 MU plugins, snippets и GTM на уже встроенный SDK; отключение одной интеграции
 не удаляет чужой tracking code. Rollback файлов не требует слепого возврата
-устаревшей production БД с потерей новых данных. [Проверки кандидата](ITD-COOKIES-0.4.3.md).
+устаревшей production БД с потерей новых данных. [Приёмка релиза](ITD-COOKIES-0.4.3.md).
+
+
+Stable v0.4.3: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3), built asset `itd-cookies-0.4.3.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.

@@ -1,5 +1,7 @@
 # ITD Cookies 0.4.3 — Production Hardening & Compatibility
 
+Historical implementation record (superseded by the stable release section below).
+
 Date: 2026-10-09. Candidate: **0.4.3-dev.1**.
 Branch: `fix/itd-cookies-0.4.3-production-hardening`.
 Base after fresh fetch: `97f7930a4caeaee8bd2989ed2346a2d3293162f5` (`origin/main`).
@@ -9,7 +11,7 @@ not merged. Published stable remains **v0.4.2**; no tag, Release or main changes
 
 ## Current verdict
 
-**READY_FOR_ITD_COOKIES_0_4_3_RELEASE** — local Playwright browser acceptance and exact baseline Restore PASS; accepted implementation CI passed 13/13. Final report-commit CI is checked separately after push; its link/result accompanies the final handoff. No stable publication is authorized by this verdict.
+**ITD_COOKIES_V0.4.3_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED** — stable packaging, release/main CI, publication, real native updater, browser acceptance and exact immutable baseline Restore PASS. Final documentation commit CI is verified separately after push; its URL is included in the final handoff.
 
 The owner explicitly authorized isolated local Playwright, the exact candidate ZIP,
 fixtures and cleanup. Earlier pending/interrupted checkpoints below are retained
@@ -399,3 +401,67 @@ Stable production ZIP: `itd-cookies-0.4.3.zip`.
 Two builds/package inspection with PHP 7.4: PASS, 18 production files.
 Stable SHA-256: `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`.
 This differs from the accepted dev ZIP hash. Translation build: 97 messages.
+
+
+## Stable publication and real updater acceptance — 2026-10-09
+
+- Release: [v0.4.3](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3); latest=v0.4.3, draft=false, prerelease=false.
+- Annotated tag commit: `5cca459ddf5626858c2f4266671929661f6ff148`. Accepted implementation: `37a1fd55fd91b60cbda96edc4836d7c4f1d23673`.
+- Stable asset: `itd-cookies-0.4.3.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`.
+- Two local production builds: identical SHA; 18 files, one itd-cookies/ root, updater/ru_RU included, development directories excluded. PHP 7.4 syntax/package inspector PASS.
+- Anonymous ZIP/checksum download: PASS; identical to the reproducible local ZIP. Published assets/tags were not rewritten.
+
+### CI and quality
+
+| Gate | Actual result |
+| --- | --- |
+| [Release branch CI](https://github.com/itdream24/itd-cookies/actions/runs/37978082773) | 13/13 PASS |
+| [Separate main CI](https://github.com/itdream24/itd-cookies/actions/runs/37978938196) | 13/13 PASS |
+| [Release workflow](https://github.com/itdream24/itd-cookies/actions/runs/37979302048) | 15/15 PASS, including publication |
+| Local PHPUnit / JS | 53 tests, 591 assertions / 42 tests PASS |
+| PHPCS / PHPStan / PHPCompatibilityWP / ESLint | PASS |
+| Composer audit / npm audit / Gitleaks | zero advisories / zero vulnerabilities / zero leaks |
+| Translation build | 97 messages, PASS |
+
+CI covers PHP 7.4/8.5, all five WordPress matrix jobs (5.2, 5.2.24, 5.3.26 and latest with PHP 7.4/8.5), both legacy guard jobs, source-collision regressions, quality, node, secrets and reproducible build. Initial local Composer test invocation could not find PHP in PATH; with the PHP 7.4 PATH corrected, the actual tests ran and passed. No runtime change was made for this tooling issue.
+
+### Stable production-format pre-release Browser E2E
+
+Chrome 154.0.8037.98, Playwright 1.62.1, isolated non-persistent contexts; WordPress 7.1.2/PHP 8.1.5/ru_RU on itd-cookies.local only. Native Upload/Replace 0.4.2 → stable 0.4.3 preserved full synthetic settings, consent, fresh-v1 migration marker, legal links, Cookie Policy and ACTIVE state. All 18 installed file hashes matched the stable ZIP.
+
+Three themes (Twenty Nineteen 3.4, Twenty Twenty 3.2, Twenty Twenty-Five 1.5) × 320×568, 390×844, 768×1024, 1440×900: PASS. Measured 288 action states (normal/hover/focus-visible/active). Actual white/#0b57d0 colors gave minimum text/border/focus contrast 6.386:1; toggle boundaries and indicators exceed 3:1. Long 24-service panel scrolls; action area visible and non-overlapping, no horizontal overflow.
+
+Fresh/Reject/Customize/Back/Save/Accept all/reopen/reload/revoke, Tab/Shift+Tab/Escape/focus return, URL rejection and settings save, four legal destinations, policy, all three shortcodes/footer: PASS. Five synthetic provider IDs produced real SDK requests only after their category was allowed; repeated consent events added no SDK tags or adapter executions. Account delivery is not validated with synthetic IDs.
+
+Script Adapters: zero, supported, missing handle/dependency, cycle, 404, timeout, ancillary/unprinted/late, ownership and CSP nonce/hash: PASS with expected diagnostics, dependency order and dedup. Refused-bootstrap API absence and foreign updater/source protection passed the CI guard/collision scenarios. Separate local synthetic success/timeout/500/malformed/invalid/no-release/cache cases preserved other plugin records; they are not represented as real attacks or release discovery.
+
+Forced colors: PASS by Playwright emulation on all three themes (system black/white buttons 21:1, visible focus/native checkbox). Physical Windows High Contrast NOT_RUN. Unexpected JS exceptions/CSP violations: zero. Expected intentional adapter 404/timeouts, favicon and synthetic vendor failures are recorded separately.
+
+One test harness initially used reload() on the force-check URL and incorrectly expected no GitHub request. The corrected ordinary Updates URL test passed with zero additional requests and unchanged six-hour timeout; no plugin fix was required. Original results remain preserved. Additional five follow-up and four actual action-click tests all passed. 50 screenshots plus the final action screenshot are retained privately outside Git/web-root. Selected screenshots were visually inspected. Known non-blocking theme-root typography (small Twenty Twenty / large Twenty Nineteen at 320px, inherited heading decoration) remains a future UX improvement, not a 0.4.3 runtime change.
+
+Pre-release cleanup: actual Restore matched all 504 files and every schema/row of 12 tables; old immutable SQL/hash unchanged.
+
+### Real native stable update — distinct cache scenarios
+
+**Cached old genuine public metadata:** before publication, official 0.4.2 and the capture-only observer obtained v0.4.2 via one real HTTP 200 using the native Check again button. The same WordPress instance, DB cache and browser context were retained through publication; no cache seeding, metadata replacement or HTTP interception. An ordinary page visit correctly reused that still-valid old cache (zero API requests, no offer). Native Check again then invalidated GitHub/update_plugins, made exactly one real HTTP 200, obtained v0.4.3 and offered only the canonical repository ZIP. The native Updates checkbox/button installed official 0.4.3, preserving all settings, consent, marker, policy, legal links and activity.
+
+**Ordinary discovery:** independently restored immutable baseline-v0.4.2 had its original expired real public cache (original expiry timestamp 1791561663). Ordinary admin/Updates discovery obtained real v0.4.3 without force-check or manual cache clearing. The native Updates button installed it again. This verifies cache-expiry/cache-miss ordinary discovery separately from cached manual refresh; no artificial waiting or synthetic metadata is claimed.
+
+Published runtime file comparison: all 18 entries match the anonymous official asset. Published consent UI/reload, adapter public API/dependency order/dedup and 390/1440 screenshots PASS. Installed settings/consent hashes and before/after observer traces are private evidence. No Upload/Replace or assisted recovery was used for these real release updates.
+
+### Final cleanup / immutable baseline-v0.4.3
+
+The second native update used restored clean default settings; temporary reference plugins/pages/provider IDs/counters from the first scenario were removed by the intervening full Restore. The passive observer/evidence option and QA cookies were then removed. No fixture/helper/synthetic metadata remains. Clean official **0.4.3 ACTIVE**, default Twenty Twenty-Five/ru_RU. All user Chrome profiles were untouched; only independent QA contexts were cleared (cookies()=[]). An older user-profile consent cookie from an earlier task may still exist and was not accessed.
+
+New immutable snapshot created outside Git/web-root and actually restored: **504 files, 12 tables**, all file hashes and all schemas/INSERT rows identical; settings, marker, active plugins, theme and locale equal.
+
+- SQL SHA-256: `e04288464b2ac2c70aa3343c64230656faa28159cb4f9ae4bf4f6434f3aa4708`
+- File manifest SHA-256: `241de2f533c82434ce9a284ac8dd3e64bd4c4098a2dc900f1fa3e4a47d8460ee`
+- Canonical database SHA-256: `64bf751d605579d40456b390dd576aed2f4e0c2689e4cac24c3776a7a686f287`
+- Old baseline-v0.4.2 SQL remains `09c7599b3f8570444a95b27b5ce9380f1b6b3fdd096b49cc85341a2c00dc8aa4`; old manifest `b33e88a1e3b2330316563be0366001f1ba02078a57f72b3ed1571e5ae344a002`. Older snapshots were not overwritten.
+
+### Production readiness and limits
+
+Metadata/activation floor remains WP 5.2 / PHP 7.4 to preserve existing installs. Recommended lower technical combination: WP 5.3 / PHP 7.4; new production should use security-supported Core/PHP. WP 5.0 support is not declared. No current stable browser acceptance on legacy WP 5.3 is claimed; that CI/previous research result is distinct from the main local browser matrix.
+
+See installation, rollout, rollback and legacy guides: verified GitHub assets, backup/Restore, 0.4.0/0.4.1 assisted recovery, one consent engine, one owner per SDK, GTM review and bounded Script Adapter limitations. The plugin is not a universal tracking firewall or a legal-compliance guarantee. No real production install occurred. Timeweb/testwp/production operations: **0**. No prior stable tag/Release/asset was changed. Final documentation is committed separately on main and its complete CI is required before the final handoff.

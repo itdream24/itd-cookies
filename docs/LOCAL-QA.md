@@ -202,3 +202,10 @@ See [the 0.4.2 release report](ITD-COOKIES-0.4.2.md) for independent A1/A2/B,
 CI/Release links, hashes, screenshots and limitations. LOCAL-FIRST remains in
 force. Next WP5.0/PHP7.4 compatibility task starts separately; minimum WP5.2
 has not been changed. Never overwrite snapshots or published release assets.
+
+
+## Current official 0.4.3 baseline — 2026-10-09
+
+Current reset: **baseline-v0.4.3**, clean official **0.4.3 ACTIVE**. Use baseline.ps1 -Mode Restore -Version 0.4.3. Never overwrite older snapshots or call Capture on an existing baseline. Native real GitHub 0.4.2 → 0.4.3 update PASS in both ordinary expired-cache and genuine cached-manual-refresh scenarios; no synthetic HTTP metadata/assisted update.
+
+Actual Capture then Restore: 504 files, 12 table schemas/all rows, settings/marker/activity/theme/locale identical. SQL SHA e04288464b2ac2c70aa3343c64230656faa28159cb4f9ae4bf4f6434f3aa4708; manifest SHA 241de2f533c82434ce9a284ac8dd3e64bd4c4098a2dc900f1fa3e4a47d8460ee; canonical DB 64bf751d605579d40456b390dd576aed2f4e0c2689e4cac24c3776a7a686f287. Old baseline-v0.4.2 hash 09c7599b3f8570444a95b27b5ce9380f1b6b3fdd096b49cc85341a2c00dc8aa4 unchanged. All QA plugins, pages, options, counters, synthetic IDs and isolated browser cookies removed. User Chrome not accessed. Detailed CI, snapshots, screenshots and caveats: [0.4.3 report](ITD-COOKIES-0.4.3.md). LOCAL-FIRST; remote QA/production is not authorized by this report.
