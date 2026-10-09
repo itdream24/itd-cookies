@@ -13,12 +13,13 @@ if ( ! defined( 'WP_CLI' ) || ! WP_CLI || 'http://wordpress.test' !== get_option
 // phpcs:disable WordPress.NamingConventions.ValidHookName.UseUnderscores -- Exercise the existing native WordPress load-update-core.php hook.
 require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
 $itd_refresh_hooks = array();
-foreach ( array( 'load-update-core.php', 'pre_set_site_transient_update_plugins', 'delete_site_transient_update_plugins' ) as $itd_refresh_hook ) {
+foreach ( array( 'load-update-core.php', 'pre_set_site_transient_update_plugins', 'delete_site_transient_update_plugins', 'site_transient_update_plugins' ) as $itd_refresh_hook ) {
 	$itd_refresh_hooks[ $itd_refresh_hook ] = clone $GLOBALS['wp_filter'][ $itd_refresh_hook ];
 }
 remove_all_actions( 'load-update-core.php' );
 remove_all_filters( 'pre_set_site_transient_update_plugins' );
 remove_all_actions( 'delete_site_transient_update_plugins' );
+remove_all_filters( 'site_transient_update_plugins' );
 add_action( 'load-update-core.php', 'wp_update_plugins' );
 $itd_refresh_user   = get_current_user_id();
 $itd_refresh_screen = $GLOBALS['current_screen'] ?? null;
@@ -80,7 +81,7 @@ set_transient(
 	array(
 		'release' => array(
 			'version' => '0.4.0',
-			'package' => 'old',
+			'package' => 'https://github.com/itdream24/itd-cookies/releases/download/v0.4.0/itd-cookies-0.4.0.zip',
 		),
 	),
 	6 * HOUR_IN_SECONDS

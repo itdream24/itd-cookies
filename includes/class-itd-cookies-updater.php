@@ -62,7 +62,9 @@ final class ITD_Cookies_Updater {
 	 * @return void
 	 */
 	public function register() {
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'update_plugins' ), PHP_INT_MAX );
+		// Old Core ignores Update URI; also reject foreign entries already cached.
+		add_filter( 'site_transient_update_plugins', array( $this, 'filter_cached_updates' ), PHP_INT_MAX );
 		add_filter( 'plugins_api', array( $this, 'plugin_information' ), 10, 3 );
 		// Keep explicit WordPress cache deletion in sync with GitHub metadata.
 		add_action( 'delete_site_transient_update_plugins', array( $this, 'clear_cache' ) );
@@ -111,7 +113,18 @@ final class ITD_Cookies_Updater {
 	public function release() {
 		$cached = get_transient( self::CACHE_KEY );
 		if ( is_array( $cached ) && isset( $cached['release'] ) ) {
-			return is_array( $cached['release'] ) ? $cached['release'] : null;
+			if ( false === $cached['release'] ) {
+				return null;
+			}
+			if ( is_array( $cached['release'] ) && isset( $cached['release']['version'], $cached['release']['package'] ) &&
+				self::trusted_package( $cached['release']['version'], $cached['release']['package'] ) ) {
+				return array(
+					'version'   => $cached['release']['version'],
+					'package'   => $cached['release']['package'],
+					'changelog' => isset( $cached['release']['changelog'] ) && is_string( $cached['release']['changelog'] ) ? $cached['release']['changelog'] : '',
+				);
+			}
+			// A malformed cache is not trusted release metadata; obtain a fresh result.
 		}
 		// Cron and WP-CLI update checks are allowed; ordinary frontend requests are not.
 		if ( ! is_admin() && ! wp_doing_cron() && ! ( defined( 'WP_CLI' ) && WP_CLI ) ) {
@@ -180,6 +193,14 @@ final class ITD_Cookies_Updater {
 	 * @return mixed
 	 */
 	public function update_plugins( $transient ) {
+		if ( is_object( $transient ) ) {
+			// Own only this basename; do not keep a foreign fallback on any early return.
+			foreach ( array( 'response', 'no_update' ) as $bucket ) {
+				if ( isset( $transient->$bucket ) && is_array( $transient->$bucket ) ) {
+					unset( $transient->{$bucket}[ $this->basename ] );
+				}
+			}
+		}
 		// WordPress 5.2 omits checked after an uncached successful check.
 		// Recover only our installed version on the final native manual result;
 		// never fetch metadata for Core's provisional last_checked-only write.
@@ -215,6 +236,46 @@ final class ITD_Cookies_Updater {
 	}
 
 	/**
+	 * Validate a strict stable version and its canonical built GitHub asset.
+	 *
+	 * @param mixed $version Stable version.
+	 * @param mixed $package Package URL.
+	 * @return bool
+	 */
+	private static function trusted_package( $version, $package ) {
+		return is_string( $version ) && is_string( $package ) &&
+			1 === preg_match( '/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/D', $version ) &&
+			'https://github.com/' . self::REPOSITORY . '/releases/download/v' . $version . '/itd-cookies-' . $version . '.zip' === $package;
+	}
+
+	/**
+	 * Sanitize cached update records without requesting metadata or changing TTL.
+	 * Only this plugin's entries are owned; other providers remain untouched.
+	 *
+	 * @param mixed $transient Cached WordPress plugin update record.
+	 * @return mixed
+	 */
+	public function filter_cached_updates( $transient ) {
+		if ( ! is_object( $transient ) ) {
+			return $transient;
+		}
+		foreach ( array( 'response', 'no_update' ) as $bucket ) {
+			if ( ! isset( $transient->$bucket ) || ! is_array( $transient->$bucket ) || ! isset( $transient->{$bucket}[ $this->basename ] ) ) {
+				continue;
+			}
+			$item = $transient->{$bucket}[ $this->basename ];
+			if ( ! is_object( $item ) || ! isset( $item->plugin, $item->slug, $item->id, $item->new_version, $item->package ) ||
+				$this->basename !== $item->plugin || 'itd-cookies' !== $item->slug ||
+				'https://github.com/' . self::REPOSITORY !== $item->id ||
+				! self::trusted_package( $item->new_version, $item->package ) ||
+				( 'response' === $bucket && ! version_compare( $item->new_version, $this->version, '>' ) ) ) {
+				unset( $transient->{$bucket}[ $this->basename ] );
+			}
+		}
+		return $transient;
+	}
+
+	/**
 	 * Supply the native plugin details modal; escape untrusted release text.
 	 *
 	 * @param mixed  $result Existing filter result.
@@ -228,7 +289,8 @@ final class ITD_Cookies_Updater {
 		}
 		$release = $this->release();
 		if ( ! $release ) {
-			return $result;
+			// WP_Error prevents Core falling back to a same-slug directory package.
+			return new WP_Error( 'itd_cookies_update_unavailable', __( 'ITD Cookies update information is temporarily unavailable. Please try again later.', 'itd-cookies' ) );
 		}
 		return (object) array(
 			'name'          => 'ITD Cookies',

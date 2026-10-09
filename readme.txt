@@ -4,13 +4,15 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.2
+Stable tag: 0.4.3-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Cookie choices with consent-aware Yandex Metrika and Google Analytics.
 
 == Description ==
+
+Recommended Core/PHP compatibility starts at WordPress 5.3/PHP 7.4. The declared WordPress 5.2 floor is retained for existing installations only; Core 5.0–5.2 with PHP 7.4 is not an officially supported Core combination. PHP 7.4 is an EOL compatibility minimum, not a recommendation for a new production server. Use current WordPress and a security-supported PHP version.
 
 Necessary, functional, analytics and marketing preferences. Analytics providers load only after analytics consent. Visitors can reopen settings using [itd_cookies_settings]. Five text sizes retain the theme font. Includes Russian translation. Category cards describe configured services. [itd_cookies_policy] provides configuration-based Cookie Policy information; [itd_cookies_legal_links] outputs configured document links and the settings action. Cookie Policy page creation is explicit. The optional automatic footer is off by default. This plugin does not scan every cookie on a site.
 

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ITD Cookies
  * Description: Cookie choices and consent-aware Yandex Metrika and Google Analytics.
- * Version: 0.4.2
+ * Version: 0.4.3-dev.1
  * Requires at least: 5.2
  * Requires PHP: 7.4
  * Plugin URI: https://github.com/itdream24/itd-cookies
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ITD_COOKIES_VERSION', '0.4.2' );
+define( 'ITD_COOKIES_VERSION', '0.4.3-dev.1' );
 define( 'ITD_COOKIES_FILE', __FILE__ );
 define( 'ITD_COOKIES_DIR', plugin_dir_path( __FILE__ ) );
 define( 'ITD_COOKIES_URL', plugin_dir_url( __FILE__ ) );
@@ -77,13 +77,16 @@ add_action(
 	}
 );
 
-/**
- * Return whether the current browser consent allows a category.
- * This is a preference signal, never an authorization decision.
- *
- * @param string $category Consent category.
- * @return bool
- */
-function itd_cookies_allowed( $category ) {
-	return ITD_Cookies_Consent::allowed( $category, ITD_Cookies_Settings::get() );
+// Conditional declaration: a refused bootstrap exposes no working consent API.
+if ( class_exists( 'ITD_Cookies_Consent', false ) && class_exists( 'ITD_Cookies_Settings', false ) ) {
+	/**
+	 * Return whether the current browser consent allows a category.
+	 * This is a preference signal, never an authorization decision.
+	 *
+	 * @param string $category Consent category.
+	 * @return bool
+	 */
+	function itd_cookies_allowed( $category ) {
+		return ITD_Cookies_Consent::allowed( $category, ITD_Cookies_Settings::get() );
+	}
 }

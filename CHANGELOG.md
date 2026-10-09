@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.3-dev.1 — unreleased
+
+- Expose the public consent function only after a supported bootstrap loads the engine.
+- Reject foreign same-basename update records on cache reads and writes; only canonical GitHub stable packages are trusted.
+- Preserve manual refresh, negative caching and unrelated plugin update providers.
+- Scope banner button/toggle colors and focus states against theme overrides, including forced colors.
+- Keep the activation floor WP 5.2 to avoid disabling existing sites; recommended Core/PHP compatibility starts at WP 5.3/PHP 7.4.
+
 ## 0.4.2 — 2026-10-09
 
 - Refresh cached GitHub release metadata and WordPress plugin update records on the native authenticated manual update check.

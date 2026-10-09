@@ -463,4 +463,161 @@ final class UpdaterTest extends TestCase {
 			unset( $_GET['force-check'] );
 		}
 	}
+
+	/**
+	 * Reject a synthetic same-basename collision on every GitHub failure path.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 *
+	 * @return void
+	 */
+	public function test_collision_failures_preserve_unrelated_providers() {
+		require_once dirname( __DIR__ ) . '/fixtures/wp-error.php';
+		$basename = 'itd-cookies/itd-cookies.php';
+		$foreign  = (object) array(
+			'new_version' => '9.9.9',
+			'package'     => 'https://downloads.wordpress.org/plugin/itd-cookies.9.9.9.zip',
+		);
+		$other    = (object) array(
+			'new_version' => '2.0.0',
+			'package'     => 'https://other.example/package.zip',
+		);
+		foreach ( array(
+			(object) array( 'error' => 'timeout' ),
+			array(
+				'code' => 500,
+				'body' => '{}',
+			),
+			array(
+				'code' => 200,
+				'body' => '{invalid',
+			),
+			array(
+				'code' => 200,
+				'body' => json_encode( array_merge( $this->fixture(), array( 'prerelease' => true ) ) ),
+			),
+			array(
+				'code' => 200,
+				'body' => json_encode( array_merge( $this->fixture(), array( 'assets' => array() ) ) ),
+			),
+		) as $http ) {
+			$this->cache = false;
+			$this->http  = $http;
+			$updater     = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '1.0.0' );
+			$before      = $this->requests;
+			$record      = (object) array(
+				'checked'   => array(
+					$basename          => '1.0.0',
+					'other/plugin.php' => '1.0.0',
+				),
+				'response'  => array(
+					$basename          => $foreign,
+					'other/plugin.php' => $other,
+				),
+				'no_update' => array(
+					$basename          => $foreign,
+					'third/plugin.php' => $other,
+				),
+			);
+			$result      = $updater->update_plugins( $record );
+			self::assertArrayNotHasKey( $basename, $result->response );
+			self::assertArrayNotHasKey( $basename, $result->no_update );
+			self::assertSame( $other, $result->response['other/plugin.php'] );
+			self::assertSame( $other, $result->no_update['third/plugin.php'] );
+			self::assertSame( '1.0.0', $result->checked['other/plugin.php'] );
+			$updater->update_plugins( $record );
+			self::assertSame( $before + 1, $this->requests );
+			self::assertSame( 900, $this->ttl );
+			$error = $updater->plugin_information( $foreign, 'plugin_information', (object) array( 'slug' => 'itd-cookies' ) );
+			self::assertInstanceOf( \WP_Error::class, $error );
+			self::assertSame( 'itd_cookies_update_unavailable', $error->get_error_code() );
+		}
+	}
+
+	/**
+	 * Reading old WordPress cache never fetches and cannot expose a foreign ZIP.
+	 *
+	 * @return void
+	 */
+	public function test_cached_record_source_and_version_guards() {
+		$updater = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '1.0.0' );
+		$valid   = (object) array(
+			'id'          => 'https://github.com/itdream24/itd-cookies',
+			'slug'        => 'itd-cookies',
+			'plugin'      => 'itd-cookies/itd-cookies.php',
+			'new_version' => '1.1.0',
+			'package'     => $this->fixture()['assets'][0]['browser_download_url'],
+		);
+		foreach ( array(
+			'package'     => 'https://foreign.example/package.zip',
+			'id'          => 'https://wordpress.org/plugins/itd-cookies',
+			'plugin'      => 'other/plugin.php',
+			'slug'        => 'other',
+			'new_version' => '1.1.0-rc.1',
+		) as $field => $value ) {
+			$item         = clone $valid;
+			$item->$field = $value;
+			$record       = (object) array(
+				'response'  => array(
+					'itd-cookies/itd-cookies.php' => $item,
+					'other/plugin.php'            => $valid,
+				),
+				'no_update' => array( 'itd-cookies/itd-cookies.php' => $item ),
+			);
+			$result       = $updater->filter_cached_updates( $record );
+			self::assertArrayNotHasKey( 'itd-cookies/itd-cookies.php', $result->response );
+			self::assertArrayNotHasKey( 'itd-cookies/itd-cookies.php', $result->no_update );
+			self::assertSame( $valid, $result->response['other/plugin.php'] );
+		}
+		$record = (object) array( 'response' => array( 'itd-cookies/itd-cookies.php' => $valid ) );
+		self::assertSame( $valid, $updater->filter_cached_updates( $record )->response['itd-cookies/itd-cookies.php'] );
+		$equal = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '1.1.0' );
+		self::assertArrayNotHasKey( 'itd-cookies/itd-cookies.php', $equal->filter_cached_updates( $record )->response );
+		self::assertSame( 0, $this->requests );
+		self::assertFalse( $updater->filter_cached_updates( false ) );
+	}
+
+	/**
+	 * No checked list means no HTTP, but still no foreign fallback; valid wins.
+	 *
+	 * @return void
+	 */
+	public function test_foreign_provisional_record_and_poisoned_metadata() {
+		$updater     = new \ITD_Cookies_Updater( '/plugin/itd-cookies.php', '1.0.0' );
+		$basename    = 'itd-cookies/itd-cookies.php';
+		$foreign     = (object) array( 'package' => 'https://foreign.example/package.zip' );
+		$provisional = (object) array(
+			'last_checked' => 123,
+			'response'     => array(
+				$basename          => $foreign,
+				'other/plugin.php' => $foreign,
+			),
+		);
+		$result      = $updater->update_plugins( $provisional );
+		self::assertArrayNotHasKey( $basename, $result->response );
+		self::assertSame( $foreign, $result->response['other/plugin.php'] );
+		self::assertSame( 0, $this->requests );
+		$this->cache = array(
+			'release' => array(
+				'version' => '9.9.9',
+				'package' => 'https://foreign.example/package.zip',
+			),
+		);
+		$record      = (object) array(
+			'checked'  => array( $basename => '1.0.0' ),
+			'response' => array(
+				$basename          => $foreign,
+				'other/plugin.php' => $foreign,
+			),
+		);
+		$result      = $updater->update_plugins( $record );
+		self::assertSame( $this->fixture()['assets'][0]['browser_download_url'], $result->response[ $basename ]->package );
+		self::assertSame( '1.1.0', $result->response[ $basename ]->new_version );
+		self::assertSame( $foreign, $result->response['other/plugin.php'] );
+		self::assertSame( 1, $this->requests );
+		$updater->update_plugins( $record );
+		self::assertSame( 1, $this->requests );
+		self::assertSame( 21600, $this->ttl );
+	}
 }

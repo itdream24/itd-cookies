@@ -56,6 +56,10 @@ if ( ! $persisted ) {
 	}
 }
 
+if ( ! function_exists( 'itd_cookies_allowed' ) || ! is_callable( 'itd_cookies_allowed' ) ) {
+	$fail( 'Supported bootstrap did not expose its consent API.' );
+}
+
 if ( itd_cookies_allowed( 'analytics' ) || ! itd_cookies_allowed( 'necessary' ) ) {
 	$fail( 'Default consent state is not fail closed.' );
 }

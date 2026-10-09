@@ -84,7 +84,7 @@
 	gap: 8px;
 }
 
-.itd-cookies__button {
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button {
 	min-height: 44px;
 	padding: 9px 14px;
 	border: 2px solid var(--itd-cookies-accent);
@@ -100,14 +100,14 @@
 	overflow-wrap: anywhere;
 }
 
-.itd-cookies__button--secondary {
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button--secondary {
 	background: #fff;
 	color: var(--itd-cookies-accent);
 }
 
 .itd-cookies :focus-visible,
 .itd-cookies-open:focus-visible {
-	outline: 3px solid #7aabff;
+	outline: 3px solid var(--itd-cookies-accent);
 	outline-offset: 3px;
 }
 
@@ -127,7 +127,7 @@
 		flex-direction: column;
 	}
 
-	.itd-cookies__button {
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button {
 		width: 100%;
 	}
 }
@@ -139,7 +139,7 @@
 		border-color: CanvasText;
 	}
 
-	.itd-cookies__button {
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button {
 		background: ButtonFace;
 		color: ButtonText;
 		border-color: ButtonText;
@@ -214,7 +214,7 @@
 .itd-cookies__services li + li { margin-block-start: 8px; }
 .itd-cookies__services span { display: block; }
 
-.itd-cookies__toggle {
+.itd-cookies input.itd-cookies__toggle {
 	appearance: none;
 	flex: 0 0 48px;
 	width: 48px;
@@ -227,7 +227,7 @@
 	cursor: pointer;
 }
 
-.itd-cookies__toggle::before {
+.itd-cookies input.itd-cookies__toggle::before {
 	content: "";
 	position: absolute;
 	top: 2px;
@@ -238,9 +238,9 @@
 	background: #fff;
 }
 
-.itd-cookies__toggle:checked { background: var(--itd-cookies-accent); border-color: var(--itd-cookies-accent); }
-.itd-cookies__toggle:checked::before { left: 22px; }
-.itd-cookies__toggle:disabled { cursor: default; opacity: .65; }
+.itd-cookies input.itd-cookies__toggle:checked { background: var(--itd-cookies-accent); border-color: var(--itd-cookies-accent); }
+.itd-cookies input.itd-cookies__toggle:checked::before { left: 22px; }
+.itd-cookies input.itd-cookies__toggle:disabled { cursor: default; opacity: .65; }
 
 .itd-cookies-open {
 	appearance: none;
@@ -291,8 +291,8 @@
 }
 
 @media (forced-colors: active) {
-	.itd-cookies__toggle { appearance: auto; }
-	.itd-cookies__toggle::before { display: none; }
+	.itd-cookies input.itd-cookies__toggle { appearance: auto; }
+	.itd-cookies input.itd-cookies__toggle::before { display: none; }
 }
 
 /* Keep actions outside the category scroller; one set of existing controls. */
@@ -329,7 +329,7 @@
 
 .itd-cookies__category-heading { flex-wrap: wrap; row-gap: 4px; }
 .itd-cookies__category-name { min-width: 0; max-width: 100%; }
-.itd-cookies__toggle { margin-inline-start: auto; }
+.itd-cookies input.itd-cookies__toggle { margin-inline-start: auto; }
 
 @media (max-width: 600px) {
 	.itd-cookies--settings { --itd-cookies-panel-padding: 18px; }
@@ -345,4 +345,43 @@
 	.itd-cookies--settings { overflow-y: auto; }
 	.itd-cookies--settings .itd-cookies__panel { max-height: none; }
 	.itd-cookies__panel > .itd-cookies__choices { overflow: visible; }
+}
+
+/* Scoped state colors beat theme button selectors without affecting site controls. */
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button:hover,
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button:focus-visible,
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button:active {
+	background: var(--itd-cookies-accent);
+	color: #fff;
+	border-color: var(--itd-cookies-accent);
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button--secondary:hover,
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button--secondary:focus-visible,
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button--secondary:active {
+	background: #fff;
+	color: var(--itd-cookies-accent);
+}
+
+.itd-cookies .itd-cookies__actions > button.itd-cookies__button:focus-visible,
+.itd-cookies input.itd-cookies__toggle:focus-visible {
+	outline: 3px solid var(--itd-cookies-accent);
+	outline-offset: 3px;
+}
+
+@media (forced-colors: active) {
+	.itd-cookies { --itd-cookies-bg: Canvas; }
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button,
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button:hover,
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button:focus-visible,
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button:active {
+		background: ButtonFace;
+		color: ButtonText;
+		border-color: ButtonText;
+	}
+	.itd-cookies .itd-cookies__actions > button.itd-cookies__button:focus-visible,
+	.itd-cookies input.itd-cookies__toggle:focus-visible { outline-color: Highlight; }
+	.itd-cookies input.itd-cookies__toggle { background: Canvas; border-color: CanvasText; }
 }
