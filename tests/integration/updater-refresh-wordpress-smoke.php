@@ -104,6 +104,8 @@ do_action( 'load-update-core.php' );
 if ( 0 !== $itd_refresh_requests || '0.4.0' !== get_transient( ITD_Cookies_Updater::CACHE_KEY )['release']['version'] ) {
 	WP_CLI::error( 'Ordinary admin view invalidated the metadata cache.' );
 }
+// Core may contact WordPress.org on an ordinary view; trace only the manual request below.
+$itd_refresh_trace = array();
 add_action( 'load-update-core.php', $itd_refresh_before, 9 );
 $_GET['force-check'] = '1';
 do_action( 'load-update-core.php' );

@@ -145,3 +145,7 @@ fixed native refresh behavior. No such stable-upgrade claim is made here.
 
 No merge/main push, tag or Release in this task. v0.4.1 and older published assets
 remain unchanged. No Timeweb, testwp or production access; LOCAL-FIRST maintained.
+
+## CI execution history
+
+Initial run https://github.com/itdream24/itd-cookies/actions/runs/37902096673: PHP, quality and node PASS; four WordPress jobs FAIL and build skipped. The new test included an ordinary-view WordPress.org HTTP event in the expected manual-only trace. Its checks for one GitHub request and refreshed update metadata passed before the trace assertion. Resetting only test trace between the ordinary and manual phases fixes that unrelated-event assumption. Production source and accepted ZIP SHA-256 are unchanged. Full CI on the corrected test remains required.
