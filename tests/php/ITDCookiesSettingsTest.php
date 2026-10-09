@@ -35,7 +35,7 @@ final class ITDCookiesSettingsTest extends TestCase {
 			}
 		);
 		Functions\when( 'wp_parse_url' )->alias(
-			static function ( $url, $component ) {
+			static function ( $url, $component = -1 ) {
 				return parse_url( $url, $component );
 			}
 		);
@@ -44,11 +44,131 @@ final class ITDCookiesSettingsTest extends TestCase {
 				return $url;
 			}
 		);
+		Functions\when( 'home_url' )->justReturn( 'http://itd-cookies.local/' );
 		Functions\when( 'wp_unslash' )->alias(
 			static function ( $value ) {
 				return $value;
 			}
 		);
+	}
+
+	/**
+	 * Normalize legal links without introducing settings notices on reads.
+	 *
+	 * @return void
+	 */
+	public function test_legal_url_normalization_is_safe_and_quiet() {
+		Functions\expect( 'add_settings_error' )->never();
+		$cases = array(
+			'https://example.org/policy?lang=ru#cookies' => 'https://example.org/policy?lang=ru#cookies',
+			'https://пример.рф/политика'                 => 'https://пример.рф/политика',
+			'/policy?lang=ru#cookies'                    => '/policy?lang=ru#cookies',
+			'http://itd-cookies.local/policy?lang=ru#cookies' => '/policy?lang=ru#cookies',
+			'http://ITD-COOKIES.local:80'                => '/',
+			'http://external.example/policy'             => '',
+			'http://itd-cookies.local:8080/policy'       => '',
+			'http://itd-cookies.local.external.example/policy' => '',
+			'http://itd-cookies.local//external.example' => '',
+			'http://user@itd-cookies.local/policy'       => '',
+			'//external.example/policy'                  => '',
+			'/\external.example'                         => '',
+			'/%2fexternal.example'                       => '',
+			'/%5cexternal.example'                       => '',
+			'https://bad..example/policy'                => '',
+			'https://example.org:99999/policy'           => '',
+			'https://example.org/a b'                    => '',
+			'https://'                                   => '',
+			'not a URL'                                  => '',
+			'javascript:alert(1)'                        => '',
+		);
+		foreach ( $cases as $input => $expected ) {
+			self::assertSame( $expected, \ITD_Cookies_Settings::sanitize( array( 'link_1_url' => $input ) )['link_1_url'], $input );
+		}
+		Functions\when( 'get_option' )->justReturn( array( 'link_1_url' => 'http://external.example' ) );
+		self::assertSame( '', \ITD_Cookies_Settings::get()['link_1_url'] );
+	}
+
+	/**
+	 * An invalid submission keeps each previous link and reports each error.
+	 *
+	 * @return void
+	 */
+	public function test_rejected_legal_urls_preserve_previous_values_on_save() {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'link_1_url' => 'https://example.org/old',
+				'link_2_url' => '/old-policy',
+				'link_3_url' => '/third',
+				'link_4_url' => '/fourth',
+			)
+		);
+		$errors = array();
+		Functions\when( 'add_settings_error' )->alias(
+			static function ( $setting, $code, $message, $type ) use ( &$errors ) {
+				$errors[] = array( $setting, $code, $message, $type );
+			}
+		);
+		$output = \ITD_Cookies_Settings::sanitize_submission(
+			array(
+				'banner_title' => 'Updated title',
+				'link_1_url'   => 'http://external.example',
+				'link_2_url'   => 'invalid',
+				'link_3_url'   => '//external.example',
+				'link_4_url'   => array( 'unexpected' ),
+			)
+		);
+		self::assertSame( 'Updated title', $output['banner_title'] );
+		self::assertSame( 'https://example.org/old', $output['link_1_url'] );
+		self::assertSame( '/old-policy', $output['link_2_url'] );
+		self::assertSame( '/third', $output['link_3_url'] );
+		self::assertSame( '/fourth', $output['link_4_url'] );
+		self::assertCount( 4, $errors );
+		foreach ( $errors as $index => $error ) {
+			self::assertSame( 'itd_cookies_settings', $error[0] );
+			self::assertSame( 'link_' . ( $index + 1 ) . '_url', $error[1] );
+			self::assertStringContainsString( 'previous link has been kept', $error[2] );
+			self::assertSame( 'error', $error[3] );
+		}
+	}
+
+	/**
+	 * Valid saves and deliberate clearing must not create errors.
+	 *
+	 * @return void
+	 */
+	public function test_valid_legal_urls_can_replace_or_clear_previous_links() {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'link_1_url' => '/old',
+				'link_4_url' => '/clear-me',
+			)
+		);
+		Functions\expect( 'add_settings_error' )->never();
+		$output = \ITD_Cookies_Settings::sanitize_submission(
+			array(
+				'link_1_url' => 'https://example.org/new',
+				'link_2_url' => '/new',
+				'link_3_url' => 'http://itd-cookies.local/new',
+				'link_4_url' => '',
+			)
+		);
+		self::assertSame( 'https://example.org/new', $output['link_1_url'] );
+		self::assertSame( '/new', $output['link_2_url'] );
+		self::assertSame( '/new', $output['link_3_url'] );
+		self::assertSame( '', $output['link_4_url'] );
+	}
+
+	/**
+	 * HTTP conversion requires the site's exact scheme, host and port.
+	 *
+	 * @return void
+	 */
+	public function test_http_conversion_requires_exact_current_origin() {
+		Functions\when( 'home_url' )->justReturn( 'http://itd-cookies.local:8080/subdirectory/' );
+		self::assertSame( '/policy', \ITD_Cookies_Settings::sanitize( array( 'link_1_url' => 'http://itd-cookies.local:8080/policy' ) )['link_1_url'] );
+		self::assertSame( '', \ITD_Cookies_Settings::sanitize( array( 'link_1_url' => 'http://itd-cookies.local/policy' ) )['link_1_url'] );
+		Functions\when( 'home_url' )->justReturn( 'https://itd-cookies.local/' );
+		self::assertSame( '', \ITD_Cookies_Settings::sanitize( array( 'link_1_url' => 'http://itd-cookies.local/policy' ) )['link_1_url'] );
 	}
 
 	/**

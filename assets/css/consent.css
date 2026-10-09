@@ -294,3 +294,55 @@
 	.itd-cookies__toggle { appearance: auto; }
 	.itd-cookies__toggle::before { display: none; }
 }
+
+/* Keep actions outside the category scroller; one set of existing controls. */
+.itd-cookies--settings {
+	--itd-cookies-panel-padding: 24px;
+	padding: var(--itd-cookies-panel-padding);
+	overflow: hidden;
+	max-height: calc(100vh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+	max-height: calc(100dvh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+}
+
+.itd-cookies--settings .itd-cookies__panel {
+	max-height: calc(100vh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)) - 2 * var(--itd-cookies-panel-padding) - 2px);
+	max-height: calc(100dvh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)) - 2 * var(--itd-cookies-panel-padding) - 2px);
+	min-height: 0;
+}
+
+.itd-cookies__panel > .itd-cookies__title,
+.itd-cookies__panel > .itd-cookies__description,
+.itd-cookies__panel > .itd-cookies__actions { flex-shrink: 0; }
+
+.itd-cookies__panel > .itd-cookies__choices {
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: 4px;
+	margin: -4px;
+}
+
+.itd-cookies__panel > .itd-cookies__actions {
+	padding-top: 12px;
+	border-top: 1px solid var(--itd-cookies-border);
+}
+
+.itd-cookies__category-heading { flex-wrap: wrap; row-gap: 4px; }
+.itd-cookies__category-name { min-width: 0; max-width: 100%; }
+.itd-cookies__toggle { margin-inline-start: auto; }
+
+@media (max-width: 600px) {
+	.itd-cookies--settings { --itd-cookies-panel-padding: 18px; }
+	.itd-cookies__panel > .itd-cookies__actions {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	}
+	.itd-cookies__panel > .itd-cookies__actions [data-itd-cookies-save] { grid-column: 1 / -1; }
+}
+
+/* Very short viewports (including keyboard-reduced layouts) use full scrolling. */
+@media (max-height: 450px) {
+	.itd-cookies--settings { overflow-y: auto; }
+	.itd-cookies--settings .itd-cookies__panel { max-height: none; }
+	.itd-cookies__panel > .itd-cookies__choices { overflow: visible; }
+}

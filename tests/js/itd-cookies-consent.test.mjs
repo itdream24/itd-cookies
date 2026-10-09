@@ -19,9 +19,11 @@ const html = `
 		</div>
 		<div data-itd-cookies-panel hidden>
 			<h2 id="itd-cookies-settings-title" tabindex="-1">Settings</h2>
+			<div class="itd-cookies__choices">
 			<input type="checkbox" data-itd-cookies-category="functional">
 			<input type="checkbox" data-itd-cookies-category="analytics">
 			<input type="checkbox" data-itd-cookies-category="marketing">
+			</div>
 			<button data-itd-cookies-save>Save</button>
 			<button data-itd-cookies-accept>Accept all in panel</button>
 			<button data-itd-cookies-cancel>Back</button>
@@ -451,4 +453,20 @@ test('existing SDK tags are not reinserted or reinitialized',t=>{
  }
  click(dom.window,'[data-itd-cookies-accept]');assert.equal(dom.window.document.querySelectorAll('script').length,5);
  assert.equal(typeof dom.window.fbq,'undefined');assert.equal(typeof dom.window.clarity,'undefined');assert.equal(typeof dom.window.ym,'undefined');
+});
+
+
+test("reopening a long settings panel resets its inner scroll without losing consent", (t) => {
+	const dom = createPage();
+	t.after(() => dom.window.close());
+	const { window } = dom;
+	click(window, '[data-itd-cookies-accept]');
+	const saved = choice(window);
+	click(window, '[data-itd-cookies-open]');
+	const choices = window.document.querySelector('.itd-cookies__choices');
+	choices.scrollTop = 500;
+	click(window, '[data-itd-cookies-cancel]');
+	click(window, '[data-itd-cookies-open]');
+	assert.equal(choices.scrollTop, 0);
+	assert.deepEqual(choice(window), saved);
 });

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1-dev.1 — unreleased
+
+- Save-time legal URL errors keep the previous valid link; ordinary reads stay silent.
+- Exact same-origin HTTP links are normalized to site-relative paths; external HTTP and protocol-relative URLs remain forbidden.
+- Category headings wrap their toggle before splitting a word on narrow screens.
+- A bounded category scroller keeps the existing settings actions visible; very short viewports retain full scrolling.
+- Consent semantics, Script Adapters, provider loading and updater behavior are unchanged.
+
 ## 0.4.0 — 2026-10-07
 
 - Developer API for explicitly registered closed classic WordPress script-handle groups.

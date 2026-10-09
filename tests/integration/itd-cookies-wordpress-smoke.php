@@ -208,4 +208,43 @@ update_option( ITD_Cookies_Settings::OPTION_NAME, $original );
 wp_delete_post( $page_id, true );
 delete_option( ITD_Cookies_Legal::PAGE_OPTION );
 
+
+// Exercise the real Settings API callback with WordPress URL escaping and storage.
+require_once ABSPATH . 'wp-admin/includes/template.php';
+( new ITD_Cookies_Settings() )->register_option();
+$original               = get_option( ITD_Cookies_Settings::OPTION_NAME );
+$previous               = ITD_Cookies_Settings::get();
+$previous['link_1_url'] = 'https://example.org/previous';
+update_option( ITD_Cookies_Settings::OPTION_NAME, $previous );
+foreach ( array( 'http://external.example/policy', '//external.example/policy', 'not a URL', '/\\external.example' ) as $invalid ) {
+	unset( $GLOBALS['wp_settings_errors'] );
+	$submitted               = $previous;
+	$submitted['link_1_url'] = $invalid;
+	update_option( ITD_Cookies_Settings::OPTION_NAME, $submitted );
+	$url_errors = get_settings_errors( ITD_Cookies_Settings::OPTION_NAME );
+	if ( 'https://example.org/previous' !== get_option( ITD_Cookies_Settings::OPTION_NAME )['link_1_url'] || 1 !== count( $url_errors ) || 'error' !== $url_errors[0]['type'] || false === strpos( $url_errors[0]['message'], 'Прежняя ссылка сохранена' ) ) {
+		$fail( 'A rejected legal URL lost the previous link or its translated error.' );
+	}
+}
+foreach ( array(
+	'https://example.org/new'     => 'https://example.org/new',
+	'/policy?language=ru#cookies' => '/policy?language=ru#cookies',
+	home_url( '/policy' )         => '/policy',
+	''                            => '',
+) as $valid => $expected ) {
+	unset( $GLOBALS['wp_settings_errors'] );
+	$submitted               = $previous;
+	$submitted['link_1_url'] = $valid;
+	update_option( ITD_Cookies_Settings::OPTION_NAME, $submitted );
+	if ( 0 !== strcmp( $expected, get_option( ITD_Cookies_Settings::OPTION_NAME )['link_1_url'] ) || get_settings_errors( ITD_Cookies_Settings::OPTION_NAME ) ) {
+		$fail( 'A valid legal URL did not save through the Settings API.' );
+	}
+}
+unset( $GLOBALS['wp_settings_errors'] );
+ITD_Cookies_Settings::get();
+if ( get_settings_errors( ITD_Cookies_Settings::OPTION_NAME ) ) {
+	$fail( 'Reading settings emitted save-time errors.' );
+}
+update_option( ITD_Cookies_Settings::OPTION_NAME, $original );
+
 WP_CLI::success( $persisted ? 'ITD Cookies reactivation preserved migrated settings.' : 'ITD Cookies activation, migration, consent defaults, UI, and Russian translation passed.' );

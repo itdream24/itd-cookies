@@ -207,6 +207,8 @@
 		banner.setAttribute('aria-modal', 'true');
 		banner.classList.add('itd-cookies--settings');
 		banner.scrollTop = 0;
+		var choices = panel.querySelector('.itd-cookies__choices');
+		if (choices) { choices.scrollTop = 0; }
 		if (backdrop) { backdrop.hidden = false; }
 		summary.hidden = true;
 		panel.hidden = false;

@@ -133,6 +133,33 @@ final class ITD_Cookies_Settings {
 	}
 
 	/**
+	 * Validate submitted links without emitting notices during ordinary reads.
+	 * WordPress options.php owns nonce, capability checks and the save redirect.
+	 *
+	 * @param mixed $input Submitted option.
+	 * @return array<string,int|string>
+	 */
+	public static function sanitize_submission( $input ) {
+		$input    = is_array( $input ) ? $input : array();
+		$output   = self::sanitize( $input );
+		$previous = self::get();
+		for ( $index = 1; $index <= 4; $index++ ) {
+			$key = 'link_' . $index . '_url';
+			if ( ( '' !== self::scalar( $input, $key ) && '' === $output[ $key ] ) || ( isset( $input[ $key ] ) && ! is_scalar( $input[ $key ] ) ) ) {
+				$output[ $key ] = $previous[ $key ];
+				add_settings_error(
+					self::OPTION_NAME,
+					$key,
+					/* translators: %d is the legal link number (1 to 4). */
+					sprintf( __( 'Link %d URL was not saved. Use a valid HTTPS URL or a site-relative path starting with /. The previous link has been kept.', 'itd-cookies' ), $index ),
+					'error'
+				);
+			}
+		}
+		return $output;
+	}
+
+	/**
 	 * Copy only consent and analytics options once. Never delete legacy data.
 	 *
 	 * @return void
@@ -194,7 +221,7 @@ final class ITD_Cookies_Settings {
 			array(
 				'type'              => 'array',
 				'default'           => self::defaults(),
-				'sanitize_callback' => array( __CLASS__, 'sanitize' ),
+				'sanitize_callback' => array( __CLASS__, 'sanitize_submission' ),
 			)
 		);
 	}
@@ -259,6 +286,7 @@ final class ITD_Cookies_Settings {
 						<?php self::text_row( sprintf( __( 'Link %d URL', 'itd-cookies' ), $index ), 'link_' . $index . '_url', $settings ); ?>
 					<?php endfor; ?>
 				</table>
+				<p class="description"><?php echo esc_html__( 'Legal URLs must use HTTPS or a site-relative path starting with /. HTTP URLs with the exact site origin are converted to relative paths. External HTTP URLs are not allowed.', 'itd-cookies' ); ?></p>
 				<h2><?php echo esc_html__( 'Footer integration', 'itd-cookies' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<?php self::checkbox_row( __( 'Automatically display legal links at the bottom of the site', 'itd-cookies' ), 'auto_footer', $settings ); ?>
@@ -374,7 +402,7 @@ final class ITD_Cookies_Settings {
 	}
 
 	/**
-	 * Accept only site-relative or HTTPS legal links.
+	 * Accept valid HTTPS/site-relative links; convert the exact HTTP site origin.
 	 *
 	 * @param string $url Candidate URL.
 	 * @return string
@@ -383,10 +411,38 @@ final class ITD_Cookies_Settings {
 		if ( '' === $url ) {
 			return '';
 		}
-		if ( '/' === $url[0] && 0 !== strpos( $url, '//' ) ) {
-			return esc_url_raw( $url );
+		// Reject browser authority ambiguities and malformed characters before escaping.
+		if ( preg_match( '/[\x00-\x20\x7f<>"\\\\]/', $url ) ) {
+			return '';
 		}
-		$scheme = wp_parse_url( $url, PHP_URL_SCHEME );
-		return 'https' === strtolower( (string) $scheme ) ? esc_url_raw( $url, array( 'https' ) ) : '';
+		if ( '/' === $url[0] ) {
+			return 0 === strpos( $url, '//' ) || preg_match( '/\A\/(?:%2f|%5c)/i', $url ) ? '' : esc_url_raw( $url );
+		}
+		$parts = wp_parse_url( $url );
+		if ( ! is_array( $parts ) || empty( $parts['host'] ) || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
+			return '';
+		}
+		// Validate DNS labels without rejecting translated paths or IDN hostnames.
+		$host = trim( $parts['host'], '[]' );
+		if ( ! filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			foreach ( explode( '.', rtrim( $host, '.' ) ) as $label ) {
+				if ( ! preg_match( '/\A[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\z/u', $label ) ) {
+					return '';
+				}
+			}
+		}
+		$scheme = isset( $parts['scheme'] ) ? strtolower( $parts['scheme'] ) : '';
+		if ( 'https' === $scheme ) {
+			return esc_url_raw( $url, array( 'https' ) );
+		}
+		$home = wp_parse_url( home_url( '/' ) );
+		if ( 'http' !== $scheme || ! is_array( $home ) || ! isset( $home['scheme'], $home['host'] ) || 'http' !== strtolower( $home['scheme'] ) || strtolower( $parts['host'] ) !== strtolower( $home['host'] ) || ( $parts['port'] ?? 80 ) !== ( $home['port'] ?? 80 ) ) {
+			return '';
+		}
+		$relative  = isset( $parts['path'] ) && '' !== $parts['path'] ? $parts['path'] : '/';
+		$relative .= isset( $parts['query'] ) ? '?' . $parts['query'] : '';
+		$relative .= isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '';
+		// Recheck the resulting path: same-origin HTTP must not become //external.
+		return self::sanitize_url( $relative );
 	}
 }

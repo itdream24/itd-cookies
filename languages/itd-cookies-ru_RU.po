@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.4.0\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.4.1-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -279,3 +279,9 @@ msgstr "Сбор согласия и загрузка провайдеров э�
 
 msgid "Additional site service"
 msgstr "Дополнительный сервис сайта"
+
+msgid "Link %d URL was not saved. Use a valid HTTPS URL or a site-relative path starting with /. The previous link has been kept."
+msgstr "URL ссылки %d не сохранён. Укажите корректный HTTPS-адрес или относительный адрес сайта, начинающийся с /. Прежняя ссылка сохранена."
+
+msgid "Legal URLs must use HTTPS or a site-relative path starting with /. HTTP URLs with the exact site origin are converted to relative paths. External HTTP URLs are not allowed."
+msgstr "Используйте HTTPS-адрес или относительный адрес сайта, начинающийся с /. HTTP-адреса с точным адресом текущего сайта преобразуются в относительные. Внешние HTTP-адреса запрещены."
