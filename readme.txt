@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.2-dev.1
+Stable tag: 0.4.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,7 +36,7 @@ No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
 
-= 0.4.2-dev.1 =
+= 0.4.2 =
 * Native authenticated manual update checks refresh GitHub and WordPress plugin metadata.
 
 = 0.4.1 =

@@ -1,9 +1,11 @@
 # Changelog
 
-## 0.4.2-dev.1 — Unreleased
+## 0.4.2 — 2026-10-09
 
 - Refresh cached GitHub release metadata and WordPress plugin update records on the native authenticated manual update check.
-- Preserve ordinary six-hour/15-minute caching and avoid repeated invalidation within one request.
+- Preserve ordinary six-hour/15-minute caching, reuse an earlier request result and make at most one GitHub metadata request per manual check.
+- Handle the final uncached update record on WordPress 5.2/5.2.24 without fetching for provisional records.
+- Old installed 0.4.0/0.4.1 retain their former cache behavior until updated: wait for natural expiry or use the official ZIP through WordPress Upload/Replace as assisted recovery.
 
 ## 0.4.1 — 2026-10-09
 
