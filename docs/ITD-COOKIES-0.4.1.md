@@ -127,3 +127,12 @@ WordPress 5.2/PHP7.4, 5.2.24/PHP7.4, latest/PHP7.4, latest/PHP8.5 and build.
 The separate report-only follow-up runs the same full CI before final handoff;
 its final run URL/status is retained in the task acceptance evidence.
 No merge, stable version/tag or Release was produced.
+
+## Stable 0.4.1 release gate
+
+Accepted implementation commit: `016e169c3d14978d81b554fe29e59dc278502571`.
+Release branch: `release/itd-cookies-0.4.1`, created directly from that commit.
+Only version/changelog/readme/translation metadata changed for stable 0.4.1;
+production runtime logic is identical to the accepted 0.4.1-dev.1.
+Stable ZIP, release/main CI, local pre-release acceptance, publication, real
+GitHub update and the new immutable baseline are pending. No stable verdict yet.

@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.1-dev.1
+Stable tag: 0.4.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,6 +35,12 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.4.1 =
+* Legal URL validation reports rejected input and keeps the previous valid link. Exact same-site HTTP links become relative paths; external HTTP remains forbidden.
+* Narrow category headings keep normal words whole and wrap toggles when necessary.
+* Settings actions remain accessible outside the category scroller, with full scrolling in very short viewports.
+* Existing consent, provider loading, Script Adapters and updater behavior are retained.
 
 = 0.4.0 =
 * Limited developer adapters for closed classic WordPress script handles and native inline attachments.

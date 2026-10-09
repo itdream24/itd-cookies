@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1-dev.1 — unreleased
+## 0.4.1 — 2026-10-09
 
 - Save-time legal URL errors keep the previous valid link; ordinary reads stay silent.
 - Exact same-origin HTTP links are normalized to site-relative paths; external HTTP and protocol-relative URLs remain forbidden.
