@@ -3,7 +3,12 @@
 Candidate: **0.4.5-dev.1**, stable baseline **0.4.4**.
 Branch: `codex/itd-cookies-0.4.5-smart-categories`.
 Base: fresh `origin/main` **31b64d2af525e1eaf4defe4c3ebcd00fe05e521c**.
-Date: 2026-10-13. Gate: **PENDING_GITHUB_CI**.
+Date: 2026-10-13. Gate: **READY_FOR_ITD_COOKIES_0_4_5_RELEASE**.
+
+Implementation commit: **c288d793a41e15f5ce705d0d8915ec9f11d1bed1**.
+[Full CI](https://github.com/itdream24/itd-cookies/actions/runs/38435692580):
+**13/13 PASS**, including build; no skipped/cancelled/failed mandatory jobs.
+The completion commit only updates this report; it does not change the tested ZIP.
 
 ## Behavior and consent decision
 
@@ -76,7 +81,7 @@ an explicit warning about independently operating external integrations/maps.
 | Reproducible build / package inspector / PHP 7.4 ZIP lint | PASS — 18 files, same hash twice |
 | Native browser upgrade + registry/consent/UI/adapters/CSP | PASS — 39/39, final ZIP |
 | Cache/legacy/minimal UI/typography/footer/PHP response follow-up | PASS — 13/13 |
-| Full GitHub CI (13 jobs) | Pending at this implementation commit |
+| Full GitHub CI (13 jobs) | PASS — PHP 7.4/8.5, quality, node, five WordPress jobs, two legacy guards, secrets, build |
 
 Final tested ZIP: `itd-cookies-0.4.5-dev.1.zip`.
 
