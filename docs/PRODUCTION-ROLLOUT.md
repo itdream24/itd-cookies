@@ -34,7 +34,34 @@
    Controlled HTTP fixtures не считать настоящим GitHub release discovery.
 8. Очистить staging fixtures/test cookies/IDs. Сохранить отчёт и baseline.
 
-## Production после отдельного разрешения владельца
+## Независимые встроенные карты — обязательная проверка проектов
+
+- [Принятое правило](MAPS-INTEGRATION-POLICY.md): iframe/constructor Яндекс.Карт
+  автоматически работают при Fresh, Reject, Analytics, All и после Revoke.
+  Сохранить одну карту, её размеры/расположение/параметры; если уже работает — NO-OP.
+- Не переносить сайтовый consent-gate карты или регистрировать map handles в
+  gated Script Adapters. Исправлять только подтверждённую несовместимую интеграцию
+  сайта, без глобального iframe/script interception и без новой миграции плагина.
+- Проверить отдельно native Metrika: до Analytics0 loader; после permission1
+  loader/init на документ; после revoke в новом документе0. Map iframe tracking
+  не считать дублем native counter и не выдавать за нарушение его gating.
+- Изучить карту/SDK/telemetry/cookies в Network по frame/initiator/counter ID.
+  Reject не отключает собственную аналитику внешней карты. Данные, уже переданные
+  поставщику, не возвращаются удалением cookie. Не классифицировать карту как
+  необходимый cookie только ради обхода consent.
+- Владелец отдельно согласует privacy-описание карты и актуальные юридические
+  сведения; автозагрузка не гарантирует соответствие. Тексты и consent_version
+  автоматически не менять, map-gate не вводить без нового решения.
+- Local desktop/mobile E2E: iframe + constructor, нулевые группы, unrelated
+  adapters/dependencies/errors/dedup, сохранение consent/marker, cleanup/Restore.
+  Production: только отдельно разрешённый guest smoke, без QA fixtures/observers.
+
+План UI0.4.4 включает переводимую информационную подсказку в настройках;
+это сообщение о внешних сервисах, не управляющий переключатель. Вместе с
+typography/footer работами пройти обычный полный CI/release gate. Отдельный
+документационный Release не создаётся.
+
+## Выполнение согласованного production rollout
 
 Применить только принятый stable ZIP и согласованные настройки; сверить SHA,
 активность/версию/marker/policy. Проверить fresh consent в обычном браузере,
