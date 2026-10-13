@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.4-dev.1 — unreleased
+## 0.4.4 — 2026-10-13
 
 - Use a local 16px consent text base instead of theme root rem units; presets are 80/90/100/115/130%. Theme font families and browser zoom are retained.
 - Center the optional automatic legal footer; whitelist left/center/right alignment and keep manual shortcode layout independent. Automatic output remains OFF by default.

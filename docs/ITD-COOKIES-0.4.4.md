@@ -217,3 +217,8 @@ The documentation-only completion commit must also finish its full feature CI
 before the final handoff. This is readiness for a separate stable release gate,
 not authorization to merge/tag/publish. Historical vendor maps availability
 remains explicitly 12/13 real PASS plus the separate mocked-constructor PASS.
+
+
+## Stable release gate — preparation
+
+Release branch `release/itd-cookies-0.4.4` starts strictly from accepted `282a4a3813174025d87117dd0a909f641c5d2266` (CI 38397237965, 13/13 PASS). Fresh origin/main was fd3dcad. Stable version 0.4.4 synchronized with structured lockfile updates: only root/package version changed; every resolved dependency and range/integrity is unchanged. Consent schema/provider loader/updater/Script Adapters/maps/migration runtime unchanged. Pre-release stable acceptance, release/main CI, publication and real update remain pending. Historical real Maps result remains 12/13 with external 504, separate mocked constructor PASS; no maps regression evidence and no map integration change.

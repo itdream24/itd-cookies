@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.4-dev.1
+Stable tag: 0.4.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -38,7 +38,7 @@ No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
 
-= 0.4.4-dev.1 =
+= 0.4.4 =
 * Theme-independent consent text sizes, with the theme font retained.
 * Centered optional automatic legal footer with left/center/right alignment.
 * Admin information explains independent external map requests. Maps loading is unchanged.
