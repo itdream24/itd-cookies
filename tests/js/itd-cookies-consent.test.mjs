@@ -187,6 +187,22 @@ test("blocked cookie writes fail closed and never emit successful consent", (t) 
 	assertFailClosed(first.window);
 });
 
+test("primary and receipt use Secure/SameSite/Path and matching lifetime on HTTPS", (t) => {
+	const jar = new CookieJar();
+	const dom = createPage({ jar }); t.after(() => dom.window.close());
+	click(dom.window, '[data-itd-cookies-accept]');
+	const cookies = jar.getCookiesSync('https://example.test/');
+	const primary = cookies.find((item) => item.key === 'itd_cookies_consent');
+	const receipt = cookies.find((item) => item.key === 'itd_cookies_services');
+	for (const item of [primary, receipt]) {
+		assert.equal(item.secure, true);
+		assert.equal(item.sameSite, 'lax');
+		assert.equal(item.path, '/');
+		assert.equal(item.maxAge, 365 * 86400);
+	}
+	assert.equal(JSON.parse(decodeURIComponent(primary.value)).expiresAt, JSON.parse(decodeURIComponent(receipt.value)).expiresAt);
+});
+
 test("fresh visitor has no optional consent and no analytics loader", (t) => {
 	const dom = createPage();
 	t.after(() => dom.window.close());

@@ -184,7 +184,54 @@ Version metadata is synchronized to 0.4.5, dependencies/runtime behavior unchang
 Stable local ZIP (18 files, PHP 7.4 inspector, same SHA twice):
 `2428d0d64bf4c6e95481621b4a59499c2bead44164d36966310a79bbcd8e4a9d`.
 
-Stable-specific CI, native upgrade matrix, receipt attributes/corruption, actual
-shared HTML cache/purge, main CI, publication, public artifact verification,
-real GitHub updater and new immutable baseline are pending at this preparation
-commit. Candidate history above is retained and is not substituted for these gates.
+### Stable pre-release acceptance
+
+Preparation commit `8c60120950ffe32ec3a4304d0de93c120f0c6392`:
+[release CI](https://github.com/itdream24/itd-cookies/actions/runs/38441276870)
+**13/13 PASS**. Downloaded CI artifact and two local builds have the identical
+stable SHA above. No runtime change was needed; the added release regression
+test asserts HTTPS Secure/SameSite/Path/lifetime on both choice cookies.
+Local JS tests now **49/49 PASS**; PHPUnit **59 tests / 690 assertions PASS**;
+PHPCS/PHPStan/PHPCompatibilityWP, translation build, audits and Gitleaks PASS.
+
+Stable ZIP native0.4.4 →0.4.5: **40/40 Browser E2E PASS**, plus **13/13**
+typography/footer/cache-independent config follow-up and **10/10** extra gate.
+These are new stable executions, not reuse of candidate results. All six
+category configurations, old positive and actual Reject saved on official 0.4.4,
+new service/new category/revision, unchanged grants, normalized false, policy,
+legal links, Settings API, keyboard/revoke/reload, three themes × four viewports,
+SDK deduplication and Script Adapters/CSP nonce/hash passed.
+
+Receipt attributes on native HTTP: host-only `itd-cookies.local`, Path `/`,
+SameSite Lax, readable by JS, Secure=false as required on HTTP; lifetime matched
+primary, with identical policy/expiry. HTTPS Secure=true asserted by the automated
+JS cookie-jar test, not presented as physical HTTPS Browser E2E. Missing/corrupt/
+wrong-expiry/97-token proof blocked SDKs in native browser and PHP parity checks.
+
+For a 3801-byte proof plus primary cookie, local nginx returned **400 Request
+Header Or Cookie Too Large** before PHP, with no SDK load. The installed JS
+controller's byte boundary was therefore separately checked via isolated
+bootstrap after native local assets loaded, and PHP via local WP-CLI raw-cookie
+input; both fail closed. It is not claimed that oversized HTTP reached WordPress.
+
+Actual shared HTML output-cache fixture (local WordPress, private cached file)
+produced MISS/HIT responses with byte-identical HTML across choices. Unpurged
+HTML stayed stale, as expected; purge caused enabled categories/config to refresh,
+and added Marketing did not inherit Analytics's grant. Literal stored HTML served
+through the same native local HTTP route preserved receipt gating after reload.
+This tests static/shared caching contracts, not every CDN/cache vendor.
+
+Initial extra gate history is retained: 8/10, with nginx 400 and Playwright's
+synthetic navigation replay causing Chrome Local Network Access subresource
+blocking. The corrected native HTTP replay and explicit byte-boundary checks
+passed 10/10. No hostname/IP/proxy/security flag/policy changes were made.
+Migration copied permitted ModuBricks settings once, retained legacy data,
+excluded unrelated/new providers, and did not grant old positive consent.
+
+All QA contexts were cleared/closed; user Chrome was untouched. Baseline-v0.4.4
+Restore after pre-release QA matched **504 file hashes and all 12 schemas/data**;
+baseline hashes remain those recorded above. Temporary plugins/pages/options were
+removed. Main/publication/real updater/new baseline remain pending at this point.
+Private stable evidence: `045-stable-release/browser/{results,followup,extra}.json`,
+cache/receipt/screenshots, first extra-pass history, migration result and Restore
+proof. Customer data/vendor delivery were not used.
