@@ -173,3 +173,18 @@ isolated cookies (including receipt) and closed contexts. User Chrome unchanged.
 Baseline was not overwritten. Production/testwp/Timeweb QA requests and mutations:
 **0**. Upstream main, existing tags/assets/Releases unchanged. Stable publication
 requires a separate release gate and owner authorization.
+
+## Stable release gate 0.4.5 — 2026-10-13
+
+Owner authorized stable publication and local updater acceptance in this task.
+Release branch `release/itd-cookies-0.4.5` starts from accepted candidate
+`fdb92850ffd08b819917322a27c9f2de2a93c147`; fresh main is its ancestor
+`31b64d2af525e1eaf4defe4c3ebcd00fe05e521c`. Existing tags/assets remain immutable.
+Version metadata is synchronized to 0.4.5, dependencies/runtime behavior unchanged.
+Stable local ZIP (18 files, PHP 7.4 inspector, same SHA twice):
+`2428d0d64bf4c6e95481621b4a59499c2bead44164d36966310a79bbcd8e4a9d`.
+
+Stable-specific CI, native upgrade matrix, receipt attributes/corruption, actual
+shared HTML cache/purge, main CI, publication, public artifact verification,
+real GitHub updater and new immutable baseline are pending at this preparation
+commit. Candidate history above is retained and is not substituted for these gates.

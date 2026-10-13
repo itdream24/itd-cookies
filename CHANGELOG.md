@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.5-dev.1 — unreleased
+## 0.4.5 — 2026-10-13
 
 - Hide unused optional categories from settings and the generated policy.
 - Accept all and custom choices grant only enabled registered categories.

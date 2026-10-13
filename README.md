@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Stable version: **0.4.4**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.4.5**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
@@ -79,3 +79,15 @@ Consent text has a local 16px base and 80/90/100/115/130% presets, retaining the
 Embedded maps load independently of Analytics and after Reject. They may transmit data/use their own analytics or cookies before consent. Native configured analytics remain gated; this is not a universal tracker firewall or legal compliance guarantee. See docs/MAPS-INTEGRATION-POLICY.md.
 
 Published v0.4.4 ZIP/checksum and local native stable0.4.3 →0.4.4 acceptance are verified; see docs/ITD-COOKIES-0.4.4.md. Current local immutable reset is baseline-v0.4.4. Production rollout needs separate site-owner authorization.
+
+## Smart consent categories (0.4.5)
+
+Only enabled registered optional categories appear; Necessary always remains.
+New choices cannot grant unused categories. Primary consent stays schema 1;
+`itd_cookies_services` binds positive choices to stable service identities. Old
+Reject is retained; unbound positive/legacy choices require confirmation. New
+services cannot inherit old Accept all. External integrations and adapters must
+revise `consent_revision` or policy when vendor/purpose changes under the same ID.
+Purge WordPress page cache/CDN/assets after upgrading and changing the inventory.
+Shared HTML/config never varies by visitor cookie. See the 0.4.5 acceptance report
+and architectural decision for cache and integration limitations.
