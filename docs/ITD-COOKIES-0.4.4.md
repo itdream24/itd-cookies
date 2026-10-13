@@ -10,7 +10,7 @@ on project sites, independently of Analytics and after Reject. Preserve the
 integration's geometry and settings. Native Metrika stays consent-controlled.
 
 See [technical decision, site responsibilities and admin copy](MAPS-INTEGRATION-POLICY.md).
-Frontend runtime changes: **none required**. No fictitious map switch or global
+Maps frontend runtime changes: **none required**. No fictitious map switch or global
 interception. A site that registered/gated its map must correct that integration;
 the generic Script Adapter API is not silently changed.
 
@@ -185,9 +185,13 @@ and centered footer images were visually reviewed. Raw QA data stays private.
   dev/tests/docs/private QA excluded.
 - ZIP: `itd-cookies-0.4.4-dev.1.zip`.
 - SHA-256: `67a13f1ee2a00c542940b68d2ccac525df06c383720b0defcd6f846993d10870`.
-- Full GitHub CI remains required before final readiness. Current workflow has
-  **13 jobs**, not the older 9: PHP ×2, quality, node, WordPress ×5,
-  legacy guard ×2, secrets, build. No workflow jobs were removed.
+- Full implementation GitHub CI: **13/13 PASS**, commit
+  `ebdcd6c873ffd7b56c105d95fe3a5be0b0b42674`,
+  [run 38396856762](https://github.com/itdream24/itd-cookies/actions/runs/38396856762).
+  Current workflow has 13 jobs, not the older 9: PHP ×2, quality, node,
+  WordPress ×5, legacy guard ×2, secrets, build. No workflow jobs were removed.
+- Downloaded Linux CI artifact matches the local tested/rebuilt ZIP SHA exactly;
+  package inspector with PHP 7.4 passes for that artifact too.
 
 ### Cleanup and Restore
 
@@ -208,4 +212,8 @@ No production/testwp/Timeweb access, main merge, tag or GitHub Release.
 Historical real maps result remains **12/13**, with external constructor 504
 and a separate mocked-contract PASS; it is not upgraded to 13/13 by these UX tests.
 
-**Final verdict: pending full feature CI.**
+**Implementation verdict: `READY_FOR_ITD_COOKIES_0_4_4_RELEASE`.**
+The documentation-only completion commit must also finish its full feature CI
+before the final handoff. This is readiness for a separate stable release gate,
+not authorization to merge/tag/publish. Historical vendor maps availability
+remains explicitly 12/13 real PASS plus the separate mocked-constructor PASS.

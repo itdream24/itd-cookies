@@ -77,7 +77,7 @@ documentation. The paragraph is now implemented in the 0.4.4-dev.1 settings
 renderer near Analytics and included in the Russian PO/MO catalog. No maps
 runtime behavior or stored map setting has been added.
 
-English source, to be escaped and translated with text domain `itd-cookies`:
+English source, escaped and translated with text domain `itd-cookies`:
 
 > Embedded Yandex Maps load independently of Analytics consent. External maps
 > may transmit data and use their own cookies or analytics before consent and
