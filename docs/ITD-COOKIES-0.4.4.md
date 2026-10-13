@@ -222,3 +222,19 @@ remains explicitly 12/13 real PASS plus the separate mocked-constructor PASS.
 ## Stable release gate — preparation
 
 Release branch `release/itd-cookies-0.4.4` starts strictly from accepted `282a4a3813174025d87117dd0a909f641c5d2266` (CI 38397237965, 13/13 PASS). Fresh origin/main was fd3dcad. Stable version 0.4.4 synchronized with structured lockfile updates: only root/package version changed; every resolved dependency and range/integrity is unchanged. Consent schema/provider loader/updater/Script Adapters/maps/migration runtime unchanged. Pre-release stable acceptance, release/main CI, publication and real update remain pending. Historical real Maps result remains 12/13 with external 504, separate mocked constructor PASS; no maps regression evidence and no map integration change.
+
+
+## Stable infrastructure recovery and pre-release acceptance
+
+Stable metadata commit: 58607aead3bf51260a566591d1329f89992ee36f.
+[Run 38401317653](https://github.com/itdream24/itd-cookies/actions/runs/38401317653) attempt 1: 11 PASS, WordPress 5.3.26/PHP 7.4 FAIL, build SKIPPED. setup-php reported Could not setup wp-cli, then the first wp core download exited 127 (wp: command not found), before Core/plugin installation. Not an ITD Cookies defect; underlying transient setup cause is unconfirmed.
+
+Owner-authorized failed-jobs rerun, attempt 2: **all 13/13 PASS**, including full WP5.3.26 integration and downstream build. WP-CLI 2.12.0 installation is recorded; PATH resolution and execution are proven by successful wp commands. Standalone command -v wp / wp --info were not steps in the unchanged workflow and are not claimed as explicitly executed runner commands. No workflow/runtime/dependency change or patch release was necessary.
+
+Stable itd-cookies-0.4.4.zip SHA-256: 4f4e0e9a98baeef087559e3863251b6f5f56cf3d427eb11566cfeba2872c53fe. Two build processes identical; CI artifact identical; inspector/PHP7.4 syntax PASS, 18 packaged files.
+
+After recovery, a **new** local native 0.4.3 → stable 0.4.4 ZIP acceptance was actually run: 119/119 main + 20/20 follow-up PASS, not reused from the earlier interrupted run or dev build. Raw settings including very-large preset, consent/schema/version/expiry, marker, policy/legal links and activity preserved. Three themes ×320/390/768/1440 ×five scales; three footer alignments; long description/unbroken Functional, category scroll/actions, contrast/focus/keyboard, disabled services, auto-footer OFF/manual shortcodes, consent/providers/adapters/dependencies/errors/dedup and nonce/hash CSP PASS. SDK responses/IDs are synthetic QA; real account delivery NOT_RUN. Forced colors uses emulation, physical Windows High Contrast NOT_RUN. Screenshots and raw evidence remain private.
+
+Actual cleanup/Restore: 504 files and all12 table schemas/rows equal immutable baseline-v0.4.3; original settings/marker/activity/theme, official0.4.3 ACTIVE, QA plugins/pages/options/counters/cookies gone. User Chrome untouched. Historical Maps result remains12/13 real with external504 and separate mocked constructor PASS; maps runtime unchanged. This is not an automatic typography/footer release blocker under the owner decision.
+
+Pre-release Browser gate: PASS. Full CI of the following documentation commit, separate main CI, tag/Release/public ZIP, genuine native GitHub update and new baseline remain required before final release verdict.

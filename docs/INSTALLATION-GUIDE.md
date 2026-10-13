@@ -1,12 +1,12 @@
 # ITD Cookies — установка
 
-Основание: официальный v0.4.3 и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
+Основание: подготовленный stable 0.4.4 (rollout только после публикации и финальной приёмки) и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
 Это инструкция для будущего согласованного rollout; установка на production
 в рамках исследования не выполнялась.
 
 ## До установки
 
-1. На отдельном staging проверьте версии Core/PHP. Header 0.4.3 заявляет
+1. На отдельном staging проверьте версии Core/PHP. Header 0.4.4 заявляет
    WP 5.2+, PHP 7.4+, но официальная совместимость Core с PHP 7.4 начинается
    с WP 5.3. PHP 7.3/7.4 EOL; для новых сайтов выбирайте актуальные Core и
    PHP с security support. WP 5.0 не является принятой поддержкой плагина.
@@ -23,10 +23,10 @@
 
 ## Установка и настройка
 
-1. Скачайте построенный asset itd-cookies-0.4.3.zip и checksum из
-   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3).
+1. Скачайте построенный asset itd-cookies-0.4.4.zip и checksum из
+   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.4).
    Source code ZIP GitHub не является installable production package.
-2. Проверьте SHA-256: 09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d.
+2. Проверьте SHA-256: 4f4e0e9a98baeef087559e3863251b6f5f56cf3d427eb11566cfeba2872c53fe.
    В архиве один root itd-cookies/, main file, local assets и ru_RU translations;
    tests/docs/vendor/node_modules отсутствуют.
 3. Plugins → Add New → Upload Plugin → Install → Activate. Для уже установленной
@@ -47,7 +47,7 @@
 8. Shortcodes: [itd_cookies_settings], [itd_cookies_policy],
    [itd_cookies_legal_links]. При желании включите отдельный legal footer.
 
-## Подготовленная UX-версия 0.4.4-dev.1 (ещё не stable)
+## UX версии 0.4.4
 
 - Пять размеров окна используют локальную базу 16 px и коэффициенты
   80/90/100/115/130%. Стандартный текст описания/кнопок — 15 px,
@@ -138,4 +138,4 @@ MU plugins, snippets и GTM на уже встроенный SDK; отключе
 устаревшей production БД с потерей новых данных. [Приёмка релиза](ITD-COOKIES-0.4.3.md).
 
 
-Stable v0.4.3: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3), built asset `itd-cookies-0.4.3.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.
+Stable v0.4.4: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.4), built asset `itd-cookies-0.4.4.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.

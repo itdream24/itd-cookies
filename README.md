@@ -70,3 +70,10 @@ The service registry adds provider_type; older descriptive extensions default to
 External SDK hosts also include www.clarity.ms and connect.facebook.net. ITD Cookies controls loading of the GTM container; tags inside depend on the container configuration and can require Marketing consent. Google Consent Mode is not configured automatically. Configure the container accordingly and avoid configuring the same service both natively and inside GTM. Clarity receives consentv2 with Analytics granted and ad storage following Marketing consent.
 
 Built-in consent gating does not block arbitrary scripts inserted by themes/plugins. No universal firewall, arbitrary script input, vendor backend delivery guarantee or legal compliance guarantee is provided.
+
+
+## Typography and footer (0.4.4)
+
+Consent text has a local 16px base and 80/90/100/115/130% presets, retaining the theme font. The optional automatic legal footer is a separate block, centered by default with left/center/right alignment. It remains OFF by default. To integrate links into a styled theme footer, keep automatic output off and place [itd_cookies_legal_links] or [itd_cookies_settings] manually. No theme DOM rewriting.
+
+Embedded maps load independently of Analytics and after Reject. They may transmit data/use their own analytics or cookies before consent. Native configured analytics remain gated; this is not a universal tracker firewall or legal compliance guarantee. See docs/MAPS-INTEGRATION-POLICY.md.

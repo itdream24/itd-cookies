@@ -73,7 +73,7 @@ Use a static, non-dismissible explanatory paragraph near Analytics settings;
 it describes the boundary and does not pretend to detect/control a site's maps.
 No checkbox, stored option, consent change, global admin warning or map detector.
 The administrator receives this information through installation/rollout
-documentation. The paragraph is now implemented in the 0.4.4-dev.1 settings
+documentation. The paragraph is now implemented in the 0.4.4 settings
 renderer near Analytics and included in the Russian PO/MO catalog. No maps
 runtime behavior or stored map setting has been added.
 
