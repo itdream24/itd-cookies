@@ -238,6 +238,34 @@ final class ProductTest extends TestCase {
 	}
 
 	/**
+	 * Automatic alignment never changes the manually placed shortcode markup.
+	 *
+	 * @return void
+	 */
+	public function test_footer_alignment_is_scoped_to_automatic_output() {
+		$legal                                 = new \ITD_Cookies_Legal();
+		$this->options['itd_cookies_settings'] = array_merge(
+			\ITD_Cookies_Settings::defaults(),
+			array(
+				'auto_footer' => 1,
+				'link_1_url'  => '/privacy',
+			)
+		);
+		$manual                                = $legal->links_shortcode();
+		foreach ( array( 'left', 'center', 'right', 'invalid' ) as $alignment ) {
+			$this->options['itd_cookies_settings']['footer_alignment'] = $alignment;
+			ob_start();
+			$legal->render_footer();
+			$automatic = ob_get_clean();
+			$expected  = 'invalid' === $alignment ? 'center' : $alignment;
+			self::assertStringContainsString( 'itd-cookies-footer--' . $expected, $automatic );
+			self::assertSame( 1, substr_count( $automatic, 'data-itd-cookies-open' ) );
+			self::assertSame( $manual, $legal->links_shortcode() );
+			self::assertStringNotContainsString( 'itd-cookies-footer--', $manual );
+		}
+	}
+
+	/**
 	 * A 0.2.0 option gains only safe OFF defaults, without writing stored data.
 	 *
 	 * @return void

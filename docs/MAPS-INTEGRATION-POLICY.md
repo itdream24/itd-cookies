@@ -72,16 +72,17 @@ Do not reintroduce a map gate without a new owner decision.
 Use a static, non-dismissible explanatory paragraph near Analytics settings;
 it describes the boundary and does not pretend to detect/control a site's maps.
 No checkbox, stored option, consent change, global admin warning or map detector.
-The administrator already receives this information through installation/rollout
-documentation. Adding the in-product paragraph is planned with the complete
-0.4.4 UI work, **not implemented in the current documentation branch**.
+The administrator receives this information through installation/rollout
+documentation. The paragraph is now implemented in the 0.4.4-dev.1 settings
+renderer near Analytics and included in the Russian PO/MO catalog. No maps
+runtime behavior or stored map setting has been added.
 
 English source, to be escaped and translated with text domain `itd-cookies`:
 
 > Embedded Yandex Maps load independently of Analytics consent. External maps
 > may transmit data and use their own cookies or analytics before consent and
-> after rejection. ITD Cookies controls the site's configured analytics providers,
-> not the map's requests. Review the map integration and privacy information separately.
+> after rejection. ITD Cookies controls the site analytics configured below,
+> not map requests. Review the map integration and privacy information separately.
 
 Russian translation:
 

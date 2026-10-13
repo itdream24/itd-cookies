@@ -1,5 +1,7 @@
 .itd-cookies {
 	--itd-cookies-scale: 1;
+	/* Local pixel base avoids theme rem resets; browser zoom still scales it. */
+	--itd-cookies-text-unit: calc(16px * var(--itd-cookies-scale));
 	--itd-cookies-ink: #172033;
 	--itd-cookies-muted: #384152;
 	--itd-cookies-border: #cbd2dc;
@@ -20,14 +22,15 @@
 	border-radius: 16px;
 	box-shadow: 0 16px 48px rgba(23, 32, 51, 0.22);
 	font-family: inherit;
+	font-size: var(--itd-cookies-text-unit);
 	text-align: start;
 	overscroll-behavior: contain;
 }
 
-.itd-cookies--text-very-small { --itd-cookies-scale: .9; }
-.itd-cookies--text-small { --itd-cookies-scale: .95; }
-.itd-cookies--text-large { --itd-cookies-scale: 1.05; }
-.itd-cookies--text-very-large { --itd-cookies-scale: 1.1; }
+.itd-cookies--text-very-small { --itd-cookies-scale: .8; }
+.itd-cookies--text-small { --itd-cookies-scale: .9; }
+.itd-cookies--text-large { --itd-cookies-scale: 1.15; }
+.itd-cookies--text-very-large { --itd-cookies-scale: 1.3; }
 
 .itd-cookies[hidden],
 .itd-cookies [hidden] {
@@ -49,7 +52,7 @@
 .itd-cookies__title {
 	margin: 0;
 	color: var(--itd-cookies-ink);
-	font-size: calc(1.25rem * var(--itd-cookies-scale));
+	font-size: calc(1.25 * var(--itd-cookies-text-unit));
 	line-height: 1.3;
 	overflow-wrap: anywhere;
 }
@@ -57,7 +60,7 @@
 .itd-cookies__description {
 	margin: 0;
 	color: var(--itd-cookies-muted);
-	font-size: calc(.9375rem * var(--itd-cookies-scale));
+	font-size: calc(.9375 * var(--itd-cookies-text-unit));
 	line-height: 1.5;
 	white-space: pre-line;
 	overflow-wrap: anywhere;
@@ -73,7 +76,7 @@
 	min-height: 44px;
 	padding-block: 8px;
 	color: var(--itd-cookies-accent);
-	font-size: calc(.875rem * var(--itd-cookies-scale));
+	font-size: calc(.875 * var(--itd-cookies-text-unit));
 	line-height: 1.4;
 	overflow-wrap: anywhere;
 }
@@ -92,7 +95,7 @@
 	background: var(--itd-cookies-accent);
 	color: #fff;
 	font-family: inherit;
-	font-size: calc(.9375rem * var(--itd-cookies-scale));
+	font-size: calc(.9375 * var(--itd-cookies-text-unit));
 	font-weight: 700;
 	line-height: 1.25;
 	text-align: center;
@@ -195,7 +198,7 @@
 }
 
 .itd-cookies__category-name {
-	font-size: calc(1rem * var(--itd-cookies-scale));
+	font-size: var(--itd-cookies-text-unit);
 	font-weight: 700;
 	overflow-wrap: anywhere;
 }
@@ -203,7 +206,7 @@
 .itd-cookies__category-description,
 .itd-cookies__services {
 	color: var(--itd-cookies-muted);
-	font-size: calc(.9375rem * var(--itd-cookies-scale));
+	font-size: calc(.9375 * var(--itd-cookies-text-unit));
 	line-height: 1.5;
 	overflow-wrap: anywhere;
 	margin: 8px 0 0;
@@ -259,9 +262,34 @@
 }
 
 .itd-cookies-footer {
-	padding: 20px;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 16px max(16px, env(safe-area-inset-right)) 16px max(16px, env(safe-area-inset-left));
 	font-family: inherit;
+	font-size: 16px;
+	line-height: 1.5;
 	color: inherit;
+	text-align: center;
+}
+
+/* Automatic output only: manual shortcodes retain their container's layout. */
+.itd-cookies-footer > .itd-cookies-legal {
+	justify-content: center;
+	gap: 4px 24px;
+	max-width: 1200px;
+	margin-inline: auto;
+}
+
+.itd-cookies-footer--left { text-align: left; }
+.itd-cookies-footer--right { text-align: right; }
+.itd-cookies-footer--left > .itd-cookies-legal { justify-content: flex-start; }
+.itd-cookies-footer--right > .itd-cookies-legal { justify-content: flex-end; }
+.itd-cookies-footer .itd-cookies-legal__link,
+.itd-cookies-footer .itd-cookies-open {
+	box-sizing: border-box;
+	min-height: 44px;
+	padding-block: 10px;
+	text-align: inherit;
 }
 
 .itd-cookies-legal {

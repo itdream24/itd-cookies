@@ -1,6 +1,7 @@
-# ITD Cookies 0.4.4 — planned UX work
+# ITD Cookies 0.4.4 — Typography, Footer UX and Maps Policy
 
-Published stable remains 0.4.3. Version metadata, main and release assets are unchanged.
+Published stable remains 0.4.3. Candidate: 0.4.4-dev.1 on a separate feature branch.
+Main and published tags/Release assets remain unchanged.
 
 ## Accepted addition: universal embedded maps policy
 
@@ -16,15 +17,14 @@ the generic Script Adapter API is not silently changed.
 ## Combined implementation scope
 
 - Include this policy in installation and production rollout documentation.
-- Include the translated explanatory admin paragraph in the same 0.4.4 settings
-  UX implementation as typography/footer improvements. It is specified here;
-  the settings renderer/translations have not been edited in this branch.
-- Typography/footer requirements and their final implementation/acceptance remain
-  the separately agreed UX scope. Do not infer their release readiness from a maps test.
+- The translated explanatory admin paragraph is implemented with the same 0.4.4
+  typography/footer settings work. It is information, not a stored map setting.
+- Typography/footer acceptance is documented separately below. Do not infer
+  complete real-vendor maps availability from the UX checks.
 - Preserve consent API, provider categories, Script Adapters and saved settings.
 - No separate tag/Release for documentation; normal full 0.4.4 CI and release gate later.
 
-## Local browser verification
+## Historical Maps Policy browser verification (official 0.4.3)
 
 Verification uses official 0.4.3 on `http://itd-cookies.local`, temporary local-only
 fixture, real Yandex map resources and synthetic native provider/adapter scripts.
@@ -70,7 +70,142 @@ official0.4.3 ACTIVE. Baseline0.4.3 and older snapshots remain unchanged.
 Screenshots/raw Network/SQL stay outside Git and webroot; no production requests.
 
 **Maps policy/specification: accepted. Real vendor Browser gate: partially blocked
-by external HTTP504.** Admin settings paragraph is still planned for the combined
-UX implementation. No runtime/version/translation files changed in this branch.
+by external HTTP504.** The paragraph was only planned at commit 73b15ba;
+the combined candidate now implements it. Maps frontend behavior is unchanged.
 
-**Complete 0.4.4 release gate: NOT_RUN.** No merge/tag/Release is authorized by this document.
+## Implementation and acceptance — 2026-10-13
+
+### Source and scope
+
+- Fresh origin/main: `fd3dcad15ae1fe6298eed96ec052152e7801dd22`; original checkout clean.
+- Feature: `codex/itd-cookies-0.4.4-typography-footer`, created from that main.
+- Only the four agreed documents from local Maps Policy commit
+  `73b15baea1aeb2953ca040a5868a03edb10fdbaf` were cherry-picked as `b472691`.
+- Candidate version synchronized in header, PHP constant, package/lock, readme,
+  PO/MO and changelog. No dependency versions changed.
+- Consent/provider JS, Script Adapters, updater and public API are unchanged.
+  No theme DOM interception, output buffering, maps loader or consent schema change.
+
+### Typography decision and measurements
+
+The old rem sizes multiplied the theme's root font size. Measured at 390px:
+
+| Theme | Root | Old Standard title | Old description/button | New Standard title | New description/button |
+|---|---:|---:|---:|---:|---:|
+| Twenty Nineteen 3.4 | 22px | 27.5px | 20.625px | 20px | 15px |
+| Twenty Twenty 3.2 | 10px | 12.5px | 9.375px | 20px | 15px |
+| Twenty Twenty-Five 1.5 | 16px | 20px | 15px | 20px | 15px |
+
+Theme versions above are checked against the installed local themes at acceptance.
+The local CSS text unit is `calc(16px * var(--itd-cookies-scale))`.
+All window text sizes use that unit with their existing hierarchy; status labels
+inherit the scaled description. No font family is added. Computed description/
+button family equals the theme body: Helvetica Neue stack for Nineteen/Twenty,
+Manrope for Twenty-Five. Browser zoom remains available; sizes do not follow a
+theme rem reset. Existing preset keys remain valid, but their appearance changes
+intentionally: Standard stays 15px on a 16px root and normalizes other themes.
+
+| Preset | Scale | Title | Description/button/services | Legal link | Category name |
+|---|---:|---:|---:|---:|---:|
+| Very small | 80% | 16px | 12px | 11.2px | 12.8px |
+| Small | 90% | 18px | 13.5px | 12.6px | 14.4px |
+| Standard | 100% | 20px | 15px | 14px | 16px |
+| Large | 115% | 23px | 17.25px | 16.1px | 18.4px |
+| Very large | 130% | 26px | 19.5px | 18.2px | 20.8px |
+
+The larger 10–15 percentage point steps replace the previous 5 point steps.
+Missing/invalid text preset still falls back to Standard.
+
+### Automatic footer
+
+`auto_footer` remains OFF by default. When enabled, the automatic wrapper is
+centered by default, with `footer_alignment` restricted to left/center/right.
+Missing, invalid or non-scalar values normalize to center. Reads do not write
+old options; stored consent/version/marker are preserved. Settings API owns
+nonce/capability checks. The wrapper class is escaped.
+
+Scoped automatic-only CSS uses a 1200px maximum content width, safe-area-aware
+16px outer padding, wrapping links, a 4px/24px gap and minimum 44px targets.
+Its theme font is retained at 16px. Manual shortcode markup/layout is unchanged;
+choose manual integration with automatic output off to avoid duplication.
+No theme element is moved or restyled by JavaScript.
+
+### Actual local Browser E2E
+
+OpenServer primary site only, WP 7.1.2/PHP 8.1, ru_RU.
+Playwright 1.62.1, installed Chrome/Chromium 155.0.8059.39, isolated contexts.
+Native browser Upload/Replace 0.4.3 → 0.4.4-dev.1; all 18 installed package
+files match the tested ZIP. No candidate file replacement was used.
+
+| Gate | Actual result |
+|---|---|
+| Native upgrade: raw settings, consent, migration marker, policy, active state | PASS |
+| 3 themes × 4 widths × 5 presets, computed sizes/families | PASS 60/60 |
+| 3 themes × 4 widths × 3 footer alignments, links/reopen/focus | PASS 36/36 |
+| 320×568, 390×844, 768×1024, 1440×900; long category list and accessible actions | PASS |
+| Long banner/links, Russian Functional kept whole, keyboard/colors on 3 themes × 4 widths | PASS 12/12 |
+| Admin save of all alignments/text preset; Russian Maps information | PASS |
+| Policy/legal documents/three shortcodes; automatic alignment isolated from manual markup | PASS |
+| Fresh, Reject, Functional, Analytics, Marketing, All; repeated event/reload/revoke | PASS |
+| Script Adapters zero/supported/errors/dependencies/dedup/CSP | PASS; no runtime changes |
+| Text and button border contrast, normal/hover/focus | PASS, measured minimum 6.386:1 |
+| Forced colors | PASS 3 theme emulations; physical Windows High Contrast NOT_RUN |
+| CSP nonce/hash | PASS; zero observed violations |
+| Unexpected JS errors and observed local PHP warnings | PASS; none |
+
+**119/119 main scenarios + 19/19 follow-up scenarios PASS.**
+SDK browser request events are observed using synthetic IDs and no-op SDK
+responses. Fresh/Reject/Functional request 0 optional SDKs; Analytics requests
+4, Marketing 1, All 5, Revoke requests 0 in the new document. Queue init counts
+and dependency traces/dedup are checked. Real account delivery/vendor SDK
+availability is NOT_RUN here; this is not a real tracking account test.
+
+Earlier follow-up runs exposed two harness errors: initial Escape was expected
+to focus Customize instead of the existing Accept-all contract, and Necessary
+was queried with a data attribute it never had. Corrected only the harness and
+reran; runtime ZIP/SHA unchanged. First results remain in private evidence.
+Initial sandbox PHP tools also failed on readable/temp paths; rerunning with
+the permitted tool environment succeeded. Initial PHPCS formatting findings
+were corrected before the tested ZIP was built.
+
+84 main screenshots plus upgrade/admin/forced-colors images are saved privately,
+outside Git/webroot. Before/after screenshots of Twenty Twenty at 390px show
+the former 9.375px and new 15px standard description. Narrow large-size panel
+and centered footer images were visually reviewed. Raw QA data stays private.
+
+### Quality and package checks
+
+- PHPUnit: PHP 7.4 and local PHP 8.1, 55 tests/620 assertions PASS.
+- JS: 42/42 PASS; ESLint PASS; 103-message translation build PASS.
+- PHPCS, PHPStan and PHPCompatibilityWP 7.4+ PASS.
+- Composer validate/audit PASS, npm audit 0 vulnerabilities.
+- Gitleaks full history and source tree PASS, no leaks.
+- Reproducible build PASS (two builds identical); package inspector/PHP 7.4
+  package syntax PASS. One `itd-cookies/` root, 18 files, updater and PO/MO included;
+  dev/tests/docs/private QA excluded.
+- ZIP: `itd-cookies-0.4.4-dev.1.zip`.
+- SHA-256: `67a13f1ee2a00c542940b68d2ccac525df06c383720b0defcd6f846993d10870`.
+- Full GitHub CI remains required before final readiness. Current workflow has
+  **13 jobs**, not the older 9: PHP ×2, quality, node, WordPress ×5,
+  legacy guard ×2, secrets, build. No workflow jobs were removed.
+
+### Cleanup and Restore
+
+Immutable baseline-v0.4.3 was actually restored before testing and after it.
+Final verification: all 504 wp-content file hashes and schemas/rows of all 12
+tables match. Settings, migration marker, policy and activity match baseline;
+official 0.4.3 ACTIVE, Twenty Twenty-Five restored. Temporary themes, reference
+plugin, MU helper, synthetic pages/options/counters and QA cookies are gone.
+QA contexts were cleared and closed; user Chrome profile was not touched.
+No `.maintenance` or temporary MU directory remains. Baseline and older
+snapshots were not overwritten.
+
+- Baseline SQL SHA: `e04288464b2ac2c70aa3343c64230656faa28159cb4f9ae4bf4f6434f3aa4708`.
+- Manifest SHA: `241de2f533c82434ce9a284ac8dd3e64bd4c4098a2dc900f1fa3e4a47d8460ee`.
+- Canonical 12-table data SHA: `64bf751d605579d40456b390dd576aed2f4e0c2689e4cac24c3776a7a686f287`.
+
+No production/testwp/Timeweb access, main merge, tag or GitHub Release.
+Historical real maps result remains **12/13**, with external constructor 504
+and a separate mocked-contract PASS; it is not upgraded to 13/13 by these UX tests.
+
+**Final verdict: pending full feature CI.**

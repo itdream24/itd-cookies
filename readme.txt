@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.3
+Stable tag: 0.4.4-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,11 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.4.4-dev.1 =
+* Theme-independent consent text sizes, with the theme font retained.
+* Centered optional automatic legal footer with left/center/right alignment.
+* Admin information explains independent external map requests. Maps loading is unchanged.
 
 = 0.4.3 =
 * Public consent API is available only after supported bootstrap.

@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.4.3\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.4.4-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -288,3 +288,21 @@ msgstr "Используйте HTTPS-адрес или относительны�
 
 msgid "ITD Cookies update information is temporarily unavailable. Please try again later."
 msgstr "Информация об обновлении ITD Cookies временно недоступна. Попробуйте позже."
+
+msgid "Left"
+msgstr "Слева"
+
+msgid "Center"
+msgstr "По центру"
+
+msgid "Right"
+msgstr "Справа"
+
+msgid "Automatic footer alignment"
+msgstr "Выравнивание автоматического футера"
+
+msgid "Applies only to the automatic footer. Manually placed shortcodes keep their surrounding layout."
+msgstr "Применяется только к автоматическому футеру. Шорткоды, размещённые вручную, сохраняют оформление своего контейнера."
+
+msgid "Embedded Yandex Maps load independently of Analytics consent. External maps may transmit data and use their own cookies or analytics before consent and after rejection. ITD Cookies controls the site analytics configured below, not map requests. Review the map integration and privacy information separately."
+msgstr "Встроенные Яндекс.Карты загружаются независимо от согласия на аналитические cookie. Внешние карты могут передавать данные и использовать собственные cookie или аналитику до согласия и после отказа. ITD Cookies управляет настроенной ниже аналитикой сайта, но не запросами карты. Проверьте интеграцию карты и сведения о конфиденциальности отдельно."

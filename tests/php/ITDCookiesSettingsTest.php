@@ -304,6 +304,30 @@ final class ITDCookiesSettingsTest extends TestCase {
 	}
 
 	/**
+	 * Alignments have a centered default and reject arbitrary CSS/class input.
+	 *
+	 * @return void
+	 */
+	public function test_automatic_footer_alignment_presets() {
+		self::assertSame( 'center', \ITD_Cookies_Settings::defaults()['footer_alignment'] );
+		foreach ( array( 'left', 'center', 'right' ) as $alignment ) {
+			self::assertSame( $alignment, \ITD_Cookies_Settings::sanitize( array( 'footer_alignment' => $alignment ) )['footer_alignment'] );
+		}
+		foreach ( array( null, array( 'right' ), 'justify', 'right" onclick="alert(1)', '' ) as $invalid ) {
+			self::assertSame( 'center', \ITD_Cookies_Settings::sanitize( array( 'footer_alignment' => $invalid ) )['footer_alignment'] );
+		}
+		Functions\expect( 'update_option' )->never();
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'auto_footer'     => 1,
+				'consent_version' => 'unchanged',
+			)
+		);
+		self::assertSame( 'center', \ITD_Cookies_Settings::get()['footer_alignment'] );
+		self::assertSame( 'unchanged', \ITD_Cookies_Settings::get()['consent_version'] );
+	}
+
+	/**
 	 * Validate the PHP consent API against version and schema errors.
 	 *
 	 * @return void

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.4-dev.1 — unreleased
+
+- Use a local 16px consent text base instead of theme root rem units; presets are 80/90/100/115/130%. Theme font families and browser zoom are retained.
+- Center the optional automatic legal footer; whitelist left/center/right alignment and keep manual shortcode layout independent. Automatic output remains OFF by default.
+- Explain external map privacy limits in the admin; preserve automatic maps integration and Analytics gating for native providers. No maps interception, loader or new consent schema.
+
 ## 0.4.3 — 2026-10-09
 
 - Expose the public consent function only after a supported bootstrap loads the engine.

@@ -39,6 +39,7 @@ final class ITD_Cookies_Settings {
 			'link_4_label'                  => __( 'User agreement', 'itd-cookies' ),
 			'link_4_url'                    => '',
 			'auto_footer'                   => 0,
+			'footer_alignment'              => 'center',
 			'metrika_enabled'               => 0,
 			'metrika_id'                    => '',
 			'metrika_webvisor'              => 0,
@@ -84,6 +85,8 @@ final class ITD_Cookies_Settings {
 		$days    = preg_match( '/\A[0-9]+\z/D', $days ) ? (int) $days : 365;
 		$size    = self::scalar( $input, 'banner_text_size' );
 		$size    = in_array( $size, array( 'very-small', 'small', 'standard', 'large', 'very-large' ), true ) ? $size : 'standard';
+		$align   = self::scalar( $input, 'footer_alignment' );
+		$align   = in_array( $align, array( 'left', 'center', 'right' ), true ) ? $align : 'center';
 		$id      = self::scalar( $input, 'metrika_id' );
 		$ga4     = self::scalar( $input, 'ga4_measurement_id' );
 		$gtm     = isset( $input['gtm_container_id'] ) && is_string( $input['gtm_container_id'] ) ? trim( $input['gtm_container_id'] ) : '';
@@ -98,6 +101,7 @@ final class ITD_Cookies_Settings {
 		$output   = array(
 			'enabled'                       => self::flag( $input, 'enabled' ),
 			'auto_footer'                   => self::flag( $input, 'auto_footer' ),
+			'footer_alignment'              => $align,
 			'banner_title'                  => '' !== $title ? $title : $defaults['banner_title'],
 			'banner_text'                   => '' !== $text ? $text : $defaults['banner_text'],
 			'banner_text_size'              => $size,
@@ -251,13 +255,18 @@ final class ITD_Cookies_Settings {
 			wp_die( esc_html__( 'You are not allowed to manage these settings.', 'itd-cookies' ) );
 		}
 
-		$settings = self::get();
-		$sizes    = array(
+		$settings   = self::get();
+		$sizes      = array(
 			'very-small' => __( 'Very small', 'itd-cookies' ),
 			'small'      => __( 'Small', 'itd-cookies' ),
 			'standard'   => __( 'Standard', 'itd-cookies' ),
 			'large'      => __( 'Large', 'itd-cookies' ),
 			'very-large' => __( 'Very large', 'itd-cookies' ),
+		);
+		$alignments = array(
+			'left'   => __( 'Left', 'itd-cookies' ),
+			'center' => __( 'Center', 'itd-cookies' ),
+			'right'  => __( 'Right', 'itd-cookies' ),
 		);
 		?>
 		<div class="wrap">
@@ -290,9 +299,15 @@ final class ITD_Cookies_Settings {
 				<h2><?php echo esc_html__( 'Footer integration', 'itd-cookies' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<?php self::checkbox_row( __( 'Automatically display legal links at the bottom of the site', 'itd-cookies' ), 'auto_footer', $settings ); ?>
+					<tr><th scope="row"><label for="itd-cookies-footer-alignment"><?php echo esc_html__( 'Automatic footer alignment', 'itd-cookies' ); ?></label></th><td><select id="itd-cookies-footer-alignment" name="<?php echo esc_attr( self::OPTION_NAME ); ?>[footer_alignment]">
+						<?php foreach ( $alignments as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $value, $settings['footer_alignment'] ); ?>><?php echo esc_html( $label ); ?></option>
+						<?php endforeach; ?>
+					</select><p class="description"><?php echo esc_html__( 'Applies only to the automatic footer. Manually placed shortcodes keep their surrounding layout.', 'itd-cookies' ); ?></p></td></tr>
 				</table>
 				<p><?php echo esc_html__( 'Use [itd_cookies_legal_links] to place the links yourself. Automatic output is disabled by default.', 'itd-cookies' ); ?></p>
 				<h2><?php echo esc_html__( 'Analytics', 'itd-cookies' ); ?></h2>
+				<p class="description"><?php echo esc_html__( 'Embedded Yandex Maps load independently of Analytics consent. External maps may transmit data and use their own cookies or analytics before consent and after rejection. ITD Cookies controls the site analytics configured below, not map requests. Review the map integration and privacy information separately.', 'itd-cookies' ); ?></p>
 				<h3><?php echo esc_html__( 'Yandex Metrika', 'itd-cookies' ); ?></h3>
 				<p><?php echo esc_html__( 'Enter the numeric counter ID. Executable snippets are not stored.', 'itd-cookies' ); ?></p>
 				<table class="form-table" role="presentation">

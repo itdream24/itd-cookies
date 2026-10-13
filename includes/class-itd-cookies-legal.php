@@ -98,9 +98,10 @@ final class ITD_Cookies_Legal {
 	 * @return void
 	 */
 	public function render_footer() {
-		if ( ! is_admin() && ITD_Cookies_Settings::get()['auto_footer'] ) {
+		$settings = ITD_Cookies_Settings::get();
+		if ( ! is_admin() && $settings['auto_footer'] ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Complete HTML is escaped in links_shortcode.
-			echo '<div class="itd-cookies-footer">' . $this->links_shortcode() . '</div>';
+			echo '<div class="itd-cookies-footer itd-cookies-footer--' . esc_attr( $settings['footer_alignment'] ) . '">' . $this->links_shortcode() . '</div>';
 		}
 	}
 
