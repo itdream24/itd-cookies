@@ -86,7 +86,12 @@ an explicit warning about independently operating external integrations/maps.
 Final tested ZIP: `itd-cookies-0.4.5-dev.1.zip`.
 
 SHA-256:
-`997789b242739c94569ba157ce571349107a5b5e5784797f1e85d830d5fbd1fe`.
+`e4168faf011407aaa292ecd3b5a98b4c102e851d24caa99260ca5574327a9706`.
+
+Local builds and the downloaded CI artifact are byte-identical. The first
+green implementation CI above and the documentation CI
+[38436106198](https://github.com/itdream24/itd-cookies/actions/runs/38436106198)
+(commit `df57af07e7c99802866a1c71c5abc8b56a5b2a1f`) both passed **13/13**.
 
 Native WordPress Upload/Replace: **0.4.4 → 0.4.5-dev.1 PASS**. Active plugin folder
 remained `itd-cookies`; settings, raw old consent, migration marker and managed
@@ -138,6 +143,14 @@ wrong admin title selector, corrected separately. No failures were hidden or
 counted as PASS. Initial build lacked PHP on PATH; rerun with explicit PHP 7.4
 passed. Initial local Gitleaks command referenced a nonexistent config; the
 actual source scan with default rules subsequently passed.
+
+The second local archive `997789b2…` passed 52/52 browser checks, but subsequent
+comparison with the Linux CI artifact found 15 CRLF line endings in the source
+`.po` file only. PHP, JS, CSS and compiled MO were identical. Normalizing that
+working file to Git's LF did not change committed content or runtime code.
+Both local rebuilds then matched the CI SHA above. The complete native upgrade,
+39/39 browser matrix and 13/13 follow-up were repeated on this exact final ZIP;
+all 18 installed file hashes matched. Final Restore was repeated afterwards.
 
 ## Cleanup / immutable baseline
 
