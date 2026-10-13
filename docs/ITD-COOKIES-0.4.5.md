@@ -1,5 +1,10 @@
 # ITD Cookies 0.4.5 — Smart Consent Categories
 
+**Latest stable verdict (2026-10-13):
+ITD_COOKIES_V0.4.5_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED**.
+Candidate/pre-release records below are retained as history. Final publication,
+real update and baseline evidence is recorded in the final section.
+
 Candidate: **0.4.5-dev.1**, stable baseline **0.4.4**.
 Branch: `codex/itd-cookies-0.4.5-smart-categories`.
 Base: fresh `origin/main` **31b64d2af525e1eaf4defe4c3ebcd00fe05e521c**.
@@ -235,3 +240,70 @@ removed. Main/publication/real updater/new baseline remain pending at this point
 Private stable evidence: `045-stable-release/browser/{results,followup,extra}.json`,
 cache/receipt/screenshots, first extra-pass history, migration result and Restore
 proof. Customer data/vendor delivery were not used.
+
+### Final publication / real update / clean baseline
+
+| Gate | Actual evidence/result |
+| --- | --- |
+| Stable tag commit | `7fcfaac35fa2ce3be63cc19ed7f68228d2ec5d4d` |
+| Final release-branch CI | [38442870818](https://github.com/itdream24/itd-cookies/actions/runs/38442870818) — **13/13 PASS** |
+| Separate main CI before tag | [38443514046](https://github.com/itdream24/itd-cookies/actions/runs/38443514046) — **13/13 PASS**, same commit |
+| Annotated tag | `v0.4.5`; object `b3ca7ea353d78814db5938770d6143ede2b13a1c` |
+| Release workflow | [38443956319](https://github.com/itdream24/itd-cookies/actions/runs/38443956319) — **15/15 PASS**, including publication |
+| Release | [v0.4.5](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.5) |
+| Anonymous latest API | `v0.4.5`, draft=false, prerelease=false; checked again after acceptance |
+| Anonymous ZIP/checksum | Both accessible; **18-file package inspector/PHP7.4 lint PASS**, identical to local/CI builds |
+
+Official `itd-cookies-0.4.5.zip` SHA-256:
+`2428d0d64bf4c6e95481621b4a59499c2bead44164d36966310a79bbcd8e4a9d`.
+
+**Real native updater E2E: 12/12 PASS**, official0.4.4 → published0.4.5.
+Two independent guests genuinely saved Reject and Accept all on0.4.4. WordPress
+Check again made **one real GitHub API request, HTTP200**, offered the exact0.4.5
+asset and installed it with the native update button. No synthetic metadata,
+GitHub API/package substitution or assisted recovery. A local observer only read
+HTTP/state/PHP diagnostics; inert frontend SDK responses and synthetic IDs were
+used for guest gating, not for updater metadata/package requests.
+
+Folder stayed `itd-cookies`, ACTIVE; all18 installed files matched the published
+ZIP. Settings, migration marker, Cookie Policy ID/content hash/title/status were
+preserved. Old Reject retained its payload/expiry, no new prompt/receipt/SDK.
+Old positive remained byte-for-byte but could not load SDK before confirmation;
+PHP/JS agreed. Confirmation created matching policy/expiry receipt and absent
+Functional/Marketing=false. Repeated save did not duplicate initialization;
+reload initialized once per document, revoke reloaded without SDK. Published
+policy/legal/settings and adapter zero/supported/nonce/hash smoke passed without
+unexpected JS/Console/PHP observer errors.
+
+The first real update already passed installation and old-choice checks, then
+the harness compared an expiry from before explicit second Save with after it.
+Save legitimately renews expiry. Corrected only that checkpoint and reran the
+whole real update from immutable0.4.4: **12/12 PASS**. Published code/tag/assets
+were not modified. First-pass evidence remains private.
+
+Stable browser executions: **40/40 main + 13/13 follow-up + 10/10 extra**, followed
+by **12/12 real updater** and clean native setup PASS. These are stable runs, not
+candidate substitutions. Private evidence in `045-stable-release/browser`,
+`real-update`, `clean` includes screenshots, request observations and first-pass
+history. User Chrome was untouched; all isolated contexts/cookies cleared.
+
+After acceptance, restored0.4.4 to remove every observer/reference plugin, QA
+page/settings/counter/option; deleted temporary cache. Another native real update
+with **no temporary plugin** left clean official0.4.5 ACTIVE with original settings,
+marker/policy and only ITD Cookies installed. Explicitly logged out only the test
+WordPress session before clearing its context. Twenty Twenty-Five1.5, ru_RU,
+WordPress7.1.2/PHP8.1.5 retained.
+
+Created new **immutable baseline-v0.4.5 outside Git/webroot**, actually restored
+it and verified **504 file hashes, all12 schemas and every dumped row**, settings,
+activity and absence of QA artifacts. All older snapshots remain unchanged;
+old0.4.4 SQL/manifest SHA still match the values above.
+
+- New SQL SHA: `30b3d7a37a1c123c5800a93f14f29a8e5812159bdd187e20bab5e285094ad2f7`.
+- New manifest SHA: `f8c0b1ae9be5ee8cf500b6472e47ba946b76ec7b773b5f8ea6b152f928ff0ae0`.
+- Canonical all-table DB SHA: `99b78bd5dca0d38958681dc3f913aa4516f4929565ea807e4bc59c59d207b29a`.
+
+Production, MVINDES, gaz-yalta.ru, Timeweb and testwp were not accessed/changed.
+Old releases/tags/assets remain immutable. Completion changes documentation only;
+no asset replacement/rebuild is performed. Future production deployment requires
+separate owner approval and mandatory page-cache/CDN/assets purge.

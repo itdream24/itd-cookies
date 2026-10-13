@@ -2,13 +2,31 @@
 
 ## Scope
 
+### Current clean baseline 0.4.5 (2026-10-13)
+
+Official v0.4.5 published; stable browser matrix **40+13+10 PASS**, real native
+0.4.4 →0.4.5 **12/12 PASS**. See `ITD-COOKIES-0.4.5.md` for exact SHA/CI, receipt
+and cache gates, retained harness history and private evidence scope.
+QA plugins/pages/settings/counters/options/cache were removed by Restore0.4.4.
+A clean native update left **official0.4.5 ACTIVE**, only ITD Cookies installed,
+original settings/policy/marker/theme, ru_RU, WordPress7.1.2/PHP8.1.5. Test admin
+session logged out, isolated cookies/contexts cleared; user Chrome unchanged.
+New separate immutable `baseline-v0.4.5` was captured outside Git/webroot and
+really restored: **504 files and all12 schemas/data rows match**.
+
+SQL SHA `30b3d7a37a1c123c5800a93f14f29a8e5812159bdd187e20bab5e285094ad2f7`;
+manifest SHA `f8c0b1ae9be5ee8cf500b6472e47ba946b76ec7b773b5f8ea6b152f928ff0ae0`;
+canonical DB SHA `99b78bd5dca0d38958681dc3f913aa4516f4929565ea807e4bc59c59d207b29a`.
+Every older baseline remains unchanged. Future reset uses explicit version0.4.5;
+never overwrite a captured baseline. No production/other-site QA was performed.
+
 ### 0.4.5 candidate acceptance (2026-10-13)
 
 Smart Categories candidate native ZIP upgrade from official 0.4.4 passed 39/39
 browser scenarios plus 13/13 follow-up checks. Details and limitations are in
 `ITD-COOKIES-0.4.5.md`. The immutable baseline-v0.4.4 was restored before and after
 QA: 504 file hashes and every schema/data row of all 12 tables matched. Local
-runtime remains official 0.4.4 ACTIVE, with original settings/marker/policy/theme.
+runtime at that candidate gate was official 0.4.4 ACTIVE, with original settings/marker/policy/theme.
 No new baseline was created. Clear `itd_cookies_services` together with primary
 consent/legacy QA cookies in isolated test contexts; do not touch user Chrome.
 

@@ -78,7 +78,7 @@ Consent text has a local 16px base and 80/90/100/115/130% presets, retaining the
 
 Embedded maps load independently of Analytics and after Reject. They may transmit data/use their own analytics or cookies before consent. Native configured analytics remain gated; this is not a universal tracker firewall or legal compliance guarantee. See docs/MAPS-INTEGRATION-POLICY.md.
 
-Published v0.4.4 ZIP/checksum and local native stable0.4.3 →0.4.4 acceptance are verified; see docs/ITD-COOKIES-0.4.4.md. Current local immutable reset is baseline-v0.4.4. Production rollout needs separate site-owner authorization.
+Published v0.4.4 ZIP/checksum and local native stable0.4.3 →0.4.4 acceptance are verified; see docs/ITD-COOKIES-0.4.4.md. The immutable reset at that acceptance was baseline-v0.4.4, which is retained. Production rollout needs separate site-owner authorization.
 
 ## Smart consent categories (0.4.5)
 
@@ -91,3 +91,8 @@ revise `consent_revision` or policy when vendor/purpose changes under the same I
 Purge WordPress page cache/CDN/assets after upgrading and changing the inventory.
 Shared HTML/config never varies by visitor cookie. See the 0.4.5 acceptance report
 and architectural decision for cache and integration limitations.
+
+Published v0.4.5 and real native0.4.4 →0.4.5 acceptance are verified. The clean
+local stand is official0.4.5 ACTIVE; new immutable baseline-v0.4.5 was actually
+restored with all504 file hashes and all12 database schemas/data matching.
+See [stable acceptance report](docs/ITD-COOKIES-0.4.5.md) and LOCAL-QA.md.

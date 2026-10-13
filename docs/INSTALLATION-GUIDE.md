@@ -1,6 +1,6 @@
 # ITD Cookies — установка
 
-Основание: опубликованный официальный v0.4.4, реальное локальное native updater acceptance PASS и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
+Основание: опубликованный официальный v0.4.5, реальное локальное native updater acceptance PASS и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
 Это инструкция для будущего согласованного rollout; установка на production
 в рамках исследования не выполнялась.
 
@@ -25,7 +25,7 @@
 контроллера после регистрации групп. Подробности: `SCRIPT-ADAPTERS.md` и
 `ITD-COOKIES-0.4.5-CONSENT-DECISION.md`. Карты по-прежнему независимы от Analytics.
 
-1. На отдельном staging проверьте версии Core/PHP. Header 0.4.4 заявляет
+1. На отдельном staging проверьте версии Core/PHP. Header 0.4.5 заявляет
    WP 5.2+, PHP 7.4+, но официальная совместимость Core с PHP 7.4 начинается
    с WP 5.3. PHP 7.3/7.4 EOL; для новых сайтов выбирайте актуальные Core и
    PHP с security support. WP 5.0 не является принятой поддержкой плагина.
@@ -42,8 +42,8 @@
 
 ## Установка и настройка
 
-1. Скачайте построенный asset itd-cookies-0.4.4.zip и checksum из
-   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.4).
+1. Скачайте построенный asset itd-cookies-0.4.5.zip и checksum из
+   [официального Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.5).
    Source code ZIP GitHub не является installable production package.
 2. Проверьте SHA-256: 4f4e0e9a98baeef087559e3863251b6f5f56cf3d427eb11566cfeba2872c53fe.
    В архиве один root itd-cookies/, main file, local assets и ru_RU translations;
@@ -157,7 +157,7 @@ MU plugins, snippets и GTM на уже встроенный SDK; отключе
 устаревшей production БД с потерей новых данных. [Приёмка релиза](ITD-COOKIES-0.4.3.md).
 
 
-Stable v0.4.4: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.4), built asset `itd-cookies-0.4.4.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.
+Stable v0.4.5: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.5), built asset `itd-cookies-0.4.5.zip`, SHA-256 `2428d0d64bf4c6e95481621b4a59499c2bead44164d36966310a79bbcd8e4a9d`. Реальное штатное обновление с официального 0.4.4 и Restore нового immutable baseline-v0.4.5 проверены локально; исходный baseline-v0.4.4 сохранён. Production не изменялся. При дефекте после публикации готовится отдельный patch release; опубликованные tags/assets не переписываются.
 
 ## Rollout 0.4.5
 
