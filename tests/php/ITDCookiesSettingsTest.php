@@ -11,6 +11,7 @@ use Brain\Monkey\Functions;
 
 require_once dirname( __DIR__, 2 ) . '/admin/class-itd-cookies-settings.php';
 require_once dirname( __DIR__, 2 ) . '/includes/class-itd-cookies-consent.php';
+require_once dirname( __DIR__, 2 ) . '/includes/class-itd-cookies-services.php';
 
 /**
  * Exercise legacy migration without a WordPress database.
@@ -23,7 +24,9 @@ final class ITDCookiesSettingsTest extends TestCase {
 	 */
 	protected function setUp(): void {
 		parent::setUp();
-		unset( $_COOKIE['itd_cookies_consent'] );
+		unset( $_COOKIE['itd_cookies_consent'], $_COOKIE['itd_cookies_services'] );
+		Functions\when( 'apply_filters' )->returnArg( 2 );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'sanitize_text_field' )->alias(
 			static function ( $text ) {
 				return trim( strip_tags( (string) $text ) );
@@ -352,6 +355,20 @@ final class ITDCookiesSettingsTest extends TestCase {
 				)
 			)
 		);
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
+		$settings['metrika_enabled']     = 1;
+		$settings['metrika_id']          = '12345678';
+		$primary                         = json_decode( rawurldecode( $_COOKIE['itd_cookies_consent'] ), true );
+		$_COOKIE['itd_cookies_services'] = rawurlencode(
+			json_encode(
+				array(
+					'schema'    => 1,
+					'version'   => $primary['version'],
+					'expiresAt' => $primary['expiresAt'],
+					'services'  => implode( '', \ITD_Cookies_Services::inventory( $settings )['analytics'] ),
+				)
+			)
+		);
 		self::assertTrue( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
 		$disabled            = $settings;
 		$disabled['enabled'] = 0;
@@ -365,6 +382,81 @@ final class ITDCookiesSettingsTest extends TestCase {
 		$settings['consent_version']    = '2';
 		self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
 		unset( $_COOKIE['itd_cookies_consent'] );
+	}
+
+	/** Receipt protects new providers/revisions while retaining known categories.
+	 *
+	 * @return void
+	 */
+	public function test_service_receipt_identity_and_boundaries() {
+		$settings                        = \ITD_Cookies_Settings::defaults();
+		$settings['metrika_enabled']     = 1;
+		$settings['metrika_id']          = '12345678';
+		$settings['meta_enabled']        = 1;
+		$settings['meta_pixel_id']       = '123456789';
+		$inventory                       = \ITD_Cookies_Services::inventory( $settings );
+		$primary                         = array(
+			'schema'     => 1,
+			'version'    => '1',
+			'expiresAt'  => ( time() + 3600 ) * 1000,
+			'categories' => array(
+				'necessary'  => true,
+				'functional' => true,
+				'analytics'  => true,
+				'marketing'  => true,
+			),
+		);
+		$proof                           = array(
+			'schema'    => 1,
+			'version'   => '1',
+			'expiresAt' => $primary['expiresAt'],
+			'services'  => implode( '', array_merge( $inventory['analytics'], $inventory['marketing'] ) ),
+		);
+		$_COOKIE['itd_cookies_consent']  = rawurlencode( json_encode( $primary ) );
+		$_COOKIE['itd_cookies_services'] = rawurlencode( json_encode( $proof ) );
+		self::assertTrue( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
+		self::assertTrue( \ITD_Cookies_Consent::allowed( 'marketing', $settings ) );
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'functional', $settings ) );
+		$changed               = $settings;
+		$changed['metrika_id'] = '87654321';
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $changed ) );
+		self::assertTrue( \ITD_Cookies_Consent::allowed( 'marketing', $changed ) );
+		$changed                     = $settings;
+		$changed['metrika_webvisor'] = ! $settings['metrika_webvisor'];
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $changed ) );
+		$changed                       = $settings;
+		$changed['ga4_enabled']        = 1;
+		$changed['ga4_measurement_id'] = 'G-TEST12345';
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $changed ) );
+		$changed                 = $settings;
+		$changed['banner_title'] = 'Different label';
+		self::assertSame( $inventory, \ITD_Cookies_Services::inventory( $changed ) );
+		foreach ( array( array( 'schema' => '1' ), array( 'version' => 'wrong' ), array( 'expiresAt' => $proof['expiresAt'] + 1 ), array( 'services' => str_repeat( 'a', 31 ) ), array( 'services' => str_repeat( 'a', 32 * 97 ) ), array( 'extra' => true ) ) as $change ) {
+			$_COOKIE['itd_cookies_services'] = rawurlencode( json_encode( array_merge( $proof, $change ) ) );
+			self::assertFalse( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
+		}
+		$_COOKIE['itd_cookies_services'] = rawurlencode( json_encode( $proof ) );
+		$revision                        = '1';
+		Functions\when( 'apply_filters' )->alias(
+			static function ( $hook, $entries ) use ( &$revision ) {
+				$entries[] = array(
+					'id'               => 'external-chat',
+					'name'             => 'Chat',
+					'category'         => 'functional',
+					'enabled'          => true,
+					'description'      => '',
+					'consent_revision' => $revision,
+				);
+				return $entries;
+			}
+		);
+		$proof['services']              .= implode( '', \ITD_Cookies_Services::inventory( $settings )['functional'] );
+		$_COOKIE['itd_cookies_services'] = rawurlencode( json_encode( $proof ) );
+		self::assertTrue( \ITD_Cookies_Consent::allowed( 'functional', $settings ) );
+		$revision = '2';
+		self::assertFalse( \ITD_Cookies_Consent::allowed( 'functional', $settings ) );
+		self::assertTrue( \ITD_Cookies_Consent::allowed( 'analytics', $settings ) );
+		unset( $_COOKIE['itd_cookies_consent'], $_COOKIE['itd_cookies_services'] );
 	}
 
 	/**

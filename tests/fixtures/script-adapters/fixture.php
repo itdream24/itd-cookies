@@ -140,11 +140,23 @@ add_action( 'wp_enqueue_scripts', static function () {
             preg_match('~<script\b[^>]*>(.*?)</script>~s', $emoji_tag, $emoji_match);
             $hashes[] = "'sha256-" . base64_encode(hash('sha256', $emoji_match[1], true)) . "'";
         }
+		$GLOBALS['itd_adapter_fixture_hashes'] = $hashes;
 		header( "Content-Security-Policy: script-src 'self' https://cdnjs.cloudflare.com " . implode( ' ', array_unique( $hashes ) ) . "; worker-src 'self' blob:; object-src 'none'" );
 	}
 // Hash the known native bodies before adapters freeze their attachments.
 // Keep nonce registration late to exercise the native print-time renderer.
 }, 'hash' === itd_adapter_fixture_mode() ? 998 : 1100 );
+
+// Inventory configuration is localized after group preparation in 0.4.5.
+// Preserve the earlier owned-body hashes and add the final controller config.
+add_action( 'wp_enqueue_scripts', static function () {
+	if ( 'hash' !== itd_adapter_fixture_mode() ) return;
+	$hashes = $GLOBALS['itd_adapter_fixture_hashes'];
+	ob_start(); wp_scripts()->print_extra_script( 'itd-cookies-consent' ); $tags = ob_get_clean();
+	preg_match_all( '~<script\b[^>]*>(.*?)</script>~s', $tags, $matches );
+	foreach ( $matches[1] as $body ) $hashes[] = "'sha256-" . base64_encode( hash( 'sha256', $body, true ) ) . "'";
+	header( "Content-Security-Policy: script-src 'self' https://cdnjs.cloudflare.com " . implode( ' ', array_unique( $hashes ) ) . "; worker-src 'self' blob:; object-src 'none'" );
+}, 1002 );
 
 add_action( 'wp_footer', static function () {
 	$mode = itd_adapter_fixture_mode();

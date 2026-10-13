@@ -24,6 +24,7 @@ final class ITD_Cookies_Plugin {
 		( new ITD_Cookies_Settings() )->register();
 		( new ITD_Cookies_Legal() )->register();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'localize_inventory' ), 1001 );
 		add_action( 'wp_footer', array( $this, 'render_banner' ), 5 );
 		add_shortcode( 'itd_cookies_settings', array( $this, 'settings_shortcode' ) );
 	}
@@ -47,17 +48,31 @@ final class ITD_Cookies_Plugin {
 		}
 		wp_enqueue_script( 'itd-cookies-providers', ITD_COOKIES_URL . 'assets/js/providers.js', array(), ITD_COOKIES_VERSION, true );
 		wp_enqueue_script( self::ASSET_HANDLE, ITD_COOKIES_URL . 'assets/js/consent.js', array( 'itd-cookies-providers' ), ITD_COOKIES_VERSION, true );
+	}
+
+	/** Localize after Script Adapters have registered and validated their groups.
+	 *
+	 * @return void
+	 */
+	public function localize_inventory() {
+		$settings = ITD_Cookies_Settings::get();
+		if ( is_admin() || ! $settings['enabled'] ) {
+			return;
+		}
 		wp_localize_script(
 			self::ASSET_HANDLE,
 			'ITDCookiesConfig',
 			array(
-				'cookieName'       => ITD_Cookies_Consent::COOKIE_NAME,
-				'legacyCookieName' => 'itd_modubricks_consent',
-				'legacyMarkerName' => 'itd_cookies_legacy_migrated',
-				'schema'           => ITD_Cookies_Consent::SCHEMA,
-				'version'          => $settings['consent_version'],
-				'lifetimeDays'     => $settings['consent_days'],
-				'providers'        => $this->providers( $settings ),
+				'cookieName'        => ITD_Cookies_Consent::COOKIE_NAME,
+				'receiptCookieName' => ITD_Cookies_Consent::RECEIPT_COOKIE_NAME,
+				'inventory'         => ITD_Cookies_Services::inventory( $settings ),
+				'saveError'         => __( 'Your choice could not be saved. Please reject optional services or contact the site administrator.', 'itd-cookies' ),
+				'legacyCookieName'  => 'itd_modubricks_consent',
+				'legacyMarkerName'  => 'itd_cookies_legacy_migrated',
+				'schema'            => ITD_Cookies_Consent::SCHEMA,
+				'version'           => $settings['consent_version'],
+				'lifetimeDays'      => $settings['consent_days'],
+				'providers'         => $this->providers( $settings ),
 			)
 		);
 	}
@@ -96,25 +111,39 @@ final class ITD_Cookies_Plugin {
 			return;
 		}
 		$services = ITD_Cookies_Services::get( $settings );
+		$optional = array_filter(
+			$services,
+			static function ( $service ) {
+				return $service['enabled'] && 'necessary' !== $service['category'];
+			}
+		);
+		$minimal  = __( 'No optional services are configured in ITD Cookies. Necessary cookies store your choice. External integrations may operate independently.', 'itd-cookies' );
 		?>
 		<div class="itd-cookies-backdrop" data-itd-cookies-backdrop hidden aria-hidden="true"></div>
 		<section class="itd-cookies itd-cookies--text-<?php echo esc_attr( $settings['banner_text_size'] ); ?>" id="itd-cookies-dialog" role="dialog" aria-modal="false" aria-labelledby="itd-cookies-title" aria-describedby="itd-cookies-description" aria-hidden="true" data-itd-cookies-banner hidden>
 			<div class="itd-cookies__summary" data-itd-cookies-summary>
 				<h2 class="itd-cookies__title" id="itd-cookies-title"><?php echo esc_html( $settings['banner_title'] ); ?></h2>
-				<p class="itd-cookies__description" id="itd-cookies-description"><?php echo esc_html( $settings['banner_text'] ); ?></p>
+				<p class="itd-cookies__description" id="itd-cookies-description"><?php echo esc_html( $optional ? $settings['banner_text'] : $minimal ); ?></p>
 				<?php $this->render_legal_links( $settings ); ?>
 				<div class="itd-cookies__actions">
-					<button type="button" class="itd-cookies__button" data-itd-cookies-accept><?php echo esc_html__( 'Accept all', 'itd-cookies' ); ?></button>
+					<button type="button" class="itd-cookies__button" data-itd-cookies-accept><?php echo $optional ? esc_html__( 'Accept all', 'itd-cookies' ) : esc_html__( 'Got it', 'itd-cookies' ); ?></button>
+					<?php if ( $optional ) : ?>
 					<button type="button" class="itd-cookies__button itd-cookies__button--secondary" data-itd-cookies-reject><?php echo esc_html__( 'Reject optional', 'itd-cookies' ); ?></button>
 					<button type="button" class="itd-cookies__button itd-cookies__button--secondary" data-itd-cookies-customize><?php echo esc_html__( 'Customize', 'itd-cookies' ); ?></button>
+					<?php endif; ?>
 				</div>
 			</div>
 			<div class="itd-cookies__panel" data-itd-cookies-panel hidden>
 				<h2 class="itd-cookies__title" id="itd-cookies-settings-title" tabindex="-1"><?php echo esc_html__( 'Cookie settings', 'itd-cookies' ); ?></h2>
-				<p class="itd-cookies__description" id="itd-cookies-settings-description"><?php echo esc_html__( 'Choose the optional categories you allow.', 'itd-cookies' ); ?></p>
+				<p class="itd-cookies__description" id="itd-cookies-settings-description"><?php echo $optional ? esc_html__( 'Choose the optional categories you allow.', 'itd-cookies' ) : esc_html( $minimal ); ?></p>
 				<div class="itd-cookies__choices">
 					<?php foreach ( ITD_Cookies_Services::categories() as $category_id => $category ) : ?>
-						<?php $list = ITD_Cookies_Services::in_category( $services, $category_id ); ?>
+						<?php
+						$list = ITD_Cookies_Services::in_category( $services, $category_id );
+						if ( 'necessary' !== $category_id && ! $list ) {
+							continue;
+						}
+						?>
 						<div class="itd-cookies__category">
 							<div class="itd-cookies__category-heading">
 								<label for="itd-cookies-category-<?php echo esc_attr( $category_id ); ?>" class="itd-cookies__category-name"><?php echo esc_html( $category['name'] ); ?></label>
@@ -151,10 +180,13 @@ elseif ( ! $list ) :
 				</div>
 				<div class="itd-cookies__actions">
 					<button type="button" class="itd-cookies__button" data-itd-cookies-save><?php echo esc_html__( 'Save choice', 'itd-cookies' ); ?></button>
+					<?php if ( $optional ) : ?>
 					<button type="button" class="itd-cookies__button itd-cookies__button--secondary" data-itd-cookies-accept><?php echo esc_html__( 'Accept all', 'itd-cookies' ); ?></button>
+					<?php endif; ?>
 					<button type="button" class="itd-cookies__button itd-cookies__button--secondary" data-itd-cookies-cancel><?php echo esc_html__( 'Back', 'itd-cookies' ); ?></button>
 				</div>
 			</div>
+			<p class="itd-cookies__description" role="alert" data-itd-cookies-error hidden></p>
 		</section>
 		<?php
 	}

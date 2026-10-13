@@ -42,6 +42,12 @@ final class ITD_Cookies_Script_Adapters {
 	 */
 	private $prepared = false;
 	/**
+	 * Descriptive declarations may be requested by a block-theme policy before head.
+	 *
+	 * @var bool
+	 */
+	private $registered = false;
+	/**
 	 * Manifest has been emitted.
 	 *
 	 * @var bool
@@ -82,10 +88,23 @@ final class ITD_Cookies_Script_Adapters {
 	 */
 	public function registration_hook() {
 		if ( ! is_admin() ) {
-			do_action( 'itd_cookies_register_script_groups' );
+			$this->register_groups();
 			// WP 5.2 queries dependencies for datepicker at priority 1000.
 			// Quarantine owned cycles before that native recursive query, too.
 			$this->prepare();
+		}
+	}
+
+	/**
+	 * Declare once, without freezing queues or executing SDKs. Block themes can
+	 * render shortcodes before wp_head; dependency validation stays at priority 999.
+	 *
+	 * @return void
+	 */
+	public function register_groups() {
+		if ( ! $this->registered && ! $this->prepared && ! is_admin() ) {
+			$this->registered = true;
+			do_action( 'itd_cookies_register_script_groups' );
 		}
 	}
 
@@ -103,7 +122,7 @@ final class ITD_Cookies_Script_Adapters {
 		if ( $this->prepared || did_action( 'wp_print_scripts' ) || did_action( 'wp_print_footer_scripts' ) ) {
 			return $this->error( $id, 'LATE_REGISTRATION' );
 		}
-		if ( isset( $this->groups[ $id ] ) || count( $this->groups ) >= 32 || array_diff( array_keys( $args ), array( 'category', 'handles', 'provider_types', 'resources', 'label' ) ) ) {
+		if ( isset( $this->groups[ $id ] ) || count( $this->groups ) >= 32 || array_diff( array_keys( $args ), array( 'category', 'handles', 'provider_types', 'resources', 'label', 'consent_revision' ) ) || ( isset( $args['consent_revision'] ) && ( ! is_string( $args['consent_revision'] ) || '' === trim( $args['consent_revision'] ) || strlen( $args['consent_revision'] ) > 100 ) ) ) {
 			return $this->error( $id, 'INVALID_GROUP' );
 		}
 		if ( ! isset( $args['category'], $args['handles'], $args['provider_types'], $args['resources'] ) || ! is_string( $args['category'] ) || ! isset( ITD_Cookies_Services::categories()[ $args['category'] ] ) || ! self::identifiers( $args['handles'], 32 ) || ! self::identifiers( $args['provider_types'], 8 ) || ! is_array( $args['resources'] ) || ( isset( $args['label'] ) && ( ! is_string( $args['label'] ) || '' === trim( $args['label'] ) || strlen( $args['label'] ) > 160 ) ) ) {
@@ -118,13 +137,14 @@ final class ITD_Cookies_Script_Adapters {
 			}
 		}
 		$this->groups[ $id ] = array(
-			'group_id'       => $id,
-			'category'       => $args['category'],
-			'handles'        => $args['handles'],
-			'provider_types' => $args['provider_types'],
-			'label'          => isset( $args['label'] ) ? sanitize_text_field( $args['label'] ) : '',
-			'failure'        => '',
-			'nodes'          => array(),
+			'group_id'         => $id,
+			'category'         => $args['category'],
+			'handles'          => $args['handles'],
+			'provider_types'   => $args['provider_types'],
+			'label'            => isset( $args['label'] ) ? sanitize_text_field( $args['label'] ) : '',
+			'consent_revision' => isset( $args['consent_revision'] ) ? sanitize_text_field( $args['consent_revision'] ) : '1',
+			'failure'          => '',
+			'nodes'            => array(),
 		);
 		foreach ( $args['handles'] as $handle ) {
 			$this->owners[ $handle ] = $id;
@@ -303,13 +323,18 @@ final class ITD_Cookies_Script_Adapters {
 		}
 		foreach ( $this->groups as $id => $group ) {
 			if ( ! $group['failure'] ) {
+				$handles = $group['handles'];
+				$types   = $group['provider_types'];
+				sort( $handles, SORT_STRING );
+				sort( $types, SORT_STRING );
 				$entries[] = array(
-					'id'            => 'script-group-' . $id,
-					'name'          => $group['label'] ? $group['label'] : __( 'Additional site service', 'itd-cookies' ),
-					'category'      => $group['category'],
-					'provider_type' => 'external',
-					'enabled'       => true,
-					'description'   => '',
+					'id'               => 'script-group-' . $id,
+					'name'             => $group['label'] ? $group['label'] : __( 'Additional site service', 'itd-cookies' ),
+					'category'         => $group['category'],
+					'provider_type'    => 'external',
+					'enabled'          => true,
+					'description'      => '',
+					'consent_revision' => hash( 'sha256', wp_json_encode( array( $handles, $types, $group['consent_revision'] ) ) ),
 				);
 			}
 		}

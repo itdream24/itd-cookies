@@ -55,6 +55,7 @@ final class ProductTest extends TestCase {
 		Functions\when( 'is_admin' )->justReturn( false );
 		Functions\when( 'is_wp_error' )->justReturn( false );
 		Functions\when( 'apply_filters' )->returnArg( 2 );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 		Functions\when( 'home_url' )->alias(
 			static function ( $url ) {
 				return 'https://example.test' . $url;
@@ -138,6 +139,34 @@ final class ProductTest extends TestCase {
 		self::assertSame( array( 'yandex-metrika', 'google-analytics-4', 'google-tag-manager', 'microsoft-clarity', 'meta-pixel' ), array_column( $list, 'id' ) );
 		self::assertCount( 2, \ITD_Cookies_Services::in_category( $list, 'analytics' ) );
 		self::assertCount( 0, \ITD_Cookies_Services::in_category( $list, 'marketing' ) );
+	}
+
+	/** Unused categories disappear from real markup and policy, not only CSS.
+	 *
+	 * @return void
+	 */
+	public function test_smart_category_markup_and_policy() {
+		foreach ( array( array(), array( 'analytics' ), array( 'marketing' ), array( 'analytics', 'marketing' ) ) as $active ) {
+			$settings                              = \ITD_Cookies_Settings::defaults();
+			$settings['metrika_enabled']           = in_array( 'analytics', $active, true ) ? 1 : 0;
+			$settings['metrika_id']                = '12345678';
+			$settings['meta_enabled']              = in_array( 'marketing', $active, true ) ? 1 : 0;
+			$settings['meta_pixel_id']             = '123456789';
+			$this->options['itd_cookies_settings'] = $settings;
+			ob_start();
+			( new \ITD_Cookies_Plugin() )->render_banner();
+			$html   = ob_get_clean();
+			$policy = ( new \ITD_Cookies_Legal() )->policy_shortcode();
+			self::assertStringContainsString( 'Always active', $html );
+			self::assertStringContainsString( '<h3>Necessary</h3>', $policy );
+			self::assertStringNotContainsString( 'Not currently used', $html . $policy );
+			self::assertStringContainsString( 'External integrations', $policy );
+			foreach ( array( 'functional', 'analytics', 'marketing' ) as $category ) {
+				self::assertSame( in_array( $category, $active, true ), false !== strpos( $html, 'data-itd-cookies-category="' . $category . '"' ) );
+				self::assertSame( in_array( $category, $active, true ), false !== strpos( $policy, '<h3>' . ucfirst( $category ) . '</h3>' ) );
+			}
+			self::assertSame( empty( $active ), false !== strpos( $html, '>Got it</button>' ) );
+		}
 	}
 
 	/**

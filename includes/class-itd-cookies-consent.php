@@ -13,8 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Read the browser's versioned consent signal for PHP integrations.
  */
 final class ITD_Cookies_Consent {
-	const COOKIE_NAME = 'itd_cookies_consent';
-	const SCHEMA      = 1;
+	const COOKIE_NAME         = 'itd_cookies_consent';
+	const SCHEMA              = 1;
+	const RECEIPT_COOKIE_NAME = 'itd_cookies_services';
 
 	/**
 	 * Read one category from a strictly validated first-party cookie.
@@ -56,6 +57,7 @@ final class ITD_Cookies_Consent {
 			! hash_equals( (string) $settings['consent_version'], $state['version'] ) ||
 			! is_int( $state['expiresAt'] ) ||
 			$state['expiresAt'] <= ( time() * 1000 ) ||
+			$state['expiresAt'] > 9007199254740991 ||
 			! is_array( $state['categories'] ) ||
 			4 !== count( $state['categories'] ) ||
 			! isset( $state['categories']['necessary'] ) ||
@@ -68,6 +70,21 @@ final class ITD_Cookies_Consent {
 			return false;
 		}
 
-		return isset( $state['categories'][ $category ] ) && true === $state['categories'][ $category ];
+		if ( ! $state['categories'][ $category ] ) {
+			return false;
+		}
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Strict receipt validation below.
+		$raw = isset( $_COOKIE[ self::RECEIPT_COOKIE_NAME ] ) ? wp_unslash( $_COOKIE[ self::RECEIPT_COOKIE_NAME ] ) : '';
+		if ( ! is_string( $raw ) || strlen( $raw ) > 3800 ) {
+			return false;
+		}
+		$receipt = json_decode( rawurldecode( $raw ), true );
+		if ( ! is_array( $receipt ) || 4 !== count( $receipt ) || ! isset( $receipt['schema'], $receipt['version'], $receipt['expiresAt'], $receipt['services'] ) ||
+			self::SCHEMA !== $receipt['schema'] || $state['version'] !== $receipt['version'] || $state['expiresAt'] !== $receipt['expiresAt'] ||
+			! is_string( $receipt['services'] ) || ! preg_match( '/^(?:[a-f0-9]{32}){0,96}$/D', $receipt['services'] ) ) {
+			return false;
+		}
+		$inventory = ITD_Cookies_Services::inventory( $settings );
+		return ! empty( $inventory[ $category ] ) && ! array_diff( $inventory[ $category ], str_split( $receipt['services'], 32 ) );
 	}
 }

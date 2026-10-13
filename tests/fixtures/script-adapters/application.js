@@ -61,7 +61,7 @@
 		var reset = document.getElementById("itd-fixture-fresh");
 		if (!reset) return;
 		reset.addEventListener("click", function () {
-			["itd_cookies_consent", "itd_modubricks_consent", "itd_cookies_legacy_migrated"].forEach(function (name) { document.cookie = name + "=;path=/;max-age=0"; });
+			["itd_cookies_consent", "itd_cookies_services", "itd_modubricks_consent", "itd_cookies_legacy_migrated"].forEach(function (name) { document.cookie = name + "=;path=/;max-age=0"; });
 			window.location.reload();
 		});
 		document.getElementById("itd-fixture-repeat").addEventListener("click", function () {

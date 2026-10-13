@@ -111,10 +111,17 @@ final class ITD_Cookies_Legal {
 	 * @return string
 	 */
 	public function policy_shortcode() {
+		if ( class_exists( 'ITD_Cookies_Script_Adapters' ) ) {
+			ITD_Cookies_Script_Adapters::instance()->register_groups();
+		}
 		$settings = ITD_Cookies_Settings::get();
 		$services = ITD_Cookies_Services::get( $settings );
 		$html     = '<section class="itd-cookies-policy"><h2>' . esc_html__( 'About cookies', 'itd-cookies' ) . '</h2><p>' . esc_html__( 'Cookies are small pieces of information stored in your browser. This plugin stores your privacy choice.', 'itd-cookies' ) . '</p>';
 		foreach ( ITD_Cookies_Services::categories() as $id => $category ) {
+			$list = ITD_Cookies_Services::in_category( $services, $id );
+			if ( 'necessary' !== $id && ! $list ) {
+				continue;
+			}
 			$html .= '<h3>' . esc_html( $category['name'] ) . '</h3><p>' . esc_html( $category['description'] ) . '</p>';
 			$list  = ITD_Cookies_Services::in_category( $services, $id );
 			if ( $list ) {
@@ -128,6 +135,8 @@ final class ITD_Cookies_Legal {
 			}
 		}
 		$html .= '<p>' . esc_html__( 'When consent is enabled, this plugin loads its built-in services only after you allow their category: Analytics or Marketing. Revoking a category saves your decision and reloads the page without its providers.', 'itd-cookies' ) . '</p>';
+		$html .= '<p>' . esc_html__( 'External integrations, including embedded maps, may transmit data independently before consent. This plugin only describes registered services and does not block arbitrary third-party code.', 'itd-cookies' ) . '</p>';
+		$html .= '<p>' . esc_html__( 'Adding or changing a registered service may require a new choice. Existing positive choices from earlier plugin versions require confirmation because they do not identify services.', 'itd-cookies' ) . '</p>';
 		if ( ! $settings['enabled'] ) {
 			$html .= '<p>' . esc_html__( 'Consent collection and provider loading by this plugin are currently disabled.', 'itd-cookies' ) . '</p>';
 		}

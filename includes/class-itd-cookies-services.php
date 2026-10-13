@@ -108,12 +108,13 @@ final class ITD_Cookies_Services {
 			}
 			$type          = isset( $entry['provider_type'] ) && is_string( $entry['provider_type'] ) ? sanitize_key( $entry['provider_type'] ) : 'external';
 			$result[ $id ] = array(
-				'provider_type' => '' !== $type ? $type : 'external',
-				'id'            => $id,
-				'name'          => sanitize_text_field( $entry['name'] ),
-				'category'      => $entry['category'],
-				'enabled'       => in_array( $entry['enabled'], array( true, 1, '1' ), true ),
-				'description'   => sanitize_text_field( $entry['description'] ),
+				'provider_type'    => '' !== $type ? $type : 'external',
+				'id'               => $id,
+				'name'             => sanitize_text_field( $entry['name'] ),
+				'category'         => $entry['category'],
+				'enabled'          => in_array( $entry['enabled'], array( true, 1, '1' ), true ),
+				'description'      => sanitize_text_field( $entry['description'] ),
+				'consent_revision' => isset( $entry['consent_revision'] ) && is_string( $entry['consent_revision'] ) ? substr( sanitize_text_field( $entry['consent_revision'] ), 0, 100 ) : '1',
 			);
 		}
 		return array_values( $result );
@@ -181,5 +182,47 @@ final class ITD_Cookies_Services {
 				}
 			)
 		);
+	}
+
+	/**
+	 * Stable optional service identities, independent of visitor cookies and labels.
+	 * Extensions must revise consent_revision when vendor or purpose changes.
+	 *
+	 * @param array $settings Plugin settings.
+	 * @return array
+	 */
+	public static function inventory( array $settings ) {
+		$result = array(
+			'functional' => array(),
+			'analytics'  => array(),
+			'marketing'  => array(),
+		);
+		$native = array();
+		foreach ( self::providers( $settings ) as $provider ) {
+			$native[ $provider['type'] ] = $provider;
+		}
+		$native_ids = array(
+			'yandex'  => 'yandex-metrika',
+			'ga4'     => 'google-analytics-4',
+			'gtm'     => 'google-tag-manager',
+			'clarity' => 'microsoft-clarity',
+			'meta'    => 'meta-pixel',
+		);
+		foreach ( self::get( $settings ) as $service ) {
+			if ( ! $service['enabled'] || ! isset( $result[ $service['category'] ] ) ) {
+				continue;
+			}
+			$identity = array( $service['id'], $service['category'], $service['provider_type'], $service['consent_revision'] );
+			$type     = $service['provider_type'];
+			if ( isset( $native[ $type ], $native_ids[ $type ] ) && $service['id'] === $native_ids[ $type ] ) {
+				$identity[] = $native[ $type ];
+			}
+			$result[ $service['category'] ][] = substr( hash( 'sha256', wp_json_encode( $identity ) ), 0, 32 );
+		}
+		foreach ( $result as &$tokens ) {
+			sort( $tokens, SORT_STRING );
+		}
+		unset( $tokens );
+		return $result;
 	}
 }

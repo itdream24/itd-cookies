@@ -28,6 +28,7 @@ const html = `
 			<button data-itd-cookies-accept>Accept all in panel</button>
 			<button data-itd-cookies-cancel>Back</button>
 		</div>
+		<p role="alert" data-itd-cookies-error hidden></p>
 	</section>
 `;
 const providers = [
@@ -35,7 +36,9 @@ const providers = [
 	{ type: "ga4", id: "G-PSW1MY7HB4" },
 ];
 
-function createPage({ jar = new CookieJar(), version = "1", configured = providers } = {}) {
+const inventory = { functional: ["1".repeat(32)], analytics: ["2".repeat(32)], marketing: ["3".repeat(32)] };
+
+function createPage({ jar = new CookieJar(), version = "1", configured = providers, registered = inventory } = {}) {
 	const dom = new JSDOM(html, {
 		cookieJar: jar,
 		pretendToBeVisual: true,
@@ -45,6 +48,9 @@ function createPage({ jar = new CookieJar(), version = "1", configured = provide
 	const { window } = dom;
 	window.ITDCookiesConfig = {
 		cookieName: "itd_cookies_consent",
+        receiptCookieName: "itd_cookies_services",
+        inventory: registered,
+        saveError: "Could not save",
 		legacyCookieName: "itd_modubricks_consent",
 		legacyMarkerName: "itd_cookies_legacy_migrated",
 		lifetimeDays: 365,
@@ -89,6 +95,97 @@ function assertFailClosed(window) {
 	assert.equal(window.document.querySelector('[data-itd-cookies-banner]').hidden, false);
 	assert.equal(scripts(window).length, 0);
 }
+
+test("smart categories normalize absent choices and events for every inventory", (t) => {
+	for (const active of [[], ['analytics'], ['marketing'], ['analytics', 'marketing'], ['functional'], ['functional', 'analytics', 'marketing']]) {
+		const registered = Object.fromEntries(Object.entries(inventory).map(([category, tokens]) => [category, active.includes(category) ? tokens : []]));
+		const jar = new CookieJar();
+		const first = createPage({ jar, registered }); t.after(() => first.window.close());
+		let event;
+		first.window.addEventListener('itd_cookies_consent_changed', (change) => { event = change.detail; });
+		click(first.window, '[data-itd-cookies-accept]');
+		for (const category of Object.keys(inventory)) {
+			assert.equal(choice(first.window).categories[category], active.includes(category));
+			assert.equal(event.categories[category], active.includes(category));
+			assert.equal(first.window.ITDCookies.allowed(category), active.includes(category));
+		}
+		const next = createPage({ jar, registered }); t.after(() => next.window.close());
+		assert.equal(next.window.document.querySelector('[data-itd-cookies-banner]').hidden, true);
+	}
+});
+
+test("new service fails closed only for its category and prompts; subsets/removals do not prompt", (t) => {
+	const jar = new CookieJar();
+	const first = createPage({ jar }); t.after(() => first.window.close());
+	click(first.window, '[data-itd-cookies-accept]');
+	const changed = { ...inventory, analytics: [...inventory.analytics, '4'.repeat(32)] };
+	const next = createPage({ jar, registered: changed }); t.after(() => next.window.close());
+	assert.equal(next.window.ITDCookies.allowed('analytics'), false);
+	assert.equal(next.window.ITDCookies.allowed('functional'), true);
+	assert.equal(scripts(next.window).length, 0);
+	assert.equal(next.window.document.querySelector('[data-itd-cookies-banner]').hidden, false);
+	click(next.window, '[data-itd-cookies-accept]');
+	assert.equal(next.window.ITDCookies.allowed('analytics'), true);
+	const subset = createPage({ jar, registered: inventory }); t.after(() => subset.window.close());
+	assert.equal(subset.window.document.querySelector('[data-itd-cookies-banner]').hidden, true);
+	assert.equal(subset.window.ITDCookies.allowed('analytics'), true);
+});
+
+test("new category does not inherit old accept all; old Reject retains exact cookie and expiry", (t) => {
+	const jar = new CookieJar();
+	const first = createPage({ jar, registered: { functional: [], analytics: inventory.analytics, marketing: [] } }); t.after(() => first.window.close());
+	click(first.window, '[data-itd-cookies-accept]');
+	assert.equal(choice(first.window).categories.marketing, false);
+	const next = createPage({ jar }); t.after(() => next.window.close());
+	assert.equal(next.window.ITDCookies.allowed('marketing'), false);
+	assert.equal(next.window.ITDCookies.allowed('analytics'), true);
+	assert.equal(next.window.document.querySelector('[data-itd-cookies-banner]').hidden, false);
+	const old = { schema: 1, version: '1', expiresAt: Date.now() + 86400000, categories: { necessary: true, functional: false, analytics: false, marketing: false } };
+	const rejectJar = new CookieJar();
+	const raw = encodeURIComponent(JSON.stringify(old));
+	rejectJar.setCookieSync('itd_cookies_consent=' + raw + '; Path=/', 'https://example.test/');
+	const reject = createPage({ jar: rejectJar }); t.after(() => reject.window.close());
+	assert.equal(reject.window.document.querySelector('[data-itd-cookies-banner]').hidden, true);
+	assert.equal(reject.window.ITDCookies.allowed('analytics'), false);
+	assert.equal(rejectJar.getCookiesSync('https://example.test/').find((cookie) => cookie.key === 'itd_cookies_consent').value, raw);
+});
+
+test("unbound positive choice and corrupt/mismatched service receipts never authorize SDKs", (t) => {
+	for (const mutate of [() => null, (receipt) => ({ ...receipt, schema: '1' }), (receipt) => ({ ...receipt, version: 'wrong' }), (receipt) => ({ ...receipt, expiresAt: receipt.expiresAt + 1 }), (receipt) => ({ ...receipt, services: '2'.repeat(31) }), (receipt) => ({ ...receipt, extra: true })]) {
+		const jar = new CookieJar();
+		const first = createPage({ jar }); t.after(() => first.window.close());
+		click(first.window, '[data-itd-cookies-accept]');
+		const cookie = jar.getCookiesSync('https://example.test/').find((item) => item.key === 'itd_cookies_services');
+		const value = mutate(JSON.parse(decodeURIComponent(cookie.value)));
+		jar.setCookieSync('itd_cookies_services=' + (value ? encodeURIComponent(JSON.stringify(value)) : '') + '; Path=/', 'https://example.test/');
+		const next = createPage({ jar }); t.after(() => next.window.close());
+		assertFailClosed(next.window);
+	}
+});
+
+test("oversized inventory refuses positive save with an error, but Reject remains available", (t) => {
+	const registered = { functional: [], analytics: Array.from({ length: 97 }, (_, i) => i.toString(16).padStart(32, '0')), marketing: [] };
+	const first = createPage({ registered }); t.after(() => first.window.close());
+	let changes = 0;
+	first.window.addEventListener('itd_cookies_consent_changed', () => { changes += 1; });
+	click(first.window, '[data-itd-cookies-accept]');
+	assert.equal(first.window.ITDCookies.allowed('analytics'), false);
+	assert.equal(changes, 0);
+	assert.equal(first.window.document.querySelector('[data-itd-cookies-error]').hidden, false);
+	click(first.window, '[data-itd-cookies-reject]');
+	assert.equal(changes, 1);
+	assert.equal(choice(first.window).categories.analytics, false);
+});
+
+test("blocked cookie writes fail closed and never emit successful consent", (t) => {
+	const first = createPage(); t.after(() => first.window.close());
+	Object.defineProperty(first.window.document, 'cookie', { get: () => '', set: () => {} });
+	let changes = 0;
+	first.window.addEventListener('itd_cookies_consent_changed', () => { changes += 1; });
+	click(first.window, '[data-itd-cookies-accept]');
+	assert.equal(changes, 0);
+	assertFailClosed(first.window);
+});
 
 test("fresh visitor has no optional consent and no analytics loader", (t) => {
 	const dom = createPage();
@@ -186,31 +283,17 @@ test("turning analytics off persists and prevents loaders on the next page", (t)
 	assert.equal(scripts(next.window).length, 0);
 });
 
-test("legacy accepted consent imports analytics only once", (t) => {
-	const jar = new CookieJar();
-	jar.setCookieSync(
-		"itd_modubricks_consent=" + encodeURIComponent(JSON.stringify({ choice: "accepted", version: "1" })) + "; Path=/",
-		"https://example.test/",
-	);
-	const first = createPage({ jar });
-	t.after(() => first.window.close());
-	assert.deepEqual(choice(first.window).categories, {
-		necessary: true, functional: false, analytics: true, marketing: false,
-	});
-	assert.equal(scripts(first.window).length, 2);
-	assert.match(first.window.document.cookie, /itd_cookies_legacy_migrated=/);
-	const second = createPage({ jar });
-	t.after(() => second.window.close());
-	assert.equal(second.window.ITDCookies.allowed("analytics"), true);
-	assert.equal(scripts(second.window).length, 2);
-	assert.deepEqual(initializationCounts(second.window), { yandex: 1, ga4: 1 });
-	click(second.window, "[data-itd-cookies-open]");
-	second.window.document.querySelector('[data-itd-cookies-category="analytics"]').checked = false;
-	click(second.window, "[data-itd-cookies-save]");
-	const third = createPage({ jar });
-	t.after(() => third.window.close());
-	assert.equal(third.window.ITDCookies.allowed("analytics"), false);
-	assert.equal(scripts(third.window).length, 0);
+test("legacy positive choice requires explicit confirmation without deleting the original", (t) => {
+    const jar = new CookieJar();
+    jar.setCookieSync("itd_modubricks_consent=" + encodeURIComponent(JSON.stringify({ choice: "accepted", version: "1" })) + "; Path=/", "https://example.test/");
+    const first = createPage({ jar }); t.after(() => first.window.close());
+    assertFailClosed(first.window);
+    assert.match(first.window.document.cookie, /itd_cookies_legacy_migrated=/);
+    assert.match(first.window.document.cookie, /itd_modubricks_consent=/);
+    click(first.window, "[data-itd-cookies-accept]");
+    const second = createPage({ jar }); t.after(() => second.window.close());
+    assert.equal(second.window.ITDCookies.allowed("analytics"), true);
+    assert.equal(scripts(second.window).length, 2);
 });
 
 test("mismatched legacy consent does not grant analytics", (t) => {

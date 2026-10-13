@@ -119,6 +119,24 @@ in the next document. Consent schema remains 1, with the existing policy version
 
 ## CSP contract
 
+Since 0.4.5, optional groups also bind consent to their stable group ID, handles,
+provider types and optional `consent_revision` string (default `1`, at most 100
+bytes). Increment the revision when the vendor or purpose changes under the same
+identifiers; changing labels, translations or a dynamic script query does not
+require renewed consent. Register descriptors before calling PHP `allowed()`.
+The controller inventory is localized at `wp_enqueue_scripts` priority 1001,
+after group preparation at 999. CSP hash integrations must include that final
+localized configuration before printing scripts. The reference hash fixture
+keeps the earlier owned-body hashes and adds the final config at priority 1002.
+No weakening of the site's CSP is required.
+
+The Cookie Policy shortcode may request declarations before `wp_head` on block
+themes. The public registration action runs once; queue freezing/dependency
+validation still runs at the usual enqueue point. Declare owned handles inside
+the callback instead of depending on the callback always running after head.
+A late runtime failure is reported by diagnostics; it does not retroactively
+remove a declared service from an already rendered policy.
+
 Classic scripts, native nonce attributes/properties and exact known inline bodies
 are preserved. Native inline renderer output is not supplemented with callback
 code. `integrity`, `crossorigin` and other native attributes survive replay.

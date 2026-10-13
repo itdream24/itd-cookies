@@ -2,6 +2,16 @@
 
 ## Scope
 
+### 0.4.5 candidate acceptance (2026-10-13)
+
+Smart Categories candidate native ZIP upgrade from official 0.4.4 passed 39/39
+browser scenarios plus 13/13 follow-up checks. Details and limitations are in
+`ITD-COOKIES-0.4.5.md`. The immutable baseline-v0.4.4 was restored before and after
+QA: 504 file hashes and every schema/data row of all 12 tables matched. Local
+runtime remains official 0.4.4 ACTIVE, with original settings/marker/policy/theme.
+No new baseline was created. Clear `itd_cookies_services` together with primary
+consent/legacy QA cookies in isolated test contexts; do not touch user Chrome.
+
 Runtime root: `C:\openserver\domains\itd-cookies.local`.
 URL: `http://itd-cookies.local`. Dedicated database: `itd_cookies_local`.
 Use the owner's existing OpenServer services. Keep the source checkout separate

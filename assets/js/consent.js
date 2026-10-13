@@ -8,15 +8,24 @@
 	var previousFocus = null;
 	var backdrop = document.querySelector('[data-itd-cookies-backdrop]');
 	var state = null;
+	var decision = null;
+	var receipt = null;
 	var categories = ['functional', 'analytics', 'marketing'];
 
 	if (
 		config.cookieName !== 'itd_cookies_consent' ||
+		config.receiptCookieName !== 'itd_cookies_services' ||
 		config.legacyCookieName !== 'itd_modubricks_consent' ||
 		config.legacyMarkerName !== 'itd_cookies_legacy_migrated' ||
 		(config.schema !== 1 && config.schema !== '1') ||
 		typeof config.version !== 'string' ||
-		!config.version
+		!config.version ||
+		!hasOnlyKeys(config.inventory, categories) ||
+		categories.some(function (category) {
+			return !Array.isArray(config.inventory[category]) || config.inventory[category].some(function (token) {
+				return typeof token !== 'string' || !/^[a-f0-9]{32}$/.test(token);
+			});
+		})
 	) {
 		return;
 	}
@@ -37,8 +46,8 @@
 		return null;
 	}
 
-	function parseJsonCookie(value) {
-		if (typeof value !== 'string' || value.length > 2048) {
+	function parseJsonCookie(value, limit) {
+		if (typeof value !== 'string' || value.length > (limit || 2048)) {
 			return null;
 		}
 		try {
@@ -86,6 +95,27 @@
 		return Number.isFinite(days) ? Math.max(1, Math.min(3650, days)) : 365;
 	}
 
+	function validateReceipt(candidate, primary) {
+		if (!primary || !hasOnlyKeys(candidate, ['schema', 'version', 'expiresAt', 'services']) ||
+			candidate.schema !== 1 || candidate.version !== primary.version || candidate.expiresAt !== primary.expiresAt ||
+			typeof candidate.services !== 'string' || !/^(?:[a-f0-9]{32}){0,96}$/.test(candidate.services)) {
+			return null;
+		}
+		return candidate.services.match(/[a-f0-9]{32}/g) || [];
+	}
+
+	function knownCategory(category) {
+		return !!receipt && config.inventory[category].every(function (token) { return receipt.indexOf(token) !== -1; });
+	}
+
+	function needsChoice() {
+		if (!state) { return true; }
+		// An old Reject remains a Reject. A positive unbound decision cannot grant new services.
+		return categories.some(function (category) { return state[category]; }) && categories.some(function (category) {
+			return config.inventory[category].length && !knownCategory(category);
+		});
+	}
+
 	function setCookie(name, value, seconds) {
 		var attributes = [
 			name + '=' + encodeURIComponent(value),
@@ -112,43 +142,53 @@
 			expiresAt: Date.now() + seconds * 1000,
 			categories: {
 				necessary: true,
-				functional: choice.functional === true,
-				analytics: choice.analytics === true,
-				marketing: choice.marketing === true,
+				functional: choice.functional === true && config.inventory.functional.length > 0,
+				analytics: choice.analytics === true && config.inventory.analytics.length > 0,
+				marketing: choice.marketing === true && config.inventory.marketing.length > 0,
 			},
 		};
+		var tokens = categories.some(function (category) { return payload.categories[category]; }) ?
+			Array.from(new Set([].concat(config.inventory.functional, config.inventory.analytics, config.inventory.marketing))).sort() : [];
+		var proof = { schema: 1, version: payload.version, expiresAt: payload.expiresAt, services: tokens.join('') };
+		var encoded = JSON.stringify(proof);
+		if (tokens.length > 96 || encodeURIComponent(encoded).length > 3800 || encodeURIComponent(JSON.stringify(payload)).length > 2048) {
+			return false;
+		}
+		setCookie(config.receiptCookieName, encoded, seconds);
 		setCookie(config.cookieName, JSON.stringify(payload), seconds);
+		if (cookieValue(config.cookieName) !== encodeURIComponent(JSON.stringify(payload)) || cookieValue(config.receiptCookieName) !== encodeURIComponent(encoded)) {
+			// A partial write cannot retain in-memory grants for a mismatched cookie pair.
+			decision = parseJsonCookie(cookieValue(config.cookieName));
+			state = validateConsent(decision);
+			receipt = validateReceipt(parseJsonCookie(cookieValue(config.receiptCookieName), 3800), decision);
+			return false;
+		}
 		markLegacyChecked();
+		decision = payload;
+		receipt = tokens;
 		state = payload.categories;
+		return true;
 	}
 
 	function migrateLegacyCookie() {
 		var raw = cookieValue(config.legacyCookieName);
-		var old;
 		if (cookieValue(config.cookieName) !== null || cookieValue(config.legacyMarkerName) !== null) {
 			return null;
 		}
 		if (raw === null) {
 			return null;
 		}
-		old = parseJsonCookie(raw);
 		markLegacyChecked();
-		if (
-			!hasOnlyKeys(old, ['choice', 'version', 'updatedAt']) ||
-			old.choice !== 'accepted' ||
-			old.version !== config.version
-		) {
-			return null;
-		}
-		writeConsent({ functional: false, analytics: true, marketing: false });
-		return state;
+		// Legacy category flags have no service identities. Ask for an explicit bound choice.
+		return null;
 	}
 
 	function allowed(category) {
 		if (category === 'necessary') {
 			return true;
 		}
-		return categories.indexOf(category) !== -1 && !!(state && state[category] === true);
+		return categories.indexOf(category) !== -1 && !!(state && state[category] === true) &&
+			config.inventory[category].length > 0 && knownCategory(category);
 	}
 
 	function focusElement(element) {
@@ -235,7 +275,13 @@
 
 	function saveChoice(choice, source) {
 		var revoked = categories.filter(allowed);
-		writeConsent(choice);
+		var error = banner ? banner.querySelector('[data-itd-cookies-error]') : null;
+		if (!writeConsent(choice)) {
+			if (error) { error.textContent = config.saveError; error.hidden = false; }
+			if (revoked.some(function (category) { return !allowed(category); })) { window.location.reload(); }
+			return;
+		}
+		if (error) { error.hidden = true; }
 		hideBanner();
 		eventChanged(state, source);
 		if (revoked.some(function (category) { return !allowed(category); })) {
@@ -301,14 +347,15 @@
 		}
 	});
 
-	state = validateConsent(parseJsonCookie(cookieValue(config.cookieName)));
+	decision = parseJsonCookie(cookieValue(config.cookieName));
+	state = validateConsent(decision);
+	receipt = validateReceipt(parseJsonCookie(cookieValue(config.receiptCookieName), 3800), decision);
 	if (!state) {
 		state = migrateLegacyCookie();
 	}
 	window.ITDCookies = { allowed: allowed, openSettings: openSettings };
-	if (state) {
-		loadProviders();
-	} else {
+	loadProviders();
+	if (needsChoice()) {
 		showBanner();
 	}
 })();

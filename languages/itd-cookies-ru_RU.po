@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.4.4\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.4.5-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -306,3 +306,18 @@ msgstr "Применяется только к автоматическому ф
 
 msgid "Embedded Yandex Maps load independently of Analytics consent. External maps may transmit data and use their own cookies or analytics before consent and after rejection. ITD Cookies controls the site analytics configured below, not map requests. Review the map integration and privacy information separately."
 msgstr "Встроенные Яндекс.Карты загружаются независимо от согласия на аналитические cookie. Внешние карты могут передавать данные и использовать собственные cookie или аналитику до согласия и после отказа. ITD Cookies управляет настроенной ниже аналитикой сайта, но не запросами карты. Проверьте интеграцию карты и сведения о конфиденциальности отдельно."
+
+msgid "Your choice could not be saved. Please reject optional services or contact the site administrator."
+msgstr "Не удалось сохранить выбор. Отклоните необязательные сервисы или обратитесь к администратору сайта."
+
+msgid "No optional services are configured in ITD Cookies. Necessary cookies store your choice. External integrations may operate independently."
+msgstr "В ITD Cookies не настроены необязательные сервисы. Необходимые cookie сохраняют ваш выбор. Внешние интеграции могут работать независимо."
+
+msgid "Got it"
+msgstr "Понятно"
+
+msgid "External integrations, including embedded maps, may transmit data independently before consent. This plugin only describes registered services and does not block arbitrary third-party code."
+msgstr "Внешние интеграции, включая встроенные карты, могут самостоятельно передавать данные до согласия. Плагин описывает только зарегистрированные сервисы и не блокирует произвольный сторонний код."
+
+msgid "Adding or changing a registered service may require a new choice. Existing positive choices from earlier plugin versions require confirmation because they do not identify services."
+msgstr "Добавление или изменение зарегистрированного сервиса может потребовать нового выбора. Разрешения, сохранённые предыдущими версиями плагина, требуют подтверждения, поскольку не содержат сведений о сервисах."

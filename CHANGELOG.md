@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.5-dev.1 — unreleased
+
+- Hide unused optional categories from settings and the generated policy.
+- Accept all and custom choices grant only enabled registered categories.
+- Bind positive choices to stable service identities with a separate first-party receipt cookie; new services require a new choice.
+- Preserve schema 1 and old Reject; require confirmation for old positive and ModuBricks choices without service identities.
+- Include external descriptors and Script Adapters; optional consent_revision records changes of vendor or purpose.
+- Preserve 0.4.4 typography/footer and immediate external maps behavior.
+
+
 ## 0.4.4 — 2026-10-13
 
 - Use a local 16px consent text base instead of theme root rem units; presets are 80/90/100/115/130%. Theme font families and browser zoom are retained.

@@ -8,6 +8,7 @@
 namespace ITD\Cookies\Tests;
 
 use Brain\Monkey\Functions;
+use Brain\Monkey\Actions;
 use Mockery;
 use ReflectionProperty;
 
@@ -30,6 +31,7 @@ final class ScriptAdaptersTest extends TestCase {
 		Mockery::mock( 'overload:WP_Error' );
 		Functions\when( 'did_action' )->justReturn( 0 );
 		Functions\when( 'sanitize_text_field' )->alias( 'strip_tags' );
+		Functions\when( 'wp_json_encode' )->alias( 'json_encode' );
 	}
 
 	/**
@@ -57,6 +59,74 @@ final class ScriptAdaptersTest extends TestCase {
 			$this->assertSame( array( 'group_id', 'code' ), array_keys( $event ) );
 			$this->assertSame( 'REGISTERED', $event['code'] );
 		}
+	}
+
+	/** Stable identity ignores labels but changes with explicit revisions/handles.
+	 *
+	 * @return void
+	 */
+	public function test_script_group_consent_revision() {
+		$args = array(
+			'category'         => 'functional',
+			'handles'          => array( 'chat-library', 'chat-ui' ),
+			'provider_types'   => array( 'chat' ),
+			'resources'        => array(),
+			'consent_revision' => '2',
+		);
+		self::assertTrue( itd_cookies_register_script_group( 'chat', $args ) );
+		$registry = \ITD_Cookies_Script_Adapters::instance();
+		$first    = $registry->services( array() )[0];
+		self::assertSame( 'functional', $first['category'] );
+		self::assertSame( hash( 'sha256', json_encode( array( $args['handles'], $args['provider_types'], '2' ) ) ), $first['consent_revision'] );
+		self::assertNotSame( hash( 'sha256', json_encode( array( $args['handles'], $args['provider_types'], '1' ) ) ), $first['consent_revision'] );
+		self::assertNotSame(
+			true,
+			itd_cookies_register_script_group(
+				'bad-revision',
+				array_merge(
+					$args,
+					array(
+						'handles'          => array( 'other' ),
+						'consent_revision' => array( 'unsafe' ),
+					)
+				)
+			)
+		);
+	}
+
+	/** Block-theme policy declarations happen once, without prematurely freezing.
+	 *
+	 * @return void
+	 */
+	public function test_early_policy_registration_does_not_freeze_or_repeat() {
+		Functions\when( 'is_admin' )->justReturn( false );
+		Actions\expectDone( 'itd_cookies_register_script_groups' )->once();
+		self::assertTrue(
+			itd_cookies_register_script_group(
+				'early-chat',
+				array(
+					'category'       => 'functional',
+					'handles'        => array( 'early-chat-sdk' ),
+					'provider_types' => array( 'early-chat' ),
+					'resources'      => array(),
+				)
+			)
+		);
+		$registry = \ITD_Cookies_Script_Adapters::instance();
+		$registry->register_groups();
+		$registry->register_groups();
+		self::assertCount( 1, $registry->services( array() ) );
+		self::assertTrue(
+			itd_cookies_register_script_group(
+				'later-chat',
+				array(
+					'category'       => 'functional',
+					'handles'        => array( 'later-chat-sdk' ),
+					'provider_types' => array( 'later-chat' ),
+					'resources'      => array(),
+				)
+			)
+		);
 	}
 
 	/**

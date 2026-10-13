@@ -64,7 +64,7 @@ if ( itd_cookies_allowed( 'analytics' ) || ! itd_cookies_allowed( 'necessary' ) 
 	$fail( 'Default consent state is not fail closed.' );
 }
 
-$valid_consent                  = array(
+$valid_consent                   = array(
 	'schema'     => 1,
 	'version'    => 'legacy-policy-1',
 	'expiresAt'  => ( time() + 3600 ) * 1000,
@@ -75,7 +75,17 @@ $valid_consent                  = array(
 		'marketing'  => false,
 	),
 );
-$_COOKIE['itd_cookies_consent'] = rawurlencode( wp_json_encode( $valid_consent ) );
+$_COOKIE['itd_cookies_consent']  = rawurlencode( wp_json_encode( $valid_consent ) );
+$_COOKIE['itd_cookies_services'] = rawurlencode(
+	wp_json_encode(
+		array(
+			'schema'    => 1,
+			'version'   => $valid_consent['version'],
+			'expiresAt' => $valid_consent['expiresAt'],
+			'services'  => implode( '', ITD_Cookies_Services::inventory( $settings )['analytics'] ),
+		)
+	)
+);
 if ( ! itd_cookies_allowed( 'analytics' ) ) {
 	$fail( 'Valid PHP consent signal was rejected.' );
 }
