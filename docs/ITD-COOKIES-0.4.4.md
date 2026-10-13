@@ -1,7 +1,6 @@
 # ITD Cookies 0.4.4 — Typography, Footer UX and Maps Policy
 
-Published stable remains 0.4.3. Candidate: 0.4.4-dev.1 on a separate feature branch.
-Main and published tags/Release assets remain unchanged.
+Published stable: **0.4.4**. Historical candidate/implementation and CI failure history are retained below. Tag/Release assets are immutable; production was not changed.
 
 ## Accepted addition: universal embedded maps policy
 
@@ -238,3 +237,35 @@ After recovery, a **new** local native 0.4.3 → stable 0.4.4 ZIP acceptance was
 Actual cleanup/Restore: 504 files and all12 table schemas/rows equal immutable baseline-v0.4.3; original settings/marker/activity/theme, official0.4.3 ACTIVE, QA plugins/pages/options/counters/cookies gone. User Chrome untouched. Historical Maps result remains12/13 real with external504 and separate mocked constructor PASS; maps runtime unchanged. This is not an automatic typography/footer release blocker under the owner decision.
 
 Pre-release Browser gate: PASS. Full CI of the following documentation commit, separate main CI, tag/Release/public ZIP, genuine native GitHub update and new baseline remain required before final release verdict.
+
+
+## Published stable and real local acceptance — final
+
+- Release: https://github.com/itdream24/itd-cookies/releases/tag/v0.4.4
+- Annotated tag v0.4.4 targets **b509ee9252e6fd4743c621f62ccbf2c78529a905** (tag object 5ca9db006f4f49f16b9fac056b67d61c8aa4a81a).
+- Accepted feature CI 38397237965:13/13. Original release CI 38401317653 attempt1 failed before wp core download (missing WP-CLI); owner-authorized attempt2 **13/13 PASS**, dependent build actually ran. Workflow unchanged, no dependency/runtime fix.
+- Release HEAD CI https://github.com/itdream24/itd-cookies/actions/runs/38417143728:13/13 PASS.
+- Separate main CI https://github.com/itdream24/itd-cookies/actions/runs/38417545055:13/13 PASS.
+- Release workflow https://github.com/itdream24/itd-cookies/actions/runs/38417957119:**15/15 PASS**, validate/checks/publish complete.
+- Public anonymous releases/latest:v0.4.4, draft=false, prerelease=false. Anonymous ZIP/checksum download, PHP7.4 inspector and all18 installed runtime files PASS. ZIP itd-cookies-0.4.4.zip SHA-256 **4f4e0e9a98baeef087559e3863251b6f5f56cf3d427eb11566cfeba2872c53fe**, matching independent local builds and CI. Old tags/assets unchanged.
+
+### Genuine update, independently of synthetic pre-release QA
+
+**14/14 actual published-runtime Browser scenarios PASS**. Restored official0.4.3, synthetic saved settings/legal documents/Policy and existing Reject cookie. Ordinary authenticated WordPress Updates offered real public0.4.4 without forced cache deletion or metadata substitution. Native Check again separately made exactly one real GitHub request, HTTP200, correct metadata/offer. The native update button installed the public GitHub ZIP; no assisted Upload/Replace. Raw settings (including text preset), cookie schema/version/expiry, marker, Policy and activity preserved. Russian Maps information and three footer alignment saves, public Script Adapters zero/supported/dependencies/dedup/nonce/hash and maximum text at320/390/768/1440 verified. No HTTP/metadata routing was used in this real update test.
+
+The first browser run selected a hidden duplicate success paragraph and timed out even though WordPress showed a green successful update and installed0.4.4 ACTIVE. The failure screenshot/log is preserved privately. Only the QA locator was corrected to require a visible match; baseline0.4.3 was restored and the entire real update rerun. Published runtime/tag/assets were never edited. No uncaught JS errors; one baseline favicon.ico404, not a plugin/CSP error. Physical Windows High Contrast and real tracking account delivery remain NOT_RUN; forced-colors pre-release tests were emulation.
+
+### Final cleanup and immutable baseline
+
+After tests, full old baseline Restore removed all temporary plugin/MU observer, reference scripts, pages, settings, counters and options. Official downloaded0.4.4 was then installed through the native WP-CLI Plugin Upgrader solely to leave the clean runtime; this cleanup installation is separate from the genuine browser updater proof above. QA browser contexts cleared cookies and closed; user Chrome was not accessed. Only official0.4.4 ACTIVE, baseline Twenty Twenty-Five, ru_RU and original clean settings remain. No maintenance file or temporary MU directory.
+
+New **baseline-v0.4.4** captured outside Git/webroot, then actually Restored. All **504 file hashes**, schemas/every row of **12 tables**, settings/marker/theme/activity equal.
+
+- SQL SHA:3a2c17fa9741f0c620b52a0a30a24f9d29b412fd4fd74598aab775e41430839b
+- Manifest SHA:a977cf4e2697f7cfb575cde064563faad9aee77d22d06e7e779542538c74ebc8
+- Canonical DB SHA:0e7bb14a0c3ba77ff0fd501bb6bc3f36bc6344ae276bbdd49285771aa7be8084
+- Old baseline-v0.4.3 SQL remains e04288464b2ac2c70aa3343c64230656faa28159cb4f9ae4bf4f6434f3aa4708; never overwritten.
+
+No production/Timeweb/testwp/other owner site changes. Historical real maps gate remains **12/13** with external constructor504 and separate mocked PASS. Maps runtime is unchanged; this external availability case is not a typography/footer blocker under the accepted owner decision.
+
+Release/local verdict: **ITD_COOKIES_V0.4.4_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED**. The final documentation-only main commit must finish its separate full CI before handoff; no runtime changes are included in it.

@@ -77,3 +77,5 @@ Built-in consent gating does not block arbitrary scripts inserted by themes/plug
 Consent text has a local 16px base and 80/90/100/115/130% presets, retaining the theme font. The optional automatic legal footer is a separate block, centered by default with left/center/right alignment. It remains OFF by default. To integrate links into a styled theme footer, keep automatic output off and place [itd_cookies_legal_links] or [itd_cookies_settings] manually. No theme DOM rewriting.
 
 Embedded maps load independently of Analytics and after Reject. They may transmit data/use their own analytics or cookies before consent. Native configured analytics remain gated; this is not a universal tracker firewall or legal compliance guarantee. See docs/MAPS-INTEGRATION-POLICY.md.
+
+Published v0.4.4 ZIP/checksum and local native stable0.4.3 →0.4.4 acceptance are verified; see docs/ITD-COOKIES-0.4.4.md. Current local immutable reset is baseline-v0.4.4. Production rollout needs separate site-owner authorization.

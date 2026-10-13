@@ -118,3 +118,8 @@ No standalone release is made for this policy. Combine it and the planned admin
 paragraph with the 0.4.4 typography/footer work; complete the usual CI, browser,
 release and production gates for that combined candidate. This document does
 not mark the complete 0.4.4 release ready.
+
+
+## 0.4.4 release status
+
+Policy/admin information ships with official v0.4.4. Typography/footer stable/local updater gates PASS; maps integration code was not changed. Historical real map matrix remains12/13, external constructor504 plus separate mocked-contract PASS. Do not turn that into13/13 or claim a universal tracker firewall/legal guarantee.

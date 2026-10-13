@@ -1,6 +1,6 @@
 # ITD Cookies — установка
 
-Основание: подготовленный stable 0.4.4 (rollout только после публикации и финальной приёмки) и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
+Основание: опубликованный официальный v0.4.4, реальное локальное native updater acceptance PASS и [feasibility audit](https://github.com/itdream24/itd-cookies/blob/4bc5fa007a1c2bd836bf10db009a080126c1c47f/docs/ITD-COOKIES-WP50-FEASIBILITY.md).
 Это инструкция для будущего согласованного rollout; установка на production
 в рамках исследования не выполнялась.
 

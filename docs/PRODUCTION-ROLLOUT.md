@@ -120,3 +120,8 @@ MU plugins, snippets и GTM на уже встроенный SDK; отключе
 
 
 Stable v0.4.3: [официальный Release](https://github.com/itdream24/itd-cookies/releases/tag/v0.4.3), built asset `itd-cookies-0.4.3.zip`, SHA-256 `09d9ddb4a6b03f13d83875cff1c1cf657f5842a5d9d97683ef09dc8dc654c06d`. Реальное native обновление с 0.4.2 и новый immutable baseline проверены локально; production не изменялся. При обнаружении дефекта после публикации готовится отдельный patch release, опубликованные assets не перезаписываются.
+
+
+## Принятый релиз 0.4.4
+
+Stable v0.4.4 опубликован, public ZIP/checksum и локальный native0.4.3 →0.4.4 проверены. Полные CI и новый baseline описаны в ITD-COOKIES-0.4.4.md. Это не разрешение изменить production: перед конкретным rollout нужны свежий site backup/rollback и отдельное решение владельца. Automatic footer — отдельный блок; для оформленного footer темы отключить auto и вставить shortcode вручную, без дубликата. Карты продолжают передавать собственные данные независимо от Analytics/Reject; политика требует отдельной проверки, юридического соответствия плагин не обещает.
