@@ -40,6 +40,8 @@ final class ITD_Cookies_Settings {
 			'link_4_url'                    => '',
 			'auto_footer'                   => 0,
 			'footer_alignment'              => 'center',
+			'footer_background_color'       => '',
+			'footer_text_color'             => '',
 			'metrika_enabled'               => 0,
 			'metrika_id'                    => '',
 			'metrika_webvisor'              => 0,
@@ -102,6 +104,8 @@ final class ITD_Cookies_Settings {
 			'enabled'                       => self::flag( $input, 'enabled' ),
 			'auto_footer'                   => self::flag( $input, 'auto_footer' ),
 			'footer_alignment'              => $align,
+			'footer_background_color'       => self::sanitize_color( $input['footer_background_color'] ?? '' ),
+			'footer_text_color'             => self::sanitize_color( $input['footer_text_color'] ?? '' ),
 			'banner_title'                  => '' !== $title ? $title : $defaults['banner_title'],
 			'banner_text'                   => '' !== $text ? $text : $defaults['banner_text'],
 			'banner_text_size'              => $size,
@@ -160,7 +164,22 @@ final class ITD_Cookies_Settings {
 				);
 			}
 		}
+		foreach ( array( 'footer_background_color', 'footer_text_color' ) as $key ) {
+			if ( ( '' !== self::scalar( $input, $key ) && '' === $output[ $key ] ) || ( isset( $input[ $key ] ) && ! is_string( $input[ $key ] ) ) ) {
+				$output[ $key ] = $previous[ $key ];
+				add_settings_error( self::OPTION_NAME, $key, __( 'Footer color was not saved. Enter #RRGGBB or leave the field empty for the default style. The previous color has been kept.', 'itd-cookies' ), 'error' );
+			}
+		}
 		return $output;
+	}
+
+	/** Normalize only six-digit HEX; empty means the existing theme style.
+	 *
+	 * @param mixed $value Color input.
+	 * @return string
+	 */
+	public static function sanitize_color( $value ) {
+		return is_string( $value ) && preg_match( '/\A#[0-9a-fA-F]{6}\z/D', trim( $value ) ) ? strtolower( trim( $value ) ) : '';
 	}
 
 	/**
@@ -189,7 +208,7 @@ final class ITD_Cookies_Settings {
 
 		$allowed = array_diff(
 			array_keys( self::defaults() ),
-			array( 'gtm_enabled', 'gtm_container_id', 'clarity_enabled', 'clarity_project_id', 'meta_enabled', 'meta_pixel_id' )
+			array( 'gtm_enabled', 'gtm_container_id', 'clarity_enabled', 'clarity_project_id', 'meta_enabled', 'meta_pixel_id', 'footer_background_color', 'footer_text_color' )
 		);
 		$copy    = array_intersect_key( $legacy, array_fill_keys( $allowed, true ) );
 		$copy    = array_merge( self::defaults(), $copy );
@@ -211,6 +230,21 @@ final class ITD_Cookies_Settings {
 		add_action( 'admin_init', array( __CLASS__, 'migrate_legacy' ), 5 );
 		add_action( 'admin_init', array( $this, 'register_option' ) );
 		add_action( 'admin_menu', array( $this, 'add_page' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_footer_editor' ) );
+	}
+
+	/** Load the native picker only on this authorized settings page.
+	 *
+	 * @param string $hook Admin page hook.
+	 * @return void
+	 */
+	public function enqueue_footer_editor( $hook ) {
+		if ( 'settings_page_' . self::PAGE_SLUG !== $hook || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_style( 'itd-cookies-footer-editor', ITD_COOKIES_URL . 'assets/css/footer-editor.css', array( 'wp-color-picker' ), ITD_COOKIES_VERSION );
+		wp_enqueue_script( 'itd-cookies-footer-editor', ITD_COOKIES_URL . 'assets/js/footer-editor.js', array( 'wp-color-picker' ), ITD_COOKIES_VERSION, true );
 	}
 
 	/**
@@ -305,6 +339,23 @@ final class ITD_Cookies_Settings {
 						<?php endforeach; ?>
 					</select><p class="description"><?php echo esc_html__( 'Applies only to the automatic footer. Manually placed shortcodes keep their surrounding layout.', 'itd-cookies' ); ?></p></td></tr>
 				</table>
+				<div id="itd-cookies-footer-editor">
+					<?php
+					foreach ( array(
+						'footer_background_color' => __( 'Background color', 'itd-cookies' ),
+						'footer_text_color'       => __( 'Link/text color', 'itd-cookies' ),
+					) as $key => $label ) :
+						?>
+						<p><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label>
+						<input type="text" id="<?php echo esc_attr( $key ); ?>" class="itd-cookies-color" name="<?php echo esc_attr( self::OPTION_NAME . '[' . $key . ']' ); ?>" value="<?php echo esc_attr( $settings[ $key ] ); ?>" data-color-role="<?php echo 'footer_background_color' === $key ? 'background' : 'text'; ?>" aria-describedby="itd-cookies-footer-color-help" />
+						<button type="button" class="button itd-cookies-color-reset" data-reset-color="<?php echo esc_attr( $key ); ?>"><?php echo esc_html__( 'Reset to default', 'itd-cookies' ); ?></button></p>
+					<?php endforeach; ?>
+					<p id="itd-cookies-footer-color-help" class="description"><?php echo esc_html__( 'Enter #RRGGBB or leave empty to keep the default style. Colors affect only the automatic footer. This preview uses a neutral background; inherited colors depend on your theme.', 'itd-cookies' ); ?></p>
+					<h3><?php echo esc_html__( 'Automatic footer preview', 'itd-cookies' ); ?></h3>
+					<div class="itd-cookies-footer-preview"><a href="#itd-cookies-footer-editor"><?php echo esc_html__( 'Privacy policy', 'itd-cookies' ); ?></a><button type="button"><?php echo esc_html__( 'Cookie settings', 'itd-cookies' ); ?></button></div>
+					<p class="itd-cookies-color-invalid" role="status" hidden><?php echo esc_html__( 'Enter a valid six-digit HEX color (#RRGGBB) or clear the field.', 'itd-cookies' ); ?></p>
+					<p class="itd-cookies-color-warning" role="status" hidden><?php echo esc_html__( 'Low contrast: link text should have a contrast ratio of at least 4.5:1. Choose a lighter text color or a darker background (or vice versa). Check the result in your theme.', 'itd-cookies' ); ?></p>
+				</div>
 				<p><?php echo esc_html__( 'Use [itd_cookies_legal_links] to place the links yourself. Automatic output is disabled by default.', 'itd-cookies' ); ?></p>
 				<h2><?php echo esc_html__( 'Analytics', 'itd-cookies' ); ?></h2>
 				<p class="description"><?php echo esc_html__( 'Embedded Yandex Maps load independently of Analytics consent. External maps may transmit data and use their own cookies or analytics before consent and after rejection. ITD Cookies controls the site analytics configured below, not map requests. Review the map integration and privacy information separately.', 'itd-cookies' ); ?></p>

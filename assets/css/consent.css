@@ -413,3 +413,24 @@
 	.itd-cookies input.itd-cookies__toggle:focus-visible { outline-color: Highlight; }
 	.itd-cookies input.itd-cookies__toggle { background: Canvas; border-color: CanvasText; }
 }
+
+/* Custom palette applies exclusively to the opt-in automatic footer. */
+.itd-cookies-footer.itd-cookies-footer--custom-colors button.itd-cookies-open,
+.itd-cookies-footer.itd-cookies-footer--custom-colors button.itd-cookies-open:is(:hover, :focus, :active) {
+ background: transparent !important;
+ box-shadow: none;
+ text-transform: none;
+}
+.itd-cookies-footer.itd-cookies-footer--custom-colors :is(a, button):hover { text-decoration: underline; text-underline-offset: .2em; }
+/* Two contrasting rings remain visible even when the chosen text is low contrast. */
+.itd-cookies-footer.itd-cookies-footer--custom-colors :is(a, button):focus-visible {
+ outline: 2px solid #000 !important;
+ outline-offset: 2px;
+ box-shadow: 0 0 0 4px #fff !important;
+}
+@media (forced-colors: active) {
+ .itd-cookies-footer.itd-cookies-footer--custom-colors { background: Canvas !important; color: CanvasText !important; forced-color-adjust: auto; }
+ .itd-cookies-footer.itd-cookies-footer--custom-colors .itd-cookies-legal__link,
+ .itd-cookies-footer.itd-cookies-footer--custom-colors button.itd-cookies-open { color: LinkText !important; }
+ .itd-cookies-footer.itd-cookies-footer--custom-colors :is(a, button):focus-visible { outline-color: Highlight !important; box-shadow: none !important; }
+}

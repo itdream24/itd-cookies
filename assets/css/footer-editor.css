@@ -1,0 +1,26 @@
+#itd-cookies-footer-editor { max-width: 900px; }
+#itd-cookies-footer-editor > p > label { display: inline-block; min-width: 180px; }
+#itd-cookies-footer-editor .itd-cookies-footer-preview {
+	box-sizing: border-box;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 24px;
+	padding: 16px;
+	background-color: #fff;
+	color: #1d2327;
+	font-size: 16px;
+	line-height: 1.5;
+}
+#itd-cookies-footer-editor .itd-cookies-footer-preview :is(a, button) {
+	background: transparent;
+	color: inherit;
+	border: 0;
+	padding: 10px 0;
+	font: inherit;
+	text-decoration: underline;
+	overflow-wrap: anywhere;
+	max-width: 100%;
+}
+#itd-cookies-footer-editor .itd-cookies-color-warning,
+#itd-cookies-footer-editor .itd-cookies-color-invalid { border-left: 4px solid #b32d2e; padding: 10px; background: #fff; color: #1d2327; }
+#itd-cookies-footer-editor [hidden] { display: none; }

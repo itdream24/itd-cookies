@@ -1,5 +1,5 @@
 msgid ""
-msgstr "Project-Id-Version: ITD Cookies 0.4.5\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
+msgstr "Project-Id-Version: ITD Cookies 0.4.6-dev.1\nLanguage: ru_RU\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\n"
 
 msgid "ITD Cookies requires PHP 7.4 or newer."
 msgstr "Для ITD Cookies требуется PHP 7.4 или новее."
@@ -321,3 +321,27 @@ msgstr "Внешние интеграции, включая встроенные
 
 msgid "Adding or changing a registered service may require a new choice. Existing positive choices from earlier plugin versions require confirmation because they do not identify services."
 msgstr "Добавление или изменение зарегистрированного сервиса может потребовать нового выбора. Разрешения, сохранённые предыдущими версиями плагина, требуют подтверждения, поскольку не содержат сведений о сервисах."
+
+msgid "Background color"
+msgstr "Цвет фона"
+
+msgid "Link/text color"
+msgstr "Цвет ссылок и текста"
+
+msgid "Reset to default"
+msgstr "Сбросить к стандартному"
+
+msgid "Automatic footer preview"
+msgstr "Предварительный просмотр автоматического футера"
+
+msgid "Footer color was not saved. Enter #RRGGBB or leave the field empty for the default style. The previous color has been kept."
+msgstr "Цвет футера не сохранён. Введите #RRGGBB или оставьте поле пустым для стандартного оформления. Прежний цвет сохранён."
+
+msgid "Enter #RRGGBB or leave empty to keep the default style. Colors affect only the automatic footer. This preview uses a neutral background; inherited colors depend on your theme."
+msgstr "Введите #RRGGBB или оставьте поле пустым для стандартного оформления. Цвета применяются только к автоматическому футеру. В preview используется нейтральный фон; наследуемые цвета зависят от темы."
+
+msgid "Enter a valid six-digit HEX color (#RRGGBB) or clear the field."
+msgstr "Введите допустимый HEX-цвет из шести цифр (#RRGGBB) или очистите поле."
+
+msgid "Low contrast: link text should have a contrast ratio of at least 4.5:1. Choose a lighter text color or a darker background (or vice versa). Check the result in your theme."
+msgstr "Низкий контраст: для текста ссылок требуется соотношение не менее 4,5:1. Выберите более светлый текст или более тёмный фон (либо наоборот). Проверьте результат в своей теме."

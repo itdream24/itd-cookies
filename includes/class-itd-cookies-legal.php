@@ -22,6 +22,7 @@ final class ITD_Cookies_Legal {
 		add_shortcode( 'itd_cookies_policy', array( $this, 'policy_shortcode' ) );
 		add_shortcode( 'itd_cookies_legal_links', array( $this, 'links_shortcode' ) );
 		add_action( 'wp_footer', array( $this, 'render_footer' ), 6 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_footer_colors' ), 20 );
 		add_action( 'admin_post_itd_cookies_create_policy', array( $this, 'create_page' ) );
 	}
 
@@ -92,6 +93,43 @@ final class ITD_Cookies_Legal {
 		return $items ? '<nav class="itd-cookies-legal" aria-label="' . esc_attr__( 'Legal information', 'itd-cookies' ) . '">' . implode( '', $items ) . '</nav>' : '';
 	}
 
+	/** Enqueue validated, automatic-footer-only CSS through the WordPress API.
+	 * Strict style CSP needs the inline stylesheet authorized by its nonce/hash.
+	 *
+	 * @return void
+	 */
+	public function enqueue_footer_colors() {
+		if ( is_admin() ) {
+			return;
+		}
+		$css = self::footer_color_css( ITD_Cookies_Settings::get() );
+		if ( '' !== $css ) {
+			wp_add_inline_style( ITD_Cookies_Plugin::ASSET_HANDLE, $css );
+		}
+	}
+
+	/** Generate CSS only from six-digit HEX; no arbitrary CSS or style attributes.
+	 *
+	 * @param array $settings Settings, validated again at the CSS boundary.
+	 * @return string
+	 */
+	public static function footer_color_css( array $settings ) {
+		if ( empty( $settings['auto_footer'] ) ) {
+			return '';
+		}
+		$background = ITD_Cookies_Settings::sanitize_color( $settings['footer_background_color'] ?? '' );
+		$text       = ITD_Cookies_Settings::sanitize_color( $settings['footer_text_color'] ?? '' );
+		$css        = '';
+		if ( '' !== $background ) {
+			$css .= '.itd-cookies-footer.itd-cookies-footer--custom-colors{background-color:' . $background . ' !important;}';
+		}
+		if ( '' !== $text ) {
+			$css .= '.itd-cookies-footer.itd-cookies-footer--custom-colors{color:' . $text . ' !important;}';
+			$css .= '.itd-cookies-footer.itd-cookies-footer--custom-colors .itd-cookies-legal__link,.itd-cookies-footer.itd-cookies-footer--custom-colors button.itd-cookies-open{color:' . $text . ' !important;}';
+		}
+		return '' === $css ? $css : '@media (forced-colors: none){' . $css . '}';
+	}
+
 	/**
 	 * Print an isolated container only after explicit opt-in.
 	 *
@@ -100,8 +138,9 @@ final class ITD_Cookies_Legal {
 	public function render_footer() {
 		$settings = ITD_Cookies_Settings::get();
 		if ( ! is_admin() && $settings['auto_footer'] ) {
+			$colors = '' !== self::footer_color_css( $settings ) ? ' itd-cookies-footer--custom-colors' : '';
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Complete HTML is escaped in links_shortcode.
-			echo '<div class="itd-cookies-footer itd-cookies-footer--' . esc_attr( $settings['footer_alignment'] ) . '">' . $this->links_shortcode() . '</div>';
+			echo '<div class="itd-cookies-footer itd-cookies-footer--' . esc_attr( $settings['footer_alignment'] . $colors ) . '">' . $this->links_shortcode() . '</div>';
 		}
 	}
 

@@ -17,6 +17,53 @@ require_once dirname( __DIR__, 2 ) . '/includes/class-itd-cookies-services.php';
  * Exercise legacy migration without a WordPress database.
  */
 final class ITDCookiesSettingsTest extends TestCase {
+	/** Color normalization is strict, quiet and independent of consent.
+	 *
+	 * @return void
+	 */
+	public function test_footer_colors_accept_only_six_digit_hex() {
+		Functions\expect( 'add_settings_error' )->never();
+		foreach ( array( '', '#181C1E', '#FFFFFF', '#000000', ' #Ab12ef ' ) as $color ) {
+			$output = \ITD_Cookies_Settings::sanitize(
+				array(
+					'footer_background_color' => $color,
+					'footer_text_color'       => $color,
+					'consent_version'         => 'unchanged',
+				)
+			);
+			self::assertSame( strtolower( trim( $color ) ), $output['footer_background_color'] );
+			self::assertSame( $output['footer_background_color'], $output['footer_text_color'] );
+			self::assertSame( 'unchanged', $output['consent_version'] );
+		}
+		foreach ( array( '#fff', '#ffffffff', 'red', 'var(--x)', 'url(https://example.test)', '#ffffff;display:none', '</style><script>', array(), true, 123, null ) as $bad ) {
+			self::assertSame( '', \ITD_Cookies_Settings::sanitize( array( 'footer_text_color' => $bad ) )['footer_text_color'] );
+		}
+		self::assertSame( '', \ITD_Cookies_Settings::defaults()['footer_background_color'] );
+		self::assertSame( '', \ITD_Cookies_Settings::defaults()['footer_text_color'] );
+	}
+
+	/** Failed color submissions keep saved values; explicit clearing resets.
+	 *
+	 * @return void
+	 */
+	public function test_footer_color_save_errors_and_reset() {
+		Functions\when( 'get_option' )->justReturn(
+			array(
+				'footer_background_color' => '#181c1e',
+				'footer_text_color'       => '#ffffff',
+			)
+		);
+		Functions\expect( 'add_settings_error' )->once()->with( 'itd_cookies_settings', 'footer_background_color', \Mockery::type( 'string' ), 'error' );
+		$output = \ITD_Cookies_Settings::sanitize_submission(
+			array(
+				'footer_background_color' => 'url(x)',
+				'footer_text_color'       => '',
+			)
+		);
+		self::assertSame( '#181c1e', $output['footer_background_color'] );
+		self::assertSame( '', $output['footer_text_color'] );
+	}
+
 	/**
 	 * Set up WordPress sanitization doubles for each test.
 	 *

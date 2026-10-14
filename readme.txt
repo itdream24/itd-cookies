@@ -4,7 +4,7 @@ Tags: cookies, consent, analytics, privacy
 Requires at least: 5.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.5
+Stable tag: 0.4.6-dev.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,9 @@ https://github.com/itdream24/itd-cookies/releases . Only stable vX.Y.Z releases 
 No. Site owners must choose their policies and provider configuration.
 
 == Changelog ==
+
+= 0.4.6-dev.1 =
+* Optional automatic-footer colors with native color picker, preview and contrast warning. Empty defaults and manual shortcode styling are preserved.
 
 = 0.4.5 =
 * Show only enabled registered optional categories.

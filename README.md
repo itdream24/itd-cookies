@@ -80,6 +80,10 @@ Embedded maps load independently of Analytics and after Reject. They may transmi
 
 Published v0.4.4 ZIP/checksum and local native stable0.4.3 →0.4.4 acceptance are verified; see docs/ITD-COOKIES-0.4.4.md. The immutable reset at that acceptance was baseline-v0.4.4, which is retained. Production rollout needs separate site-owner authorization.
 
+## Automatic footer colors (0.4.6 candidate)
+
+Footer integration provides optional background and link/text #RRGGBB colors using the native WordPress picker. Empty values keep the existing theme style. Preview warns below 4.5:1; inherited theme colors require a frontend check. Reset each field separately. Only the automatic panel is styled; manual legal shortcodes keep theme formatting. With strict style CSP, authorize the WordPress inline stylesheet by nonce or its exact hash; no CSP policy is disabled by the plugin. Clear page/CDN cache after saving colors.
+
 ## Smart consent categories (0.4.5)
 
 Only enabled registered optional categories appear; Necessary always remains.

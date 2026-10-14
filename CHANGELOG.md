@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.6-dev.1 — unreleased
+
+- Add optional automatic-footer background and link/text HEX colors, native WordPress Color Picker, live preview, contrast warning and independent resets.
+- Empty defaults preserve 0.4.5 styling; manual shortcodes and consent behavior are unchanged.
+
 ## 0.4.5 — 2026-10-13
 
 - Hide unused optional categories from settings and the generated policy.

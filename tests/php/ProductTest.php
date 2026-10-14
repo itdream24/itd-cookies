@@ -16,6 +16,40 @@ require_once dirname( __DIR__, 2 ) . '/public/class-itd-cookies-plugin.php';
 
 /** Tests settings compatibility, registry and dynamic legal integration. */
 final class ProductTest extends TestCase {
+	/** Empty colors preserve output; custom CSS cannot affect manual links.
+	 *
+	 * @return void
+	 */
+	public function test_footer_color_scope_and_upgrade_defaults() {
+		$settings = \ITD_Cookies_Settings::defaults();
+		unset( $settings['footer_background_color'], $settings['footer_text_color'] );
+		$settings['auto_footer']               = 1;
+		$this->options['itd_cookies_settings'] = $settings;
+		$before                                = $this->options;
+		$legal                                 = new \ITD_Cookies_Legal();
+		$manual                                = $legal->links_shortcode();
+		self::assertSame( '', \ITD_Cookies_Legal::footer_color_css( $settings ) );
+		self::assertSame( '', \ITD_Cookies_Settings::get()['footer_text_color'] );
+		self::assertSame( $before, $this->options );
+		$settings['footer_background_color']   = '#181C1E';
+		$settings['footer_text_color']         = '#ffffff';
+		$this->options['itd_cookies_settings'] = $settings;
+		self::assertSame( $manual, $legal->links_shortcode() );
+		$css = \ITD_Cookies_Legal::footer_color_css( $settings );
+		self::assertStringContainsString( 'background-color:#181c1e', $css );
+		self::assertStringContainsString( 'color:#ffffff', $css );
+		self::assertStringContainsString( '@media (forced-colors: none)', $css );
+		ob_start();
+		$legal->render_footer();
+		self::assertStringContainsString( 'itd-cookies-footer--custom-colors', ob_get_clean() );
+		$settings['footer_background_color'] = 'url(javascript:x)';
+		$settings['footer_text_color']       = '#fff;display:none';
+		self::assertSame( '', \ITD_Cookies_Legal::footer_color_css( $settings ) );
+		$settings['footer_text_color'] = '#ffffff';
+		$settings['auto_footer']       = 0;
+		self::assertSame( '', \ITD_Cookies_Legal::footer_color_css( $settings ) );
+	}
+
 	/**
 	 * Stored options.
 	 *
