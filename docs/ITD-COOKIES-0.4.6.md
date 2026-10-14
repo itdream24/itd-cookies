@@ -1,4 +1,22 @@
-# ITD Cookies 0.4.6 — automatic footer colors
+# ITD Cookies 0.4.6 — stable release and automatic footer colors
+
+## Stable gate — 2026-10-14
+
+Stable source is prepared from accepted feature commit `2417b3bbc288d8e771a56d4763e04196b332cd95`. Release branch: `release/itd-cookies-0.4.6`. Fresh main was `ec9f662c64880b21a2a9f67c3fde2ff5797bcaef`, an ancestor of the accepted commit; no unexpected divergence. Version metadata alone changes to 0.4.6; runtime and dependencies are identical to the accepted implementation.
+
+Stable ZIP: `itd-cookies-0.4.6.zip`, 20 files, PHP 7.4 lint/package inspector PASS. Two consecutive builds have SHA-256 `4c61310f81eaae2dccf9527d9a868ca0188597045061ef1fa7bfd61209770994`. PHPUnit 62/734, JS 50, ESLint, Composer/npm audits PASS.
+
+Separate stable Browser E2E **44/44 PASS**, Chromium 155.0.8059.40: native 0.4.5 → 0.4.6 ZIP upgrade, exact settings/primary+receipt/marker/policy/active preservation; three themes × 320/390/768/1440; picker/save/reopen/reset; light/dark palettes; #181C1E/white contrast17.161:1; alignments and manual shortcode/banner isolation; auto-footer OFF/ON; keyboard; consent/providers and Script Adapters; emulated forced colors. All20 installed file hashes match the stable ZIP.
+
+CSP stable tests: no additional palette stylesheet at empty defaults; palette applies with authorized nonce/hash and no style attributes; strict CSP without authorization blocks custom inline palette **as expected**, while the document stays usable. Expected denial violations are counted separately. No unsafe-inline or CSP disabling is added by the plugin. CSP integrations must authorize WordPress inline styles (exact hash includes WordPress whitespace/sourceURL); inherited themes/admin native picker also require an appropriate site policy. No universal CSP compatibility is claimed.
+
+Map regression uses a synthetic local constructor/iframe integration: one map instance and preserved dimensions for Fresh/Reject/Accept all, independent of Analytics; primary SDK remains gated. External Yandex availability/tracking delivery is **not** claimed by this mock. Runtime map handling remains unchanged. The first stable harness looked for Reject with zero optional services; corrected fixture enables synthetic Analytics, and the entire44-scenario suite was rerun. A transient WordPress.org TLS warning during CLI theme installation is classified as setup environment output; themes installed from cache, browser suite has no unexpected errors.
+
+Pre-release cleanup restores immutable baseline-v0.4.5: 504 files, every schema and row in12 tables, original settings/marker/theme/plugin activity; QA cookies cleared in isolated contexts, user Chrome untouched. Old snapshot SHA values remain as recorded below. Publication waits for release and independent main CI.
+
+Current stable gate: pending release CI / main CI / publication / real updater / new baseline.
+
+## Feature acceptance history (retained)
 
 Date: 2026-10-14. Candidate: `0.4.6-dev.1`.
 Branch: `codex/itd-cookies-0.4.6-footer-colors`, based on fresh
