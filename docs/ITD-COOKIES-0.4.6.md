@@ -122,4 +122,21 @@ All QA runs use separate contexts; final run clears guest/admin cookies and clos
 them. User Chrome is untouched. No production, testwp, Timeweb or reference-site
 visit, upstream main merge, tag or Release is authorized or performed.
 
-Verdict pending full feature CI; local acceptance and cleanup PASS.
+## GitHub CI and verdict
+
+Implementation/acceptance commit: `a7e327bc2222240e7cfe0840a50415a93ed71b71`.
+[Feature CI run](https://github.com/itdream24/itd-cookies/actions/runs/38565155830):
+**13/13 completed SUCCESS**, including build; no required skipped/cancelled jobs.
+
+- PHP 7.4 and 8.5: PASS.
+- Node (audit, ESLint, translation reproducibility, JS tests): PASS.
+- Quality (Composer audit, PHPCS, PHPStan): PASS.
+- WordPress 5.2 / 5.2.24 / 5.3.26 with PHP 7.4, latest with PHP 7.4 / 8.5: PASS.
+- Legacy guards PHP 7.3 / 7.4: PASS.
+- Gitleaks: PASS.
+- Build, package inspector and reproducibility: PASS.
+
+Final documentation commit receives its own unchanged-runtime CI; its URL and HEAD
+are provided in the final handoff. Stable main/releases remain untouched.
+
+Verdict: **`ITD_COOKIES_0_4_6_FOOTER_COLORS_READY`**.
