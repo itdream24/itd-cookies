@@ -14,7 +14,45 @@ Map regression uses a synthetic local constructor/iframe integration: one map in
 
 Pre-release cleanup restores immutable baseline-v0.4.5: 504 files, every schema and row in12 tables, original settings/marker/theme/plugin activity; QA cookies cleared in isolated contexts, user Chrome untouched. Old snapshot SHA values remain as recorded below. Publication waits for release and independent main CI.
 
-Current stable gate: pending release CI / main CI / publication / real updater / new baseline.
+### Initial release CI blocker (history retained)
+
+Stable preparation commit: `295d5311830c4136305c216171748b71599830d8`.
+[Original release CI](https://github.com/itdream24/itd-cookies/actions/runs/38605368991), attempts **1 and 2**:
+**Both FAILURE** — each attempt: 11 jobs SUCCESS, `wordpress (5.3.26, 7.4)` FAILURE,
+downstream `build` SKIPPED.
+
+The WordPress 5.3.26 job reaches integration setup but its first `wp core download`
+command fails: `wp: command not found`, exit 127. Plugin integration steps never run
+in that job. This is a WP-CLI/CI infrastructure setup blocker, not evidence of a
+plugin runtime defect. Other WordPress matrix jobs and PHP/JS/quality/secrets pass.
+Workflow/runtime/dependencies have not been modified to hide the failure.
+
+Per the owner's stop-on-failed-gate requirement, no main merge, tag, Release,
+publication attempt or genuine updater acceptance is performed. Main remains
+`ec9f662c64880b21a2a9f67c3fde2ff5797bcaef`; latest remains v0.4.5.
+Stable Browser E2E44/44 and baseline Restore504/12 remain PASS. Official0.4.5 ACTIVE
+is left locally, no QA artefacts; baseline-v0.4.6 is NOT_CREATED.
+
+Continuation requires a fully completed release CI including WP5.3.26 and build,
+then separate main CI before tagging. Final genuine updater/new baseline remain
+NOT_RUN. This blocker note is retained as a local documentation diff, without a
+push that would automatically start another CI attempt.
+
+Historical verdict before recovery: **`BLOCKED_BY_CI_WP_CLI_SETUP`**. No publication occurred during that blocked stage.
+
+## WP-CLI infrastructure recovery — 2026-10-15
+
+Original HEAD `295d5311830c4136305c216171748b71599830d8`; attempt1 job115994750505 and attempt2 job115997251748 both show setup-php `Could not setup wp-cli`, followed by `wp: command not found` / exit127. WordPress integration did not start in that job; WordPress5.3.26 is not identified as the cause. Setup-php does not report an underlying HTTP status, so a specific network cause is unproven.
+
+Minimal infrastructure commit: `c88a03745bb88fd0371fd650d53ca76e1dec2499` (workflow + CI helper only). Native setup-php remains responsible for PHP/extensions and pins `wp-cli:2.12.0`. `scripts/ci/ensure-wp-cli.sh` checks the command, falls back only when missing (or explicitly forced by its regression row), downloads the official pinned PHAR over verified HTTPS with3 bounded retries, verifies a fixed SHA-256 before installing to RUNNER_TEMP, then requires `command -v wp`, `wp --info` and exact2.12.0. No curl|bash, TLS disabling, integration skipping, matrix reduction or swallowed installation error.
+
+Source: [official WP-CLI2.12.0 release](https://github.com/wp-cli/wp-cli/releases/tag/v2.12.0). Pinned PHAR SHA-256 `ce34ddd838f7351d6759068d09793f26755463b4a4610a5a5c0a97b68220d85c` independently matches both the official checksum asset and GitHub release asset digest. The same verifier protects both WordPress and legacy-guard matrices. WP5.3.26 deliberately forces the real fallback on every CI, then runs the complete existing integration suite with that PHAR.
+
+Local tests on PHP7.4.33/Git Bash: actual absent-command fallback download/install/info PASS; already-present command PASS; corrupt download rejected before installation PASS; download failure rejected PASS. No global WP-CLI/OpenServer setting was changed. The original uncommitted blocker report was backed up privately as a patch (SHA-256 `0f4bcdd2dc3cac244e54a82da724b00cda61b59ccd0a5616fd2429316e3330c8`) and its history remains above.
+
+Two stable rebuilds / package inspector PASS with unchanged SHA-256 `4c61310f81eaae2dccf9527d9a868ca0188597045061ef1fa7bfd61209770994`. No plugin PHP/CSS/JS, runtime dependencies, consent/receipts/providers/adapters or version metadata changed in recovery.
+
+[Recovery CI](https://github.com/itdream24/itd-cookies/actions/runs/38685649191) on c88a037: **13/13 completed SUCCESS**. WP5.3.26 executes the verified fallback and its entire integration smoke; every other matrix row and downstream build PASS, no skipped/cancelled mandatory job. Downloaded Linux CI artifact matches the same stable ZIP SHA-256. Current stage: release CI recovered; independent main CI and publication remain pending.
 
 ## Feature acceptance history (retained)
 
