@@ -1,5 +1,47 @@
 # ITD Cookies 0.4.6 — stable release and automatic footer colors
 
+## Final result — 2026-10-15
+
+**`ITD_COOKIES_V0.4.6_RELEASED_AND_LOCAL_STABLE_UPDATE_VERIFIED`**
+
+- Release: https://github.com/itdream24/itd-cookies/releases/tag/v0.4.6
+- Immutable annotated tag object: `c8a9c06e0aad80d54e91916bf34cea4343de692b`.
+- Tag/stable commit: `c9d4e4f16eac0629edecfb31ca38322022229004`.
+- Minimal CI fix: `c88a03745bb88fd0371fd650d53ca76e1dec2499`; no runtime/dependency changes during recovery.
+- [Recovery CI](https://github.com/itdream24/itd-cookies/actions/runs/38685649191):13/13 PASS.
+- [Release HEAD CI](https://github.com/itdream24/itd-cookies/actions/runs/38685852535):13/13 PASS.
+- [Independent pre-tag main CI](https://github.com/itdream24/itd-cookies/actions/runs/38686015557):13/13 PASS.
+- [Stable Release workflow](https://github.com/itdream24/itd-cookies/actions/runs/38687367191):15/15 completed SUCCESS, including publish. No mandatory skipped/cancelled job.
+- Official asset: `itd-cookies-0.4.6.zip`, SHA-256 `4c61310f81eaae2dccf9527d9a868ca0188597045061ef1fa7bfd61209770994`.
+- Local reproducible build, Linux recovery/main CI artifacts, anonymous published download and official checksum all match. Anonymous API confirms latest=v0.4.6, draft=false, prerelease=false. Published package inspector/PHP7.4 syntax:20 files PASS.
+
+### Genuine WordPress updater —7/7 PASS
+
+After publication, immutable official baseline-v0.4.5 was restored. A local-only observer recorded HTTP events and state; it did not intercept/substitute HTTP, metadata, package or cache. Synthetic settings/IDs, Cookie Policy/legal pages and two real0.4.5 visitor choices (Reject/positive) were created.
+
+The actual WordPress Updates → Check again requested the public GitHub latest API exactly once (HTTP200), received0.4.6 and the real public package URL. The normal WordPress update button installed0.4.6 in `itd-cookies`, active. All20 file hashes match the anonymous published ZIP. All original settings, primary consent and service receipt for both visitors, migration marker and policy ID/content/title/status survived exactly. No unnecessary re-consent, no SDK for Reject; repeated save did not duplicate SDK; revoke/reload worked. Published Color Picker/manual HEX/save and dark footer were checked at390px without changing visitor receipts. Guest/admin contexts cleared and closed; user Chrome untouched. No unexpected observer PHP or browser JS errors. SDK delivery itself used inert browser responses with synthetic IDs; server-side GitHub API/package were genuine throughout.
+
+Private evidence: `046-stable-release/real-update/results.json`, public-offer/native-update screenshots and `official-dark-footer-390.png`. This is genuine updater acceptance, not synthetic metadata or assisted Upload/Replace recovery.
+
+### Cleanup and new immutable baseline
+
+The observer, all QA pages/options/counters/settings were removed by full baseline-v0.4.5 Restore, independently verified against504 files and all12 tables. Then a second **helper-free native WordPress updater** upgraded the clean original0.4.5 to official0.4.6, preserving original settings/marker/policy/theme. There is exactly one official active plugin; all20 published file hashes match. Test admin session explicitly logged out; QA cookies cleared, browser context closed, no maintenance file.
+
+New separate `baseline-v0.4.6` was captured outside Git/webroot and **actually restored**. Verification: **506/506 file hashes**, every schema and row in **12/12 tables**, settings, locale, theme, marker and active plugin PASS. The two additional files relative to0.4.5 are the new footer editor JS/CSS assets.
+
+- New baseline SQL SHA-256: `4b6ad4ee948af6e4cae6b4df872b5f8cca054e16174b5ed26c56b3a33ba36af9`.
+- New manifest SHA-256: `350e33f33e4223d6672bff30db0ac36df23375812759e90d98bc1780a283466b`.
+- All12 canonical table hash: `415cc8cc7f793e59b0897eeecb93f114ca6f534bd051f5187c228c929e42e24e`.
+- Old baseline-v0.4.5 SQL remains `30b3d7a37a1c123c5800a93f14f29a8e5812159bdd187e20bab5e285094ad2f7`, manifest `f8c0b1ae9be5ee8cf500b6472e47ba946b76ec7b773b5f8ea6b152f928ff0ae0`.
+
+Final stand: official **0.4.6 ACTIVE**, WordPress7.1.2 / PHP8.1.5 / ru_RU / Twenty Twenty-Five1.5. No temporary plugins, synthetic metadata, QA pages/options/counters or test cookies remain. Existing baselines/tags/Release assets are not overwritten. No business-site/production/testwp/Timeweb access or mutation.
+
+Strict CSP limits are unchanged: empty color defaults add no palette inline CSS; chosen colors require site-authorized nonce/hash for the native WordPress inline stylesheet. Without authorization the browser correctly blocks the palette, with expected CSP violations; the document stays usable. No unsafe-inline, policy disabling or universal CSP compatibility is claimed. Forced-colors QA is emulation. Full stable three-theme/mobile/CSP suite44/44 is recorded below; runtime is byte-identical to that accepted stable ZIP.
+
+Final documentation commit receives its own CI; final HEAD/CI URL are included in the handoff.
+
+---
+
 ## Stable gate — 2026-10-14
 
 Stable source is prepared from accepted feature commit `2417b3bbc288d8e771a56d4763e04196b332cd95`. Release branch: `release/itd-cookies-0.4.6`. Fresh main was `ec9f662c64880b21a2a9f67c3fde2ff5797bcaef`, an ancestor of the accepted commit; no unexpected divergence. Version metadata alone changes to 0.4.6; runtime and dependencies are identical to the accepted implementation.
@@ -53,6 +95,18 @@ Local tests on PHP7.4.33/Git Bash: actual absent-command fallback download/insta
 Two stable rebuilds / package inspector PASS with unchanged SHA-256 `4c61310f81eaae2dccf9527d9a868ca0188597045061ef1fa7bfd61209770994`. No plugin PHP/CSS/JS, runtime dependencies, consent/receipts/providers/adapters or version metadata changed in recovery.
 
 [Recovery CI](https://github.com/itdream24/itd-cookies/actions/runs/38685649191) on c88a037: **13/13 completed SUCCESS**. WP5.3.26 executes the verified fallback and its entire integration smoke; every other matrix row and downstream build PASS, no skipped/cancelled mandatory job. Downloaded Linux CI artifact matches the same stable ZIP SHA-256. Current stage: release CI recovered; independent main CI and publication remain pending.
+
+## Pre-publication local startup pause (resolved) — 2026-10-15
+
+[Actual release HEAD CI](https://github.com/itdream24/itd-cookies/actions/runs/38685852535), commit `c9d4e4f16eac0629edecfb31ca38322022229004`: **13/13 completed SUCCESS**, including forced fallback WP5.3.26 and build. Main was clean and fast-forwarded to that exact commit after this gate.
+
+[Separate main CI](https://github.com/itdream24/itd-cookies/actions/runs/38686015557): **13/13 completed SUCCESS**. Independently downloaded recovery/main CI ZIPs and local ZIP all have SHA-256 `4c61310f81eaae2dccf9527d9a868ca0188597045061ef1fa7bfd61209770994`. Stable Browser44/44 is retained; no runtime change requires reacceptance.
+
+Pre-publication environment blocker: local OpenServer services are stopped/unavailable. MariaDB127.0.0.1:3306 returns10061; HTTP port80 is unavailable. The installed OpenServer5.4.2 binary confirms its `/start` switch; a normal start was requested without changing global settings. The log reaches `Обновление Hosts файла`, but services are not ready. The owner has been asked to finish the normal startup / report any displayed dialog. No host/IP proxy workaround, manual global config rewrite or direct database-daemon repair was attempted.
+
+A private wp-content checkpoint was copied; its database export failed while MariaDB was down and is explicitly INVALID (empty), never used for Restore. Immutable baseline-v0.4.5 SQL/manifest hashes remain unchanged. There has been no local WordPress mutation in this recovery task.
+
+Historical continuation status during the pause: **`BLOCKED_BY_LOCAL_OPENSERVER_STARTUP`**. WP-CLI CI blocker is resolved. Tag/Release/publication/genuine updater/new baseline remain NOT_RUN; latest is still v0.4.5. Resume at local readiness verification and pre-tag checks on c9d4e4f, not by retrying the old failed CI. The owner subsequently completed normal OpenServer startup; HTTP/DB readiness and a valid SQL checkpoint were verified. Baseline-v0.4.5 Restore504/12 was repeated before tagging. This pause did not cause any tag or publication rewrite.
 
 ## Feature acceptance history (retained)
 

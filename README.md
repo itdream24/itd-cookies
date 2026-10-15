@@ -2,7 +2,7 @@
 
 Standalone WordPress consent preferences with Yandex Metrika and Google Analytics gated on analytics consent. GPL-2.0-or-later. WordPress 5.2+, PHP 7.4+.
 
-Version: **0.4.6**, prepared for the stable release gate. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
+Stable version: **0.4.6**. Download only a built `itd-cookies-X.Y.Z.zip` asset from this repository's Releases, never the source archive.
 
 ## Install and migrate
 
@@ -100,3 +100,5 @@ Published v0.4.5 and real native0.4.4 →0.4.5 acceptance are verified. The clea
 local stand is official0.4.5 ACTIVE; new immutable baseline-v0.4.5 was actually
 restored with all504 file hashes and all12 database schemas/data matching.
 See [stable acceptance report](docs/ITD-COOKIES-0.4.5.md) and LOCAL-QA.md.
+
+Published v0.4.6 and genuine native0.4.5 →0.4.6 local updater acceptance are verified. Official0.4.6 ACTIVE remains on the local QA stand; immutable baseline-v0.4.6 Restore verifies506 files and12 tables. WP-CLI CI recovery uses a pinned official checksum-verified fallback. See [0.4.6 release report](docs/ITD-COOKIES-0.4.6.md).
